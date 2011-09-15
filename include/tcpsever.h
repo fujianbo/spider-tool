@@ -1,9 +1,9 @@
 /*
- * Spider -- An open source xxx toolkit.
+ * Spider -- An open source C language toolkit.
  *
  * Copyright (C) 2011 , Inc.
  *
- * lidp <774291943@qq.com>
+ * lidp <openser@yeah.net>
  *
  * This program is free software, distributed under the terms of
  * the GNU General Public License Version 2. See the LICENSE file

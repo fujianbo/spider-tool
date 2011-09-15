@@ -44,6 +44,7 @@
 #define COLOR_WHITE     37
 #define COLOR_BRWHITE   (37 | 128)
 
+/* some default dir definition */
 #define spd_config_SPD_CONFIG_DIR "/etc/spider"
 
 int option_debug = 2;
