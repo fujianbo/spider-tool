@@ -10,20 +10,35 @@
  * at the top of the source tree.
  */
 
-#ifndef _TCPSERVER_H
-#define _TCPSERVER_H
+#ifndef _SPIDER_POLL_H
+#define _SPIDER_POLL_H
 
 #if defined(__cplusplus) || defined(c_plusplus)
 extern "C" {
 #endif
 
-/* pending request queue size */
-#define LISTENQ  10
+#include<sys/poll>
 
-int init_tcp_server();
+#ifndef SPD_INSTERNAL_POLL
+
+#define spd_poll(a,b,c)  poll(a,b,c)
+
+#else
+
+#define spd_poll(a,b,c)  spd_internal_poll(a,b,c)
+
+int spd_internal_poll(struct pollfd *fds, unsigned long nfds, int timeout);
+
+#endif
+
+
+int spd_waitfor_pollin(int fd, int ms);
+
+int spd_waitfor_pollout(int fd, int ms);
+
 
 #if defined(__cplusplus) || defined(c_plusplus)
 }
 #endif
-#endif 
 
+#endif

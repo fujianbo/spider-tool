@@ -44,6 +44,10 @@
 #include <string.h>
 #include <stdio.h>
 
+#if defined(__cplusplus) || defined(c_plusplus)
+extern "C" {
+#endif
+
 #define SPD_PTHREADT_NULL (pthread_t) -1
 #define SPD_PTHREADT_STOP (pthread_t) -2
 
@@ -193,6 +197,7 @@ static inline spd_mutex_init(spd_mutex_t *spdmutex)
 
     res = pthread_mutex_init(spdmutex, &attr);
     pthread_mutex_attr_destroy(&attr);
+	
     return res;
 }
 
@@ -283,7 +288,7 @@ typedef pthread_rwlock_t spd_rwlock_t;
 #define spd_rwlock_init(rwlock) __spd_rwlock_init(__FILE__, __LINE__, __PRETTY_FUNCTION__, #rwlock, rwlock)
 
 static inline int __spd_rwlock_init(const char *filename, int lineno, const char *func, 
-    const char *rwlock_name, ast_rwlock_t *prwlock)
+    const char *rwlock_name, spd_rwlock_t *prwlock)
 {
     int res;
     pthread_rwlockattr_t attr;
@@ -359,6 +364,20 @@ static inline int spd_rwlock_trywrlock(spd_rwlock_t *prwlock)
     scop spd_rwlock_t rwlock = SPD_RWLOCK_INIT_VALUE
     
 #define SPD_RWLOCK_DEFINE_STATIC(rwlock) __SPD_RWLOCK_DEFINE(static, rwlock)
+
+static inline int spd_atomic_fetchadd_int(volatile int *p, int v)
+{
+	__asm __volatile (
+	"       lock   xaddl   %0, %1 ;        "
+	: "+r" (v),                     /* 0 (result) */
+	  "=m" (*p)                     /* 1 */
+	: "m" (*p));                    /* 2 */
+	return (v);
+}
+
+#if defined(__cplusplus) || defined(c_plusplus)
+}
+#endif
 
 #endif 
 

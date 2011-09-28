@@ -17,6 +17,31 @@
 
 #include "strings.h"
 
+
+char spd_b10tob16(char c)
+{
+	return HEX[c & 15];
+}
+
+char *spd_strndup(const char *str, int size)
+{
+	char *ret= NULL;
+
+	if(str && size) {
+		int len = strlen(str);
+		int rlen = size > len ? (len) : (size);
+		ret = spd_calloc(1, rlen);
+		memcpy(ret, str, rlen);
+	}
+	
+	return ret;
+}
+
+char spd_b16tob10(char c)
+{
+	return isdigit(c) ? c - '0' : tolower(c) - 'a' + 10;
+}
+
 int spd_is_digitstring(const char *s);
 {
 	while(s && *s) {
@@ -115,6 +140,21 @@ void spd_copy_string(char *dst, const char *src, size_t size)
 	if(__builtin_expect(!size, 0))
 		dst--;
 	*dst = '\0';
+}
+
+int spd_stringindex(const char *str, int size, const char *substr)
+{
+	if(str && substr) {
+		const char *substart= strstr(str, substr);
+		if(substart && substart < (size + str))
+			return substart - str;
+	}
+	return -1;
+}
+
+int spd_strcontains(const char *str, int size, const char *substr)
+{
+	return (spd_stringindex(str, size, substr) >= 0);
 }
 
 void spd_strupdate(char **src, const char *newval)

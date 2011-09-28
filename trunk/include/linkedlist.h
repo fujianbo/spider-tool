@@ -12,9 +12,13 @@
 
 
 #ifndef _SPIDER_LINKEDLIST_H
- #define _SPIDER_LINKEDLIST_H
+#define _SPIDER_LINKEDLIST_H
 
- #include "lock.h"
+#include "lock.h"
+
+#if defined(__cplusplus) || defined(c_plusplus)
+extern "C" {
+#endif
 
  /*!
   * \file linkedlist.h
@@ -43,7 +47,7 @@
  * \retval non-zero on failure
  */
 
-#define SPD_RWLIST_LOCK(head)   \
+#define SPD_RWLIST_WRLOCK(head)   \
     spd_rwlock_wrlock(&(head)->lock)
 
 /*!
@@ -148,7 +152,7 @@
  * \param name This will be the name if the defined structure.
  * \type this is the type of each list entry.
  *
- * This Macro creates a structure definition tha can be used to hold a list 
+ * This Macro creates a structure definition that can be used to hold a list 
  * of entries of type type, it does not actually declare a structure of the instance
  * you wish to declare or use the specified name to declare instances elsewhere.
  *
@@ -187,7 +191,7 @@
     struct name {                  \
 	struct type *first;\
 	struct type *last;\
-        spd_rwlock_t lock; \
+    spd_rwlock_t lock; \
     }
 
 /*!
@@ -386,7 +390,7 @@ struct __dummy_##name
 #define SPD_RWLIST_ENTRY  SPD_LIST_ENTRY
 
 /*!
- * \brief get the first entry contained in a lisk.
+ * \brief get the first entry contained in a list.
  * \param pointer to the list head structure
  */
 #define SPD_LIST_FIRST(head)  ((head)->first)
@@ -464,7 +468,7 @@ struct __dummy_##name
 #define SPD_LIST_TRAVERSE(head, cur, field)   \
 	for((cur) = (head)->first; (cur); (cur) = (cur)->field.next)
 
-#define SPD_RWLISt_TRAVERSE SPD_LIST_TRAVERSE
+#define SPD_RWLIST_TRAVERSE SPD_LIST_TRAVERSE
 
 /*!
  * \brief Loops safely over (traverses) the entries in a list.
@@ -697,7 +701,7 @@ struct __dummy_##name
         (head)->last = (cur);                     \
 } while (0)
         
-#define SPD_RWLIST_INSERT_HEAD SPD_LIST_INSERT_HEAD
+#define SPD_RWLIST_INSERT_HEAD  SPD_LIST_INSERT_HEAD
 
 /*!
  * \brief Appends a list entry to the tail of a list.
@@ -856,5 +860,9 @@ struct __dummy_##name
 })
 
 #define SPD_RWLIST_REMOVE SPD_LIST_REMOVE
+
+#if defined(__cplusplus) || defined(c_plusplus)
+}
+#endif
 
 #endif /* _SPIDER_LINKEDLIST_H */

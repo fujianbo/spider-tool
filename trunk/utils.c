@@ -92,3 +92,69 @@ int spd_mkdir(const char *path, int mode)
     }
     return 0;
 }
+
+/* filter escape sequences */
+void term_filter_escapes(char *line)
+{
+	int i;
+	int len = strlen(line);
+
+	for (i = 0; i < len; i++) {
+		if (line[i] != ESC)
+			continue;
+		if ((i < (len - 2)) &&
+		    (line[i + 1] == 0x5B)) {
+			switch (line[i + 2]) {
+		 	case 0x30:
+			case 0x31:
+			case 0x33:
+				continue;
+			}
+		}
+		/* replace ESC with a space */
+		line[i] = ' ';
+	}
+}
+
+
+char *term_color(char *outbuf, const char *inbuf, int fgcolor, int bgcolor, int maxout)
+{
+	int attr=0;
+	char tmp[40];
+	
+	if (!fgcolor && !bgcolor) {
+		spd_copy_string(outbuf, inbuf, maxout);
+		return outbuf;
+	}
+	if ((fgcolor & 128) && (bgcolor & 128)) {
+		/* Can't both be highlighted */
+		spd_copy_string(outbuf, inbuf, maxout);
+		return outbuf;
+	}
+	if (!bgcolor)
+		bgcolor = COLOR_BLACK;
+
+	if (bgcolor) {
+		bgcolor &= ~128;
+		bgcolor += 10;
+	}
+	if (fgcolor & 128) {
+		attr = ATTR_BRIGHT;
+		fgcolor &= ~128;
+	}
+	if (fgcolor && bgcolor) {
+		snprintf(tmp, sizeof(tmp), "%d;%d", fgcolor, bgcolor);
+	} else if (bgcolor) {
+		snprintf(tmp, sizeof(tmp), "%d", bgcolor);
+	} else if (fgcolor) {
+		snprintf(tmp, sizeof(tmp), "%d", fgcolor);
+	}
+	if (attr) {
+		snprintf(outbuf, maxout, "%c[%d;%sm%s%c[0;%d;%dm", ESC, attr, tmp, inbuf, ESC, 
+    		COLOR_WHITE, COLOR_BLACK + 10);
+	} else {
+		snprintf(outbuf, maxout, "%c[%sm%s%c[0;%d;%dm", ESC, tmp, inbuf, ESC, COLOR_WHITE, 
+    		COLOR_BLACK + 10);
+	}
+	return outbuf;
+}

@@ -32,8 +32,6 @@ void *spd_threadprivdata_get(struct spd_threadprivdata *ts, size_t init_size)
     return buf;
 }
 
-
-
 struct spd_dynamic_str *spd_dynamic_str_create(size_t len)
 {
     struct spd_dynamic_str *buffer;

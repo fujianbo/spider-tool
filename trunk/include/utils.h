@@ -25,6 +25,8 @@
 
 #include "logger.h"
 
+#if defined(__cplusplus) || defined(c_plusplus)
+extern "C" {
 
 /***********spider memory wraper functions ***************/
 
@@ -192,4 +194,13 @@ int spd_false(const char *s);
  **/
  int spd_mkdir(const char *path, int mode);
 
+/**/
+void term_filter_escapes(char *line);
+
+/**/
+char *term_color(char *outbuf, const char *inbuf, int fgcolor, int bgcolor, int maxout);
+
+#if defined(__cplusplus) || defined(c_plusplus)
+}
+#endif
 #endif

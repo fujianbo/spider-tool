@@ -14,6 +14,9 @@
 #ifndef SPIDER_CONST_H
 #define SPIDER_CONST_H
 
+#if defined(__cplusplus) || defined(c_plusplus)
+extern "C" {
+#endif
 
 #define ESC 0x1b
 #define ATTR_RESET	0
@@ -45,10 +48,16 @@
 #define COLOR_BRWHITE   (37 | 128)
 
 /* some default dir definition */
-#define spd_config_SPD_CONFIG_DIR "/etc/spider"
+const char *spd_config_SPD_CONFIG_DIR = "/etc/spider";
+const char *spd_config_SPD_LOG_DIR = "/var/log/spider";
+const char *spd_config_SPD_LOGGER_FILE = "/etc/spider/logger.conf";
 
 int option_debug = 2;
 int option_verbose = 2;
+
+#if defined(__cplusplus) || defined(c_plusplus)
+}
+#endif
 
 #endif
 

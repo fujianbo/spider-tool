@@ -30,7 +30,9 @@
 #include "strings.h"
 #include "utils.h"
 
-
+#if defined(__cplusplus) || defined(c_plusplus)
+extern "C" {
+#endif
 
 /*!
   * \brief data for a thread locally stored variable
@@ -51,7 +53,7 @@ enum {
 	 *  spd_dynamic_str_thread_build_va() needs to be called again after
 	 *  a va_end() and va_start().
 	 */
-    SPD_DNMCSTR_BUILD_RETRY = -2
+    SPD_DNMCSTR_BUILD_RETRY = -2,
  };
 
 /*!
@@ -89,7 +91,7 @@ enum {
   * SPD_THREADPRIVDATA_CUSTOM(my_buf, my_init, my_cleanup);
   * \endcode
   */
-#define SPD_THREADSTORAGE_CUSTOM(a,b,c)	SPD_THREADSTORAGE_CUSTOM_SCOPE(a,b,c,static)
+#define SPD_THREADSTORAGE_CUSTOM(a,b,c)	SPD_THREADPRIVDATA_CUSTOM_SCOP(a,b,c,static)
 
 #define SPD_PTHREAD_ONCE_INIT  PTHREAD_ONCE_INIT
 
@@ -332,3 +334,7 @@ int  spd_dynamic_str_set(
     struct spd_dynamic_str **buf, size_t len, 
     struct spd_threadprivdata *tpd, const char *fmt, ...);
 
+#if defined(__cplusplus) || defined(c_plusplus)
+}
+#endif
+#endif
