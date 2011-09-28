@@ -3,7 +3,7 @@
  *
  * Copyright (C) 2011 , Inc.
  *
- * lidp <774291943@qq.com>
+ * lidp <openser@yeah.net>
  *
  * This program is free software, distributed under the terms of
  * the GNU General Public License Version 2. See the LICENSE file
@@ -12,8 +12,10 @@
  
 #include <signal.h>
 
-#include "spider/tcpserver.h"
-
+#include "tcpserver.h"
+#include "config.h"
+#include "utils.h"
+#include "socket.h"
 
 
 static struct sigaction handle_sigchld = {
@@ -48,7 +50,7 @@ void str_echo(int sockfd)
     
 }
 
-int main(int argc, char *argv[])
+int init_tcp_server()
  {
     int listenfd, connfd;
     pid_t chiledpid;
@@ -69,14 +71,14 @@ int main(int argc, char *argv[])
     
     if(bind(listenfd, (struct sockaddr *)&servaddr, sizeof(servaddr))) {
         spd_log(LOG_NOTICE, "Unable to bind server to %s:%d %s\n",
-            spd_inet_ntoa(servaddr.sin_addr), ntohs(servaddr.sin_port),
+            inet_ntoa(servaddr.sin_addr), ntohs(servaddr.sin_port),
             strerror(errno));
         close(listenfd);
         servaddr = -1;
         return;
     }
 
-    if(listen(listenfd, LISTENQ)) {
+    if( (listenfd, LISTENQ)) {
         spd_log(LOG_NOTICE, "Unable to lisen !\n");
         close(servaddr);
         listenfd = -1;
@@ -87,7 +89,7 @@ int main(int argc, char *argv[])
         clilen = sizeof(cliaddr);
         if((connfd = accept(listenfd, (struct sockaddr *)&cliaddr, &clilen)) < 0) {
             if(errno != EINTR && errno != EAGAIN)
-                spd_log(LOG_WARNING, ""Accept failed: %s\n", strerror(errno)");   
+                spd_log(LOG_WARNING, "Accept failed: %s\n", strerror(errno));   
             else
                continue;
         }
@@ -100,4 +102,12 @@ int main(int argc, char *argv[])
         close(connfd);
     }
  }
+
+static int parse_config()
+{
+	
+}
+
+void tcp_server_start();
+
 

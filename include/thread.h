@@ -10,7 +10,7 @@
  * at the top of the source tree.
  */
 
- #ifndef _SPIDER_THREAD_H
+#ifndef _SPIDER_THREAD_H
 #define _SPIDER_THREAD_H
 
 #include <pthread.h>
@@ -56,5 +56,10 @@ int spd_pthread_create_detached_stack(pthread_t *thread, pthread_attr_t *attr, v
 	spd_pthread_create_detached_stack(a, b, c, d,		\
 		SPD_BACKGROUND_STACKSIZE,			\
 		__FILE__, __FUNCTION__, __LINE__, #c)
+
+
+#if defined(__cplusplus) || defined(c_plusplus)
+}
+#endif
 
 #endif

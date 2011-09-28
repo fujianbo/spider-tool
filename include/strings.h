@@ -16,12 +16,47 @@
 #include <ctype.h>
 #include "utils.h"
 
-/*! \brief return whether string lengh is zero
-  *
+#if defined(__cplusplus) || defined(c_plusplus)
+extern "C" {
+
+static char HEX[] = "0123456789abcdef";
+
+/*
+* From base 10 to base 16
+* @param c the base 10 char to convert to base 16
+* @retval The base 16 value
+*/
+char spd_b10tob16(char c);
+
+/*
+* From base 16 to base 10
+* @param c The base 16 char to convert to base 10
+* @retval The base 10 value
+*/
+char spd_b16tob10(char c);
+
+/**	Duplicates the first @a n chars of @a str.
+ * @param s1 The string to duplicate. 
+ * @param n The number of characters to copy to the new string. 
+ * @retval	null A copy of @a str. 
+**/
+char *spd_strndup(const char *str, int size);
+
+/*
+* Checks if @a str contains @a substring.
+* @param str The master string.
+* @param size The size of the master string.
+* @param substring the substring.
+* @retval @a true if @a str contains at least one occurence of @a substring and @a false othewise.
+*/
+int spd_strcontains(const char *str, int size, const char *substr);
+
+/*! 
+  *\brief return whether string lengh is zero
   */
 static inline int spd_strlen_zero(const char *s)
 {
-		return (!s || (*s == '\0'));
+	return (!s || (*s == '\0'));
 }
 
 /*! \brief returns the equivalent of logic or for strings:
@@ -107,14 +142,14 @@ char *spd_skip_blanks(const char *s);
   \param str the input string
   \return a pointer to the first whitespace character
  */
-char * spd_skip_nonblanks(char *s);
+char *spd_skip_nonblanks(char *s);
 /*!
  * \brief Trims trailing whitespace characters from a string.
  * \param spd_trim_blanks function being used
  * \param str the input string
  * \return a pointer to the modified string
  */
-char * spd_trim_blanks(char *s);
+char *spd_trim_blanks(char *s);
 
 /*!
  * \brief Strip head && tail whitespace from a string.
@@ -179,6 +214,16 @@ char *spd_unescape_semicolon(char *s);
 void spd_copy_string(char *dst, const char *src, size_t size);
 
 /*!
+  *\brief Gets the first occurrence of @a substring within @a str.
+  * @param str The master string.
+  * @param size The size of the master string.
+  * @param substring The substring that is to be searched for within @a str.
+  * @retval The index of the first ocurrence of @a substring in @a str.
+  * If no occurrence of @a substring is found, then -1 is returned.
+  */
+int spd_stringindex(const char *str, int size, const char *substr);
+
+/*!
   * \brief   update the valur of src with newval
   */
 void spd_strupdate(char **src, const char *newval);
@@ -200,4 +245,7 @@ int spd_snprintf(char *buf, int size, const char *fmt,...);
 */
 void spd_str_join(char *s, size_t len, char *const w[]);
 
+#if defined(__cplusplus) || defined(c_plusplus)
+}
+#endif
 #endif
