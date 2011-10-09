@@ -13,10 +13,16 @@
 #include <ctype.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <stdio.h>
+#include <string.h>
+
 
 #include "utils.h"
 #include "lock.h"
 #include "linkedlist.h"
+#include "const.h"
+#include "threadprivdata.h"
+#include "time.h"
 
 long int spd_random(void)
 {
@@ -92,6 +98,56 @@ int spd_mkdir(const char *path, int mode)
     }
     return 0;
 }
+
+
+#define ONE_MILLION	1000000
+/*
+ * put timeval in a valid range. usec is 0..999999
+ * negative values are not allowed and truncated.
+ */
+static struct timeval tvfix(struct timeval a)
+{
+	if (a.tv_usec >= ONE_MILLION) {
+		spd_log(LOG_WARNING, "warning too large timestamp %ld.%ld\n",
+			(long)a.tv_sec, (long int) a.tv_usec);
+		a.tv_sec += a.tv_usec / ONE_MILLION;
+		a.tv_usec %= ONE_MILLION;
+	} else if (a.tv_usec < 0) {
+		spd_log(LOG_WARNING, "warning negative timestamp %ld.%ld\n",
+			(long)a.tv_sec, (long int) a.tv_usec);
+		a.tv_usec = 0;
+	}
+	return a;
+}
+
+struct timeval spd_tvadd(struct timeval a, struct timeval b)
+{
+	/* consistency checks to guarantee usec in 0..999999 */
+	a = tvfix(a);
+	b = tvfix(b);
+	a.tv_sec += b.tv_sec;
+	a.tv_usec += b.tv_usec;
+	if (a.tv_usec >= ONE_MILLION) {
+		a.tv_sec++;
+		a.tv_usec -= ONE_MILLION;
+	}
+	return a;
+}
+
+struct timeval spd_tvsub(struct timeval a, struct timeval b)
+{
+	/* consistency checks to guarantee usec in 0..999999 */
+	a = tvfix(a);
+	b = tvfix(b);
+	a.tv_sec -= b.tv_sec;
+	a.tv_usec -= b.tv_usec;
+	if (a.tv_usec < 0) {
+		a.tv_sec-- ;
+		a.tv_usec += ONE_MILLION;
+	}
+	return a;
+}
+#undef ONE_MILLION
 
 /* filter escape sequences */
 void term_filter_escapes(char *line)

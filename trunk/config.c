@@ -25,6 +25,7 @@
 #include "strings.h"
 #include "linkedlist.h"
 #include "threadprivdata.h"
+#include "const.h"
 
 
 #define MAX_NEXT_COMMENT 128
@@ -160,7 +161,7 @@ void spd_variables_destroy(struct spd_variable * var)
     while(var) {
         v = var;
         var = var->next;
-        spd_free(v);
+        spd_safe_free(v);
     }
 }
 
@@ -771,7 +772,7 @@ static struct spd_config *config_text_file_load(const char *database, const char
         if (filename[0] == '/') {
             spd_copy_string(fn, filename, sizeof(fn));
         } else {
-            snprintf(fn, sizeof(fn), "%s/%s", (char *)spd_config_SPD_CONFIG_DIR, filename);
+            snprintf(fn, sizeof(fn), "%s/%s", spd_config_SPD_CONFIG_DIR, filename);
         }
         if (withcomments) {
             comment_init(&comment_buffer, &comment_buffer_size, &lline_buffer, &lline_buffer_size);

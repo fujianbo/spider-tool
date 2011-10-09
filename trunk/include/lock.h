@@ -1,18 +1,22 @@
 /*
- * Spider -- An open source C language toolkit.
+ * Spider -- An open source xxx toolkit.
  *
  * Copyright (C) 2011 , Inc.
  *
- * lidp <openser@yeah.net>
+ * lidp <774291943@qq.com>
  *
  * This program is free software, distributed under the terms of
  * the GNU General Public License Version 2. See the LICENSE file
  * at the top of the source tree.
  */
 
-/*!
- * \brief General Spider locking definitions.
- *
+ /*! \file
+  * \brief General Spider locking definitions.
+  *
+  * - See 
+  */
+
+  /*! \page LockDef Spider thread locking models
  *
  * This file provides different implementation of the functions,
  * depending on the platform, the use of DEBUG_THREADS, and the way
@@ -43,10 +47,6 @@
 #include <errno.h>
 #include <string.h>
 #include <stdio.h>
-
-#if defined(__cplusplus) || defined(c_plusplus)
-extern "C" {
-#endif
 
 #define SPD_PTHREADT_NULL (pthread_t) -1
 #define SPD_PTHREADT_STOP (pthread_t) -2
@@ -196,8 +196,7 @@ static inline spd_mutex_init(spd_mutex_t *spdmutex)
     pthread_mutexattr_settype(&attr, SPD_MUTEX_KIND);
 
     res = pthread_mutex_init(spdmutex, &attr);
-    pthread_mutex_attr_destroy(&attr);
-	
+    pthread_mutexattr_destroy(&attr);
     return res;
 }
 
@@ -277,10 +276,11 @@ static inline int spd_cond_timewait(spd_cond_t *cond, spd_mutex_t *t, const stru
 
 typedef pthread_rwlock_t spd_rwlock_t;
 
+
 #ifdef HAVE_PTHREAD_RWLOCK_INITIALIZER
 #define SPD_RWLOCK_INIT_VALUE PTHREAD_RWLOCK_INITIALIZER
 #else
-#define SPD_RWLOCK_INIT_VALUE NULL
+#define SPD_RWLOCK_INIT_VALUE PTHREAD_RWLOCK_INITIALIZER
 #endif
 
 #ifdef DEBUG_THREADS
@@ -288,7 +288,7 @@ typedef pthread_rwlock_t spd_rwlock_t;
 #define spd_rwlock_init(rwlock) __spd_rwlock_init(__FILE__, __LINE__, __PRETTY_FUNCTION__, #rwlock, rwlock)
 
 static inline int __spd_rwlock_init(const char *filename, int lineno, const char *func, 
-    const char *rwlock_name, spd_rwlock_t *prwlock)
+    const char *rwlock_name, ast_rwlock_t *prwlock)
 {
     int res;
     pthread_rwlockattr_t attr;
@@ -365,19 +365,4 @@ static inline int spd_rwlock_trywrlock(spd_rwlock_t *prwlock)
     
 #define SPD_RWLOCK_DEFINE_STATIC(rwlock) __SPD_RWLOCK_DEFINE(static, rwlock)
 
-static inline int spd_atomic_fetchadd_int(volatile int *p, int v)
-{
-	__asm __volatile (
-	"       lock   xaddl   %0, %1 ;        "
-	: "+r" (v),                     /* 0 (result) */
-	  "=m" (*p)                     /* 1 */
-	: "m" (*p));                    /* 2 */
-	return (v);
-}
-
-#if defined(__cplusplus) || defined(c_plusplus)
-}
-#endif
-
 #endif 
-

@@ -10,8 +10,14 @@
  * at the top of the source tree.
  */
 
-#include "include/thread.h"
-#include "include/logger.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <malloc.h>
+#include <sys/types.h>
+#include <errno.h>
+
+#include "thread.h"
+#include "logger.h"
 
 int spd_pthread_create_stack(pthread_t *thread, pthread_attr_t *attr, void*(*start_routine)(void*), 
 			void *data, size_t stacksize, const char *file, const char *caller, int line, const char *start_fn)
@@ -29,13 +35,13 @@ int spd_pthread_create_stack(pthread_t *thread, pthread_attr_t *attr, void*(*sta
 	   PTHREAD_EXPLICIT_SCHED in the attr argument; instead they must set
 	   the priority afterwards with pthread_setschedparam(). */
 	   if((errno = pthread_attr_setinheritsched(attr, PTHREAD_INHERIT_SCHED)))
-	       spd_log(LOG_WARNING, "pthread_attr_setinheritsched: %s\n", strerror(errno));
+	       spd_log(LOG_WARNING, "pthread_attr_setinheritsched: %d \n", strerror(errno));
 
 	   if(!stacksize)
 	   	stacksize = SPD_STACKSIZE;
 
 	   if((errno = pthread_attr_setstacksize(attr, stacksize ? stacksize: SPD_STACKSIZE)))
-	   	spd_log(LOG_WARNING, "pthread_attr_setstacksize: %s\n", strerror(errno));
+	   	spd_log(LOG_WARNING, "pthread_attr_setstacksize %d", strerror(errno));
 
 	   return pthread_create(thread, attr, start_routine, data);
 }
@@ -53,7 +59,7 @@ int spd_pthread_create_detached_stack(pthread_t *thread, pthread_attr_t *attr, v
 	}
 
 	if ((errno = pthread_attr_setdetachstate(attr, PTHREAD_CREATE_DETACHED)))
-		spd_log(LOG_WARNING, "pthread_attr_setdetachstate: %s\n", strerror(errno));
+		spd_log(LOG_WARNING, "pthread_attr_setdetachstate: %d\n", strerror(errno));
 
 	res = spd_pthread_create_stack(thread, attr, start_routine, data, stacksize, file,
 			caller, line, start_fn);

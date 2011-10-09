@@ -14,6 +14,7 @@
 #include "utils.h"
 #include "threadprivdata.h"
 #include "logger.h"
+#include "const.h"
 
 
 SPD_THREADPRIVDATA(spd_sockaddr_string_buf);
@@ -21,7 +22,7 @@ SPD_THREADPRIVDATA(spd_sockaddr_string_buf);
 char *spd_sockaddr_tostring_fmt(const struct spd_sockaddr *addr, int fmt)
 {
 	struct spd_sockaddr addr_ipv4;
-	struct spd_sockaddr *tmp_sock;
+	const struct spd_sockaddr *tmp_sock;
 
 	char host[NI_MAXHOST];
 	char port[NI_MAXSERV];
@@ -50,7 +51,7 @@ char *spd_sockaddr_tostring_fmt(const struct spd_sockaddr *addr, int fmt)
 			     fmt & SPD_SOCKADDR_STR_PORT ? port : 0,
 			     fmt & SPD_SOCKADDR_STR_PORT ? sizeof(port): 0,
 			     NI_NUMERICHOST | NI_NUMERICSERV))) {
-		spd_log(LOG_ERROR, "getnameinfo(): %s\n", gai_strerror(e));
+		spd_log(LOG_ERROR, "getnameinfo(): %s\n", gai_strerror(ret));
 		return "";
 	}
 
@@ -63,18 +64,17 @@ char *spd_sockaddr_tostring_fmt(const struct spd_sockaddr *addr, int fmt)
 
 	switch ((fmt & SPD_SOCKADDR_STR_FORMAT_MASK))  {
 	case SPD_SOCKADDR_STR_DEFAULT:
-		spd_dynamic_str_set(&str, 0, tmp_sock->ss.ss_family == AF_INET6 ?
-				"[%s]:%s" : "%s:%s", host, port);
+		spd_dynamic_str_set(&str, 0, &spd_sockaddr_string_buf,tmp_sock->ss.ss_family == AF_INET6 ? "[%s]:%s" : "%s:%s", host, port);
 		break;
 	case SPD_SOCKADDR_STR_ADDR:
-		spd_dynamic_str_set(&str, 0, "%s", host);
+		spd_dynamic_str_set(&str, 0, &spd_sockaddr_string_buf, "%s", host);
 		break;
 	case SPD_SOCKADDR_STR_HOST:
-		spd_dynamic_str_set(&str, 0,
+		spd_dynamic_str_set(&str, 0,&spd_sockaddr_string_buf,
 			    tmp_sock->ss.ss_family == AF_INET6 ? "[%s]" : "%s", host);
 		break;
 	case SPD_SOCKADDR_STR_PORT:
-		spd_dynamic_str_set(&str, 0, "%s", port);
+		spd_dynamic_str_set(&str, 0, &spd_sockaddr_string_buf, "%s", port);
 		break;
 	default:
 		spd_log(LOG_ERROR, "Invalid format\n");
@@ -87,7 +87,7 @@ char *spd_sockaddr_tostring_fmt(const struct spd_sockaddr *addr, int fmt)
 
 int spd_sockaddr_ipv4_mapped(const struct spd_sockaddr * addr, struct spd_sockaddr * spd_mapped)
 {
-	const struct sockaddr_in6 sin6;
+        const struct sockaddr_in6 *sin6;
 	struct sockaddr_in sin4;
 
 	if(!spd_sockaddr_is_ipv6(addr)) {
@@ -103,7 +103,7 @@ int spd_sockaddr_ipv4_mapped(const struct spd_sockaddr * addr, struct spd_sockad
 	memset(&sin4, 0, sizeof(sin4));
 
 	sin4.sin_family = AF_INET;
-	sin4.sin_port = sin6.sin6_port;
+	sin4.sin_port = sin6->sin6_port;
 	sin4.sin_addr.s_addr = ((uint32_t *)&sin6->sin6_addr)[3];
 
 	spd_sockaddr_from_sin(spd_mapped, &sin4);
@@ -113,7 +113,7 @@ int spd_sockaddr_ipv4_mapped(const struct spd_sockaddr * addr, struct spd_sockad
 
 int spd_sockaddr_is_ipv4(const struct spd_sockaddr * addr)
 {
-	return addr->ss.ss_family == AF_INET6 && addr->len == sizeof(struct sockddr_in6);
+	return addr->ss.ss_family == AF_INET6 && addr->len == sizeof(struct sockaddr_in6);
 }
 
 int spd_sockaddr_is_ipv4_mapped(const struct spd_sockaddr * addr)
@@ -124,15 +124,16 @@ int spd_sockaddr_is_ipv4_mapped(const struct spd_sockaddr * addr)
 
 int spd_sockaddr_is_ipv6_link_local(const struct spd_sockaddr * addr)
 {
-	const struct sockaddr_in6 *sin6 (struct sockaddr_in6 *)&addr->ss;
+	const struct sockaddr_in6 *sin6 =  (struct sockaddr_in6 *)&addr->ss;
 	return addr->len && IN6_IS_ADDR_LINKLOCAL(&sin6->sin6_addr);
 }
 
-uint32 spd_sockaddr_ipv4(const struct spd_sockaddr * addr)
+unsigned int  spd_sockaddr_ipv4(const struct spd_sockaddr *addr)
 {
 	const struct sockaddr_in *sin =(struct sockaddr_in *)&addr->ss; 
 	return ntohl(sin->sin_addr.s_addr);
 }
+
 int spd_sockaddr_is_ipv4_multicast(const struct spd_sockaddr *addr)
 {
 	return ((spd_sockaddr_ipv4(addr) & 0xf0000000) == 0xe0000000);
@@ -153,8 +154,8 @@ int spd_sockaddr_is_any(const struct spd_sockaddr * addr)
 		.ss = addr->ss,
 	};
 
-	return (spd_sockaddr_is_ipv4(addr) && tmp_sock.addr4.sin_addr.s_addr == INADDR_ANY)||
-			(spd_sockaddr_is_ipv6(addr) && IN6_IS_ADDR_UNSPECIFIED(tmp_sock.addr6.sin6_addr));
+	return (spd_sockaddr_is_ipv4(addr) && tmp_sock.addr4.sin_addr.s_addr == INADDR_ANY)|| 
+		(spd_sockaddr_is_ipv6(addr) && IN6_IS_ADDR_UNSPECIFIED(&tmp_sock.addr6.sin6_addr));
 }
 
 int spd_sockaddr_cmp_addr(const struct spd_sockaddr *a, const struct spd_sockaddr *b)
@@ -162,23 +163,24 @@ int spd_sockaddr_cmp_addr(const struct spd_sockaddr *a, const struct spd_sockadd
 	const struct spd_sockaddr *a_tmp, *b_tmp;
 	struct spd_sockaddr maped_addr;
 
-	const struct sockaddr_in *ina, *inb;
-	const struct sockaddr_in6 *in6a, *in6b;
+	const struct in_addr *ina, *inb;
+	const struct in6_addr *in6a, *in6b;
 	int ret = -1;
 	
 	a_tmp = a;
 	b_tmp = b;
 
 	if(a->len != b->len) {
-		if(spd_sockaddr_ipv4_mapped(a_tmp, &maped_addr)) {
-			a_tmp = &maped_addr;
-	} else if(spd_sockaddr_ipv4_mapped(b_tmp, &maped_addr)) {
-			b_tmp = &maped_addr;
-	}
+	    if(spd_sockaddr_ipv4_mapped(a_tmp, &maped_addr)) {
+		a_tmp = &maped_addr;
+	    } else if(spd_sockaddr_ipv4_mapped(b_tmp, &maped_addr)) {
+		b_tmp = &maped_addr;
+	  }
+        }
 
 	if(a->len < b->len) {
 		ret = -1;
-	} else if(a > b->len) {
+	} else if(a->len > b->len) {
 		ret = 0;
 	}
 
@@ -189,17 +191,18 @@ int spd_sockaddr_cmp_addr(const struct spd_sockaddr *a, const struct spd_sockadd
 			ret = memcmp(ina, inb, sizeof(*ina));
 			break;
 		case AF_INET6:
-			in6a = &((const struct sockddr_in6*)&a_tmp->ss)->sin_addr;
-			in6b = &((const struct sockaddr_in6*)&b_tmp->ss)->sin_addr;
+			in6a = &((const struct sockaddr_in6*)&a_tmp->ss)->sin6_addr;
+			in6b = &((const struct sockaddr_in6*)&b_tmp->ss)->sin6_addr;
 			ret = memcmp(ina, inb, sizeof(*ina));
 			break;
 	}
 
 	return ret;
 }
+
 int spd_sockaddr_cmp(const struct spd_sockaddr *a, const struct spd_sockaddr *b)
 {
-	struct spd_sockaddr *a_tmp, *b_tmp;
+	const struct spd_sockaddr *a_tmp, *b_tmp;
 	struct spd_sockaddr maped_addr;
 
 	a_tmp = a;
@@ -223,7 +226,7 @@ int spd_sockaddr_cmp(const struct spd_sockaddr *a, const struct spd_sockaddr *b)
 }
 
 
-void _spd_sockaddr_from_sin(struct spd_sockaddr *addr, const struct sockaddr_in *sin,
+int  _spd_sockaddr_to_sin(const struct spd_sockaddr *addr,  struct sockaddr_in *sin,
 		const char *file, int line, const char *func)
 {
 	if (spd_sockaddr_isnull(addr)) {
@@ -244,7 +247,7 @@ void _spd_sockaddr_from_sin(struct spd_sockaddr *addr, const struct sockaddr_in 
 	return 1;
 }
 
-void _spd_sockaddr_to_sin(const struct spd_sockaddr *addr, struct sockaddr_in *sin, const char * file, int line, const char * func)
+void _spd_sockaddr_from_sin(struct spd_sockaddr *addr, const struct sockaddr_in *sin, const char * file, int line, const char * func)
 {
 	memcpy(&addr->ss, sin, sizeof(*sin));
 
@@ -252,7 +255,7 @@ void _spd_sockaddr_to_sin(const struct spd_sockaddr *addr, struct sockaddr_in *s
 		spd_log(LOG_WARNING, "Address family is not AF_INET\n");
 	}
 
-	addr->len = sizeof(*sin);
+	addr->len = sizeof(struct sockaddr_in);
 }
 
 int spd_sockaddr_stringto_hostport(char *str, char **host, char **port, int flags)
@@ -346,7 +349,7 @@ int spd_sockaddr_parse(struct spd_sockaddr * addr, const char * str, int flags)
 	if ((e = getaddrinfo(host, port, &hints, &res))) {
 		if (e != EAI_NONAME) { /* if this was just a host name rather than a ip address, don't print error */
 			spd_log(LOG_ERROR, "getaddrinfo(\"%s\", \"%s\", ...): %s\n",
-				host, S_OR(port, "(null)"), gai_strerror(e));
+				host, F_OR(port, "(null)"), gai_strerror(e));
 		}
 		return 0;
 	}
@@ -398,7 +401,7 @@ int spd_sockaddr_resolve(struct spd_sockaddr **addrs, const char * str, int flag
 		res_cnt++;
 	}
 
-	if ((*addrs = spd_malloc(res_cnt * sizeof(struct ast_sockaddr))) == NULL) {
+	if ((*addrs = spd_malloc(res_cnt * sizeof(struct spd_sockaddr))) == NULL) {
 		res_cnt = 0;
 		goto cleanup;
 	}
@@ -415,7 +418,7 @@ cleanup:
 	return res_cnt;
 }
 
-uint16 _spd_sockaddr_get_port(struct spd_sockaddr *addr, const char * file, int line, const char * function)
+unsigned char  _spd_sockaddr_get_port(struct spd_sockaddr *addr, const char * file, int line, const char * function)
 {
 	if(addr->ss.ss_family == AF_INET && addr->len == sizeof(struct sockaddr_in)) {
 		return ntohs(((struct sockaddr_in *)&addr->ss)->sin_port);
@@ -435,7 +438,7 @@ void _spd_sockaddr_set_port(struct spd_sockaddr * addr, uint16_t port, const cha
 	if(addr->ss.ss_family == AF_INET && addr->len == sizeof(struct sockaddr_in)) {
 		((struct sockaddr_in *)&addr->ss)->sin_port = htons(port);
 	} else if(addr->ss.ss_family == AF_INET6 && addr->len == sizeof(struct sockaddr_in6)) {
-		(struct sockaddr_in6 *)&addr->ss)->sin6_port = htons(port);
+		((struct sockaddr_in6 *)&addr->ss)->sin6_port = htons(port);
 	} else if(option_debug > 2) {
 		spd_log(__LOG_DEBUG, file, line, function, "Not an IPv4 nor IPv6 address, cannot set port.\n");
 	}
@@ -443,14 +446,13 @@ void _spd_sockaddr_set_port(struct spd_sockaddr * addr, uint16_t port, const cha
 
 int spd_bind(int fd, struct spd_sockaddr *addr) 
 {
-	addr->len = sizeof(struct spd_sockaddr);
-	return bind(fd, addr->addr_in, &addr->len);
+	return bind(fd, (struct sockaddr *)&addr->ss, addr->len);
 }
 
 int spd_accept(int fd, struct spd_sockaddr *addr)
 {	
 	addr->len = sizeof(struct spd_sockaddr);
-	return accept(fd, (struct sockaddr *)&addr->ss, addr->len);
+	return accept(fd, (struct sockaddr *)&addr->ss, &addr->len);
 }
 
 int spd_connect(int fd, struct spd_sockaddr * addr)
@@ -458,10 +460,10 @@ int spd_connect(int fd, struct spd_sockaddr * addr)
 	return connect(fd,(struct sockaddr *)&addr->ss, addr->len);
 }
 
-ssize_t spd_recvfrom(int sockfd, void * buf, size_t len, int flags, struct spd_sockaddr * src_addr)
+ssize_t spd_recvfrom(int sockfd, void * buf, size_t len, int flags, struct spd_sockaddr *src_addr)
 {
 	src_addr->len = sizeof(src_addr->ss);
-	return recvfrom(sockfd, buf, len, flags, (const struct sockaddr *)&src_addr->ss, &src_addr->len);
+	return recvfrom(sockfd, buf, len, flags, (struct sockaddr *)&src_addr->ss, &src_addr->len);
 }
 
 int spd_getsockname(int sockfd, struct spd_sockaddr * addr)

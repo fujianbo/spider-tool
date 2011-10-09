@@ -19,7 +19,7 @@
 #include <errno.h>
 #include "poll.h"
 #include "logger.h"
-#include "time.h"
+#include "times.h"
 
 #ifdef SPD_INTERNAL_POLL
 
@@ -47,7 +47,9 @@ int spd_waitfor_pollout(int fd, int ms)
 	struct pollfd fds[1];
 	int ret;
 	int escap= 0;
-	struct timeval start = spd_tvnow();
+	struct timeval start;
+
+	start = spd_tvnow();
 	
 	fds[0].fd = fd;
 	fds[0].events = POLLOUT;
@@ -69,7 +71,7 @@ int spd_waitfor_pollout(int fd, int ms)
 			spd_log(LOG_ERROR, "poll returned error: %s\n", strerror(errno));
 			return -1;
 		} else {
-			escap = spd_tvdiff_ms(spd_tvnow, start);
+			escap = spd_tvdiff_ms(spd_tvnow(), start);
 			if(escap >= ms) {
 				return -1;
 			}

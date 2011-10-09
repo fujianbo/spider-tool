@@ -42,7 +42,7 @@ char spd_b16tob10(char c)
 	return isdigit(c) ? c - '0' : tolower(c) - 'a' + 10;
 }
 
-int spd_is_digitstring(const char *s);
+int spd_is_digitstring(const char *s)
 {
 	while(s && *s) {
 		if(*s < 48 || *s > 57) {
@@ -81,7 +81,7 @@ char * spd_trim_blanks(char *s)
 		   actually set anything unless we must, and it's easier just
 		   to set each position to \0 than to keep track of a variable
 		   for it */
-		  while((tmp < s) && ((unsigned char) *tmp) > 33)
+		  while((tmp >= s) && ((unsigned char) *tmp) < 33)
 		  	  *(tmp--) = '\0';
 	}
 
@@ -159,17 +159,17 @@ int spd_strcontains(const char *str, int size, const char *substr)
 
 void spd_strupdate(char **src, const char *newval)
 {
-	spd_safe_free((void **)src);
+	spd_safe_free(src);
 	*src = spd_strdup(newval);
 }
 
-int spd_snprintf(char *buf, int size, const char *fmt,...)
+int spd_snprintf(char *buf, int  size, const char *fmt,...)
 {
 	int ret;
 	va_list ap;
 
 	va_start(ap, fmt);
-	ret = vsnprintf(buf, size, ap, fmt);
+	ret = vsnprintf(buf, size, fmt, ap);
 	va_end(ap);
 
 	return ret;

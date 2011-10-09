@@ -19,6 +19,7 @@
 extern "C" {
 #endif
 
+
 #define VERBOSE_PREFIX_1 " "
 #define VERBOSE_PREFIX_2 "  == "
 #define VERBOSE_PREFIX_3 "    -- "
@@ -44,7 +45,7 @@ extern "C" {
 #undef LOG_WARNING
 #endif
 #define __LOG_WARNING  2
-#define LOG_WARNING __LOG_WARNING, _LOG_
+#define LOG_WARNING  __LOG_WARNING,  _LOG_
 
 #ifdef LOG_ERROR
 #undef LOG_ERROR
@@ -79,9 +80,9 @@ void spd_log(int level, const char *file, int line, const char *function, const 
 	__attribute__((format(printf, 5, 6)));
 
 /* debug msg */
-#define spd_debug(level, ...) do { \
-	if(option_debug >= (level))    	\
-		spd_log(LOG_DEBUG, __VA_ARGS__)\ 
+#define spd_debug(level, ...) do {      \
+	if(option_debug >= (level))           \
+		spd_log(LOG_DEBUG, __VA_ARGS__);  \
 } while(0)
 
 /*! Send a verbose message (based on verbose level)

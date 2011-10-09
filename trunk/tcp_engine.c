@@ -20,11 +20,14 @@ extern "C" {
 
 #include <signal.h>
 #include <sys/signal.h>
+#include <fcntl.h>
+#include <pthread.h>
 
 #include "tcp_engine.h"
 #include "utils.h"
 #include "thread.h"
 #include "logger.h"
+#include "const.h"
 
 /******************** client part ********************************************/
 
@@ -98,6 +101,32 @@ error:
 	return NULL;
 }
 
+static void *handle_tcp_connection(void *data)
+{
+	struct spd_tcp_session *session = data;
+	
+	if((session->f = fdopen(session->client_fd, "w+"))) {
+			if(setvbuf(session->f, NULL, _IONBF, 0)) {
+				fclose(session->f);
+				session->f = NULL;
+			}
+	}
+
+	if(!session->f) {
+		close(session->client_fd);
+		spd_log(LOG_WARNING, "fail to open file %s", strerror(errno));
+		spd_safe_free(session);
+
+		return NULL;
+	}
+
+	if(session && session->arg->work_func) {
+		return session->arg->work_func(session); /* session will be managed by actual work func  */
+	} else {
+		return session;
+	}
+}
+
 
 struct spd_tcp_session *spd_tcp_session_client_start(struct spd_tcp_session *session)
 {
@@ -108,7 +137,7 @@ struct spd_tcp_session *spd_tcp_session_client_start(struct spd_tcp_session *ses
 		goto client_start_error;
 	}
 
-	if (spd_connect(desc->accept_fd, &desc->remote_address)) {
+	if (spd_connect(desc->server_fd, &desc->peeraddr)) {
 		spd_log(LOG_ERROR, "Unable to connect %s to %s: %s\n",
 			desc->name,
 			spd_sockaddr_tostring_default(&desc->peeraddr),
@@ -153,32 +182,6 @@ int spd_tcp_server_write(struct spd_tcp_session *session, const void *buf,  size
 	return write(session->client_fd, buf, count);
 }
 
-static void *handle_tcp_connection(void *data)
-{
-	struct spd_tcp_session *session = data;
-	
-	if((session->f = fdopen(session->fd, "w+"))) {
-			if(setvbuf(session->f, NULL, _IONBF, 0)) {
-				fclose(session->f);
-				session->f = NULL;
-			}
-	}
-
-	if(!session->f) {
-		close(session->client_fd);
-		spd_log(LOG_WARNING, "fail to open file %s", strerror(errno));
-		spd_safe_free(session);
-
-		return NULL;
-	}
-
-	if(session && session->arg->work_func) {
-		return session->arg->work_func(session); /* session will be managed by actual work func  */
-	} else {
-		return session;
-	}
-}
-
 void *spd_tcp_server_mainloop(void *data)
 {
 	struct spd_tcp_session_arg *ser = data;
@@ -188,12 +191,12 @@ void *spd_tcp_server_mainloop(void *data)
 	struct spd_tcp_session *session = NULL;
 	pthread_t client_thread;
 	
-	for(::){
+	for(;;){
 		if(ser->precheck_func) {
 			ser->precheck_func(ser);
 		}
 
-		ret = spd_waitfor_pollin(ser->server_fd, ser->poll_timeout)
+		ret = spd_waitfor_pollin(ser->server_fd, ser->poll_timeout);
 		if(ret <= 0) {
 			continue;
 		}
@@ -213,7 +216,7 @@ void *spd_tcp_server_mainloop(void *data)
 		}
 		spd_mutex_init(&session->lock);
 
-		flags = fcntl(fd, F_GETFL);
+		flags = fcntl(client_fd, F_GETFL);
 		fcntl(client_fd, F_SETFL, flags & ~O_NONBLOCK);
 
 		session->client_fd = client_fd;
@@ -238,6 +241,7 @@ void *spd_tcp_server_mainloop(void *data)
 void spd_tcp_server_start(struct spd_tcp_session_arg *ser)
 {
 	int x = 1;
+	int flags;
 	
 	if(!spd_sockaddr_cmp(&ser->serveraddr, &ser->oldaddr)) {
 		spd_debug(1, "nothing change about server :%s\n", ser->name);
@@ -246,9 +250,9 @@ void spd_tcp_server_start(struct spd_tcp_session_arg *ser)
 
 	spd_sockaddr_setnull(&ser->oldaddr);
 	
-	if(arg->master != SPD_PTHREADT_NULL) {
+	if(ser->master != SPD_PTHREADT_NULL) {
 		pthread_cancel(ser->master);
-		phread_kill(ser->master, SIGURG);
+		pthread_kill(ser->master, SIGURG);
 		pthread_join(ser->master, NULL);
 	}
 
@@ -257,7 +261,7 @@ void spd_tcp_server_start(struct spd_tcp_session_arg *ser)
 	}
 
 	if(spd_sockaddr_isnull(&ser->serveraddr)) {
-		spd_debug(2, "no server address specifed :%s", arg->name);
+		spd_debug(2, "no server address specifed :%s", ser->name);
 		return;
 	}
 
@@ -305,9 +309,9 @@ void spd_tcp_server_start(struct spd_tcp_session_arg *ser)
 void spd_tcp_server_stop(struct spd_tcp_session_arg *ser)
 {
 	if(ser->master != SPD_PTHREADT_NULL) {
-		phread_cancel(ser->master);
+		pthread_cancel(ser->master);
 		pthread_kill(ser->master, SIGURG);
-		pthread_join(ser->maser, NULL);
+		pthread_join(ser->master, NULL);
 		ser->master = SPD_PTHREADT_NULL;
 	}
 

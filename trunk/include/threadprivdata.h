@@ -16,19 +16,9 @@
  #define _SPD_THREADPRIVDATA_H
 
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdarg.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>	/* we want to override inet_ntoa */
-#include <netdb.h>
-#include <limits.h>
-#include <time.h>	/* we want to override localtime_r */
-#include <unistd.h>
-
 #include "lock.h"
-#include "strings.h"
 #include "utils.h"
+#include "strings.h"
 
 #if defined(__cplusplus) || defined(c_plusplus)
 extern "C" {

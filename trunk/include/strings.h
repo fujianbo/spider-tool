@@ -18,6 +18,7 @@
 
 #if defined(__cplusplus) || defined(c_plusplus)
 extern "C" {
+#endif
 
 static char HEX[] = "0123456789abcdef";
 
