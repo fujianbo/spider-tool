@@ -48,12 +48,15 @@ extern "C" {
 #define COLOR_BRWHITE   (37 | 128)
 
 /* some default dir definition */
-const char *spd_config_SPD_CONFIG_DIR = "/etc/spider";
-const char *spd_config_SPD_LOG_DIR = "/var/log/spider";
-const char *spd_config_SPD_LOGGER_FILE = "/etc/spider/logger.conf";
 
-int option_debug = 2;
-int option_verbose = 2;
+#define spd_config_SPD_LOG_DIR  "/var/log/spider"
+#define spd_config_SPD_LOGGER_FILE  "/etc/spider/logger.conf"
+#define spd_config_maincfg  "/etc/spider/spider.conf"
+#define spd_config_SPD_CONFIG_DIR  "/etc/spider"
+
+
+int option_debug;
+int option_verbose;
 
 #if defined(__cplusplus) || defined(c_plusplus)
 }

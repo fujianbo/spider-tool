@@ -10,6 +10,7 @@
  * at the top of the source tree.
  */
 
+
 #include <signal.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -113,13 +114,13 @@ static int make_components(char *s, int lineno)
     char *w;
     int res = 0;
     char *stringp = s;
-
+	
     while((w = strsep(&stringp, ","))) {
         w = spd_strip(w);
         if(spd_strlen_zero(w)) {
             continue;
         }
-
+		
         if (!strcasecmp(w, "error")) 
 			res |= (1 << __LOG_ERROR);
 		else if (!strcasecmp(w, "warning"))
@@ -143,10 +144,10 @@ static struct spd_logchain *make_logchain(char *channel, char *components, int l
     struct spd_logchain *chan;
     char facility;
 
-    if(spd_strlen_zero(channel) || !(chan = spd_calloc(1, sizeof(*chan))))
+    if(spd_strlen_zero(channel) || !(chan = spd_calloc(1, sizeof(struct spd_logchain))))
         return NULL;
 
-    if(!strcasecmp(channel, "console")) {
+    if(!strncasecmp(channel, "console", 7)) {
         chan->type = LOGTYPE_CONSOLE;
     } else if (!strncasecmp(channel, "syslog", 6)) {
     	/*
@@ -204,22 +205,23 @@ static void init_logger_chain(void)
             hostname[0] = '\0';
         if((s = spd_variable_retrive(cfg, "general", "dataformat")))
             spd_copy_string(dateformat, s, sizeof(dateformat));
-        /*if((s = spd_variable_retrive(cfg, "general", "messsge")))
-           		 spd_logfiles.message = spd_true(s);
-            */
+        
         SPD_RWLIST_WRLOCK(&spd_logchains);
         var = spd_variable_browse(cfg, "logfiles");
             for(; var; var = var->next) {
+				//printf("start make logchan, name %s  value %s\n",var->name, var->value);
                 if(!(logchain = make_logchain(var->name, var->value, var->lineno)))
                     continue;
+				
                 SPD_RWLIST_INSERT_HEAD(&spd_logchains,logchain, list);
                 global_logmask |= logchain->logmark;
             }
-            SPD_RWLIST_UNLOCK(&spd_logchains);
+        SPD_RWLIST_UNLOCK(&spd_logchains);
 
 	   spd_mkdir(spd_config_SPD_LOG_DIR, 0755);
 	   
        spd_config_destroy(cfg);
+	   return;
     }else{       /* no config file , we will use defualt settings */
 		fprintf(stderr, "Unable to open logger.conf , default setting will be used\n");
 		if(!(logchain = spd_calloc(1, sizeof(struct spd_logchain)))) {
@@ -243,20 +245,6 @@ int init_logger(void)
     sigaction(SIGXFSZ, &handle_sigxfsz, NULL);
     
     init_logger_chain();
-	/*
-    	if(spd_logfiles.message) {
-        spd_mkdir(spd_config_SPD_LOG_DIR, 0755);
-        snprintf(tmp, sizeof(tmp), "%s%s", (char *)spd_config_SPD_LOG_DIR, MESSAGE);
-        message = fopen((char *)tmp, "a");
-        if(message) {
-           spd_log(LOG_DEBUG, "Started Spider massage log\n\n");
-            
-        } else {
-            spd_log(LOG_ERROR, "unable to create event log:%s\n", strerror(errno));
-            res = -1;
-        }
-    	}*/
-
 }
 
 void close_logger()
@@ -265,8 +253,8 @@ void close_logger()
 	
 	SPD_RWLIST_WRLOCK(&spd_logchains);
 
-	SPD_RWLIST_TRAVERSE(&spd_logchains, log, list) {
-		if(log->fptr && log->fptr != STDOUT && log->fptr != STDERR) {
+	SPD_RWLISt_TRAVERSE(&spd_logchains, log, list) {
+		if(log->fptr && log->fptr != stdout && log->fptr != stderr) {
 			fclose(log->fptr);
 			log->fptr = NULL;
 		}
@@ -320,7 +308,7 @@ void spd_log(int level, const char *file, int line, const char *function, const 
             va_end(ap);
        }*/
 
-    SPD_RWLIST_TRAVERSE(&spd_logchains, chan, list) {
+    SPD_RWLISt_TRAVERSE(&spd_logchains, chan, list) {
     	/* console log */
         if((chan->logmark & (1 << level)) && (chan->type == LOGTYPE_CONSOLE)) {
 
@@ -357,7 +345,7 @@ void spd_log(int level, const char *file, int line, const char *function, const 
 			spd_dynamic_str_set(&buf, BUFSIZ, &log_buf, 
 				"[%s] %s[%ld] %s: ",
 				date, loglevels[level], (long)getpid(), file);
-			res = fprinf(chan->fptr, "%s", buf->str);
+			res = fprintf(chan->fptr, "%s", buf->str);
 			if(res <= 0 && !spd_strlen_zero(buf->str)) {
 				fprintf(stderr,"****  Logging Error: ***********\n");
 				if (errno == ENOMEM || errno == ENOSPC) {
@@ -435,7 +423,7 @@ int spd_unregister_verbose(void(* verboser)(const char * string))
     SPD_RWLIST_TRAVERSE_SAFE_BEGIN(&verbosers, cur, list) {
         if(cur->verboser == verboser) {
             SPD_RWLIST_REMOVE_CURRENT(&verbosers, list);
-            free(cur);
+            spd_safe_free(cur);
             break;
         }
     }

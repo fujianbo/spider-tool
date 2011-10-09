@@ -92,7 +92,7 @@ struct spd_tcp_session *spd_tcp_session_client_create(struct spd_tcp_session_arg
 /*
  *\brief start client side socket
  */
-struct spd_tcp_session *spd_tcp_session_client_start(struct spd_tcp_session_arg *arg);
+struct spd_tcp_session *spd_tcp_session_client_start(struct spd_tcp_session *arg);
 
 
 /*

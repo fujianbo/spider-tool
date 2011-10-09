@@ -12,6 +12,7 @@
 
 /*
   * \brief network socket utils, suport ipv4 and ipv6
+  * refer to http://www.retran.com/beej/ip4to6.html
   */
   
 #ifndef _SPIDER_SOCKET_H
@@ -21,11 +22,10 @@
 extern "C" {
 #endif
 
-#include<sys/socket.h>
-#include<netinet/in.h/>
-
-typedef int socklen_t;
-
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <stdlib.h>
+#include <string.h>
 
 #define SPD_SOCKADDR_STR_ADDR		(1 << 0)
 #define SPD_SOCKADDR_STR_PORT		(1 << 1)
@@ -213,7 +213,7 @@ static inline char *spd_sockaddr_tostring_addr_remote(const struct spd_sockaddr 
  */
 static inline char *spd_sockaddr_tostring_host(const struct spd_sockaddr *addr)
 {
-	return spd_sockaddr_tostring_fmt(const struct spd_sockaddr * ss, int fmt)(addr, SPD_SOCKADDR_STR_HOST);
+	return spd_sockaddr_tostring_fmt(addr, SPD_SOCKADDR_STR_HOST);
 }
 
 /*!
@@ -344,7 +344,7 @@ int spd_sockaddr_resolve(struct spd_sockaddr **addrs, const char *str,
  */
 #define spd_sockaddr_get_port(addr) _spd_sockaddr_get_port(addr,__FILE__, __LINE__, __PRETTY_FUNCTION__)
 
-uint16_t _spd_sockaddr_get_port(struct spd_sockaddr *ss, const char *file, int line, const char *function);
+unsigned char  _spd_sockaddr_get_port(struct spd_sockaddr *ss, const char *file, int line, const char *function);
 
 
 /*!
@@ -593,7 +593,7 @@ int _spd_sockaddr_to_sin(const struct spd_sockaddr *addr,
  * \return an ast_sockaddr structure
  */
 #define spd_sockaddr_from_sin(addr,sin)	_spd_sockaddr_from_sin(addr,sin, __FILE__, __LINE__, __PRETTY_FUNCTION__)
-void _spd_sockaddr_from_sin(struct spd_sockaddr *addr, const struct sockaddr_in *sin,
+void _spd_sockaddr_from_sin(struct spd_sockaddr *addr, const  struct sockaddr_in *sin,
 		const char *file, int line, const char *func);
 
 #if defined(__cplusplus) || defined(c_pluseplus)
