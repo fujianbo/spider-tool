@@ -309,7 +309,7 @@ void spd_section_destroy(struct spd_section *cat)
     spd_variables_destroy(cat->root);
     spd_destroy_comments(cat);
     spd_destroy_template_list(cat);
-    free(cat);
+    spd_safe_free(cat);
 }
 
 static struct spd_section *next_available_section(struct spd_section *cat)
@@ -540,7 +540,7 @@ void spd_config_destroy(struct spd_config *cfg)
 		cat = cat->next;
 		spd_section_destroy(catn);
 	}
-	free(cfg);
+	spd_safe_free(cfg);
 }
 
 struct spd_section *spd_config_get_current_section(const struct spd_config *cfg)

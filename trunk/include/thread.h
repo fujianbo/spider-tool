@@ -13,6 +13,11 @@
 #ifndef _SPIDER_THREAD_H
 #define _SPIDER_THREAD_H
 
+#if defined(__cplusplus) || defined(c_plusplus)
+extern "C" { 
+#endif
+
+
 #include <pthread.h>
 
 /* default thread stacksize is 240 KB */

@@ -47,7 +47,7 @@ enum {
 enum {
 	PARSE_PORT_MASK =	0x0300, /* 0x000: accept port if present */
 	PARSE_PORT_IGNORE =	0x0100, /* 0x100: ignore port if present */
-	PARSE_PORT_REQUIRE =	0x0200, /* 0x200: require port number */
+	PARSE_PORT_REQUIRE = 0x0200, /* 0x200: require port number */
 	PARSE_PORT_FORBID =	0x0300, /* 0x100: forbid port number */
 };
 
