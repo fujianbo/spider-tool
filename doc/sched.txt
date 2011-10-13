@@ -1,0 +1,6 @@
+spider-tool uses an extremely simple scheduler which does not use the alarm signal 
+like most schedulers, but integrates with the poll call so that there are no 
+race conditions at all.  Simplicity is the key to keeping spider-tool reliable.
+
+For fairly complete descriptions of the functions in the scheduler, see the 
+comments in sched.h

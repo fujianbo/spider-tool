@@ -1,9 +1,9 @@
 /*
- * Spider -- An open source xxx toolkit.
+ * Spider -- An open source C language toolkit.
  *
  * Copyright (C) 2011 , Inc.
  *
- * lidp <774291943@qq.com>
+ * lidp <openser@yeah.net>
  *
  * This program is free software, distributed under the terms of
  * the GNU General Public License Version 2. See the LICENSE file
@@ -178,7 +178,7 @@ static void __attibute__((constructor)) init_empty_mutex(void)
 		} \
 	} while (0)
 
-/* pthread库 互斥锁封装  */
+
 typedef pthread_mutex_t spd_mutex_t; 
 
 #define SPD_MUTEX_INIT_VALUE ((spd_mutex_t) PTHREAD_MUTEX_INIT_VALUE)
@@ -222,7 +222,7 @@ static inline int spd_mutex_trylock(spd_mutex_t *pmutex)
     return pthread_mutex_trylock(pmutex);
 }
 
-/* pthread库 条件变量封装  */
+
 typedef pthread_cond_t spd_cond_t;
 
 static inline int spd_cond_init(spd_cond_t *cond, pthread_condattr_t *cond_attr)
@@ -230,16 +230,12 @@ static inline int spd_cond_init(spd_cond_t *cond, pthread_condattr_t *cond_attr)
     return pthread_cond_init(cond, cond_attr);
 }
 
-
-/* 发送一个信号给另外一个正在处于阻塞等待状态的线程,使其脱离阻塞状态,
- *  继续执行.如果没有线程处在阻塞等待状态,pthread_cond_signal也会成功返回。
- */
 static inline int spd_cond_signal(spd_cond_t *cond)
 {
     return pthread_cond_signal(cond);
 }
 
-/* */
+
 static inline int spd_cond_broadcast(spd_cond_t *cond)
 {
     return pthread_cond_broadcast(cond);
@@ -255,7 +251,6 @@ static inline int spd_cond_wait(spd_cond_t *cond, spd_mutex_t *pmutex)
     return pthread_cond_wait(cond, pmutex);
 }
 
-/* */
 static inline int spd_cond_timewait(spd_cond_t *cond, spd_mutex_t *t, const struct 
     timespec *abstime)
 {
@@ -272,7 +267,7 @@ static inline int spd_cond_timewait(spd_cond_t *cond, spd_mutex_t *t, const stru
 #define SPD_MUTEX_DEFINE_STATIC_NOTRAKING(mutex) __SPD_MUTEX_DEFINE(static, mutex, SPD_MUTEX_INIT_VALUE_NOTRACKING, 0)
 
 
-/* pthread库读写锁封装  */
+
 
 typedef pthread_rwlock_t spd_rwlock_t;
 
@@ -364,5 +359,15 @@ static inline int spd_rwlock_trywrlock(spd_rwlock_t *prwlock)
     scop spd_rwlock_t rwlock = SPD_RWLOCK_INIT_VALUE
     
 #define SPD_RWLOCK_DEFINE_STATIC(rwlock) __SPD_RWLOCK_DEFINE(static, rwlock)
+
+static inline int spd_atomic_fetchadd_int(volatile int *p, int v)
+{
+	__asm __volatile (
+	"       lock   xaddl   %0, %1 ;        "
+	: "+r" (v),                     /* 0 (result) */
+	  "=m" (*p)                     /* 1 */
+	: "m" (*p));                    /* 2 */
+	return (v);
+}
 
 #endif 

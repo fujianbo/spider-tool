@@ -1,0 +1,18 @@
+IO management routines are locate in io.c and io.h.  The spider-tool
+centers around a poll() call on a set (possibly a large number) of file 
+descriptors.  spd_io_add, spd_io_change, and spd_io_remove are used 
+to manipulate this list.  Operating systems which do not support poll may use 
+some sort of select() emulation.  spider-tool is designed to take advantage of 
+this powerful system.
+
+IO management is complicated by the fact that poll requires an array as its 
+primary argument and provides no callback field.  Therefore, our data is 
+basically stored in a parallel array, with the same index.  The ID number of 
+the I/O event is then index into these arrays. 
+
+This does present a problem because of removing entries.  That will tend to 
+leave holes in the poll() array which can be filled by re-arranging the 
+existing entries.  This, however, redefines the ID numbers, so for all 
+manipulation, we use pointers to the ID numbers instead of actual integers.  
+Using this double indirection method, all operations remain O(1), including 
+delete!
