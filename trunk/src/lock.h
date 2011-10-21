@@ -266,11 +266,7 @@ static inline int spd_cond_timewait(spd_cond_t *cond, spd_mutex_t *t, const stru
 #define SPD_MUTEX_DEFINE_STATIC(mutex) __SPD_MUTEX_DEFINE(static, mutex, SPD_MUTEX_INIT_VALUE, 1)
 #define SPD_MUTEX_DEFINE_STATIC_NOTRAKING(mutex) __SPD_MUTEX_DEFINE(static, mutex, SPD_MUTEX_INIT_VALUE_NOTRACKING, 0)
 
-
-
-
 typedef pthread_rwlock_t spd_rwlock_t;
-
 
 #ifdef HAVE_PTHREAD_RWLOCK_INITIALIZER
 #define SPD_RWLOCK_INIT_VALUE PTHREAD_RWLOCK_INITIALIZER
