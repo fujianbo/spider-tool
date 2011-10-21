@@ -191,12 +191,12 @@ void * __obj_alloc(size_t data_size, obj_destructor_fn destructor_fn);
  *
  * @{
  */
-#define obj_ref(user_data, delta) __obj_ref((user_data), (delta))
 
-#define obj_t_ref(user_data, delta) __obj_ref((user_data), (delta))
 
-int __obj_ref(void * user_data, const int delta);
+#define obj_ref(user_data, delta) \
+	__obj_ref(user_data,delta)
 
+int __obj_ref(void *user_data, const int delta);
 
 /*! @} */
 
@@ -522,7 +522,7 @@ void *__obj_link(struct obj_container *c, void *new_obj, int flags);
 #define obj_t_unlink(arg1, arg2, arg3) __obj_unlink((arg1), (arg2), 0)
 #define obj_unlink_nolock(arg1, arg2, arg3) __obj_unlink((arg1), (arg2), OBJ_NOLOCK)
 
-void __obj_unlink(struct obj_container *c, void *new_obj, int flags);
+void *__obj_unlink(struct obj_container *c, void *new_obj, int flags);
 
 
 /*@} */

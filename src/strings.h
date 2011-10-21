@@ -74,6 +74,23 @@ static inline int spd_strlen_zero(const char *s)
 #define spd_strdup(str)    \
     _spd_strdup((str), __FILE__, __LINE__, __PRETTY_FUNCTION__)
 
+/*!
+  \brief duplicate a string in memory from the stack
+  \param s The string to duplicate
+
+  This macro will duplicate the given string.  It returns a pointer to the stack
+  allocatted memory for the new string.
+*/
+#define spd_strdupa(str)                                           \
+(__extension__                                                    \
+	({                                                                \
+		const char *__old = (s);                                  \
+		size_t __len = strlen(__old) + 1;                         \
+		char *__new = __builtin_alloca(__len);                    \
+		memcpy (__new, __old, __len);                             \
+		__new;                                                    \
+	}))
+	
 static inline void *_spd_strdup(const char *str, const char *file, int lineno, const char 
     *func)
 {

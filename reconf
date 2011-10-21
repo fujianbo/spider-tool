@@ -1,0 +1,24 @@
+#!/bin/sh
+rm -f config.cache
+rm -f acconfig.h
+
+## If using libtool
+#echo "libtoolize..."
+#libtoolize --force
+
+echo "- aclocal..."
+aclocal 
+
+echo "- autoconf..."
+autoconf
+
+## If using the c header
+#echo "- autoheader..."
+#autoheader
+
+echo "- automake..."
+#automake -a -v
+automake -a
+
+echo "- ready :), next ./configure &&  make  && make install"
+exit

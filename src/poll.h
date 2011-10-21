@@ -25,6 +25,13 @@ extern "C" {
 
 #else
 
+#define POLLIN		0x01
+#define POLLPRI		0x02
+#define POLLOUT		0x04
+#define POLLERR		0x08
+#define POLLHUP		0x10
+#define POLLNVAL	0x20
+
 #define spd_poll(a,b,c)  spd_internal_poll(a,b,c)
 
 int spd_internal_poll(struct pollfd *fds, unsigned long nfds, int timeout);

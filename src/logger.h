@@ -14,6 +14,7 @@
 #define _SPIDER_LOGGER_H
 
 #include <stdarg.h>
+#include "const.h"
 
 #if defined(__cplusplus) || defined(c_plusplus)
 extern "C" {
