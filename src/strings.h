@@ -263,6 +263,23 @@ int spd_snprintf(char *buf, int size, const char *fmt,...);
 */
 void spd_str_join(char *s, size_t len, char *const w[]);
 
+/*!
+ * \brief Compute a hash value on a case-insensitive string
+ *
+ * Uses the same hash algorithm as ast_str_hash, but converts
+ * all characters to lowercase prior to computing a hash. This
+ * allows for easy case-insensitive lookups in a hash table.
+ */
+static inline int spd_str_case_hash(const char *name)
+{
+	int hash = 5381;
+	while(*name) {
+		hash = hash * 33 ^ tolower(*name++);
+	}
+
+	return abs(hash);
+}
+
 #if defined(__cplusplus) || defined(c_plusplus)
 }
 #endif

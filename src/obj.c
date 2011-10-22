@@ -54,7 +54,7 @@ struct obj {
 /*!
  * \brief convert from a pointer _p to a user-defined object
  *
- * \return the pointer to the astobj2 structure
+ * \return the pointer to the obj structure
  */
 static inline struct obj *internal_obj(void *user_data)
 {
