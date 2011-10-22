@@ -518,7 +518,7 @@ void *__obj_link(struct obj_container *c, void *new_obj, int flags);
  */
 
 
-#define obj_unlink(arg1, arg2, arg3)  __obj_unlink((arg1), (arg2), 0)
+#define obj_unlink(arg1, arg2)   __obj_unlink((arg1), (arg2), 0)
 #define obj_t_unlink(arg1, arg2, arg3) __obj_unlink((arg1), (arg2), 0)
 #define obj_unlink_nolock(arg1, arg2, arg3) __obj_unlink((arg1), (arg2), OBJ_NOLOCK)
 
@@ -631,6 +631,8 @@ void *__obj_callback_data(struct obj_container * c, const enum search_flags flag
 /*! obj_find() is a short hand for obj_callback(c, flags, c->cmp_fn, arg)
  * XXX possibly change order of arguments ?
  */
+
+#define obj_find(c, arg, flag)  __obj_find((c), (arg), (flag))
 
 void *__obj_find(struct obj_container *c, void *arg, enum search_flags flags);
 
