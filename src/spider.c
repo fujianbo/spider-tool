@@ -135,7 +135,7 @@ static int show_usage()
 }
 static int show_version()
 {
-	printf(" spider version  %d \n", SPD_VERSION);
+	printf(" spider version  %ld \n", SPD_VERSION);
 	return 0;
 }
 
@@ -387,7 +387,7 @@ int main(int argc, char *argv[])
 	if(getenv("HOME"))
 		snprintf(filename, sizeof(filename), "%s/.spider_history", getenv("HOME"));
 
-	while((c = getopt(argc, argv, "gvVrRhkd") != -1)) {
+	while((c = getopt(argc, argv, "cgvVrRhkd")) != -1) {
 		switch (c) {
 			case 'g':
 				spd_set_flag(&spd_options, SPD_OPT_FLAG_CORE_DUMP);
@@ -399,12 +399,22 @@ int main(int argc, char *argv[])
 				show_version();
 				exit(0);
 				break;
+			case 'v':
+				option_verbose++;
+				break;
 			case 'k':
 				kill_spider_backgroud();
 				exit(0);
 			case 'd':
-				is_deamon++;
+				option_debug++;
 				break;
+			case 'r':
+				spd_set_flag(&spd_options, SPD_OPT_FLAG_NO_FORK |SPD_OPT_FLAG_REMOTE);
+				break;
+			case 'R':
+				spd_set_flag(&spd_options, SPD_OPT_FLAG_NO_FORK| SPD_OPT_FLAG_RECONNECT);
+			case 'c':
+				spd_set_flag(&spd_options, SPD_OPT_FLAG_CONSOLE);
 		}
 	}
 	
@@ -429,15 +439,17 @@ int main(int argc, char *argv[])
 	 }
 
 	 /* init logger engine */
-     printf("start init logger \n");
      init_logger();
-     printf("end init logger\n");
      spd_log(LOG_DEBUG, " welcome\n");
-	 spd_log(LOG_DEBUG, "sys name : %s    debug level: %d  verbose level: %d  timestamp %d\n",
-            spd_config_SPD_SYSTEM_NAME, option_debug, option_verbose, spd_options.flags);
-
-	 if(is_deamon)
+	 spd_log(LOG_NOTICE, "sys name : %s debug level: %d  verbose level: %d\n",
+            spd_config_SPD_SYSTEM_NAME, option_debug, option_verbose);
+	 
+	 if(is_deamon) {
+	 	spd_log(LOG_NOTICE, "run in background mode\n");
 	 	deamonize();
+	 }
+
+	 for(;;);
 }
 
  

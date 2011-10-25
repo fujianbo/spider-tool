@@ -3,7 +3,7 @@
  *
  * Copyright (C) 2011 , Inc.
  *
- * lidp <774291943@qq.com>
+ * lidp <openser@yeah.net>
  *
  * This program is free software, distributed under the terms of
  * the GNU General Public License Version 2. See the LICENSE file
@@ -29,6 +29,7 @@ enum spd_option_flags {
     SPD_OPT_FLAG_TIMESTAMP = (1 << 3),
     /* whether allow core dump  */
 	SPD_OPT_FLAG_CORE_DUMP = (1 << 4),
+	SPD_OPT_FLAG_RECONNECT = (1 << 5),
 };
 
 #if defined(__cplusplus) || defined(c_plusplus)

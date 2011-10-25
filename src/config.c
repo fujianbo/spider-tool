@@ -802,8 +802,6 @@ static struct spd_config *config_text_file_load(const char *database, const char
                 continue;
             }
             count++;
-            if (option_debug)
-                spd_log(LOG_DEBUG, "Parsing %s\n", fn);
             if (option_verbose > 1)
                 spd_verbose("Found\n");
             while(!feof(f)) {
