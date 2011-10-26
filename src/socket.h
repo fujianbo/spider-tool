@@ -59,7 +59,7 @@ struct spd_sockaddr {
 /*!
  *
  * \brief
- * Checks if the ast_sockaddr is null. "null" in this sense essentially
+ * Checks if the spd_sockaddr is null. "null" in this sense essentially
  * means uninitialized, or having a 0 length.
  *
  * \param addr Pointer to the spd_sockaddr we wish to check
@@ -86,10 +86,10 @@ static inline void spd_sockaddr_setnull(struct spd_sockaddr *ss)
 /*!
  *
  * \brief
- * Copies the data from one ast_sockaddr to another
+ * Copies the data from one spd_sockaddr to another
  *
- * \param dst The destination ast_sockaddr
- * \param src The source ast_sockaddr
+ * \param dst The destination spd_sockaddr
+ * \param src The source spd_sockaddr
  * \retval void
  */
 static inline void spd_sockaddr_copy(struct spd_sockaddr *dst, const struct spd_sockaddr *src)
@@ -101,7 +101,7 @@ static inline void spd_sockaddr_copy(struct spd_sockaddr *dst, const struct spd_
 /*!
  *
  * \brief
- * Compares two ast_sockaddr structures
+ * Compares two spd_sockaddr structures
  *
  * \retval -1 \a a is lexicographically smaller than \a b
  * \retval 0 \a a is equal to \a b
@@ -274,7 +274,7 @@ int spd_sockaddr_stringto_hostport(char *str, char **host, char **port, int flag
  *
  * \details
  * Parses a string containing an IPv4 or IPv6 address followed by an optional
- * port (separated by a colon) into a struct ast_sockaddr. The allowed formats
+ * port (separated by a colon) into a struct spd_sockaddr. The allowed formats
  * are the following:
  *
  * a.b.c.d
@@ -305,7 +305,7 @@ int spd_sockaddr_parse(struct spd_sockaddr *ss, const char *str, int flags);
  * \details
  * Parses a string containing a host name or an IPv4 or IPv6 address followed
  * by an optional port (separated by a colon).  The result is returned into a
- * array of struct ast_sockaddr. Allowed formats for str are the following:
+ * array of struct spd_sockaddr. Allowed formats for str are the following:
  *
  * hostname:port
  * host.example.com:port
@@ -366,7 +366,7 @@ void _spd_sockaddr_set_port(struct spd_sockaddr *ss, uint16_t port, const char *
 /*!
  *
  * \brief
- * Get an IPv4 address of an ast_sockaddr
+ * Get an IPv4 address of an spd_sockaddr
  *
  * \warning You should rarely need this function. Only use if you know what
  * you're doing.
@@ -573,9 +573,9 @@ int spd_set_qos(int sockfd, int tos, int cos, const char *desc);
 /*!
  *
  * \brief
- * Converts a struct ast_sockaddr to a struct sockaddr_in.
+ * Converts a struct spd_sockaddr to a struct sockaddr_in.
  *
- * \param addr The ast_sockaddr to convert
+ * \param addr The spd_sockaddr to convert
  * \param[out] sin The resulting sockaddr_in struct
  * \retval nonzero Success
  * \retval zero Failure
@@ -590,7 +590,7 @@ int _spd_sockaddr_to_sin(const struct spd_sockaddr *addr,
  * Converts a struct sockaddr_in to a struct ast_sockaddr.
  *
  * \param sin The sockaddr_in to convert
- * \return an ast_sockaddr structure
+ * \return an spd_sockaddr structure
  */
 #define spd_sockaddr_from_sin(addr,sin)	_spd_sockaddr_from_sin(addr,sin, __FILE__, __LINE__, __PRETTY_FUNCTION__)
 void _spd_sockaddr_from_sin(struct spd_sockaddr *addr, const  struct sockaddr_in *sin,

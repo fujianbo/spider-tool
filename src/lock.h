@@ -279,7 +279,7 @@ typedef pthread_rwlock_t spd_rwlock_t;
 #define spd_rwlock_init(rwlock) __spd_rwlock_init(__FILE__, __LINE__, __PRETTY_FUNCTION__, #rwlock, rwlock)
 
 static inline int __spd_rwlock_init(const char *filename, int lineno, const char *func, 
-    const char *rwlock_name, ast_rwlock_t *prwlock)
+    const char *rwlock_name, spd_rwlock_t *prwlock)
 {
     int res;
     pthread_rwlockattr_t attr;

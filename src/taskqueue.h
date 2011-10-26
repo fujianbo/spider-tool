@@ -45,7 +45,7 @@ struct spd_taskqueue;
  * Specify whether a v should be created via spd_taskqueue_get() if the taskqueue 
  * does not already exist.  The default behavior is to create a taskqueue if it does not already exist 
  * and provide its reference to the calling function.  To only return a reference to a taskqueue if 
- * and only if it exists, use the TPS_REF_IF_EXISTS option in ast_taskqueue_get().
+ * and only if it exists, use the TPS_REF_IF_EXISTS option in spd_taskqueue_get().
  */
 enum spd_tps_options {
 	/*! \brief return a reference to a v, create one if it does not exist */
@@ -58,7 +58,7 @@ enum spd_tps_options {
  * \brief Get a reference to a taskprocessor with the specified name and create the taskprocessor if necessary
  *
  * The default behavior of instantiating a taskprocessor if one does not already exist can be
- * disabled by specifying the TPS_REF_IF_EXISTS ast_tps_options as the second argument to ast_taskprocessor_get().
+ * disabled by specifying the TPS_REF_IF_EXISTS spd_tps_options as the second argument to spd_taskprocessor_get().
  * \param name The name of the taskprocessor
  * \param create Use 0 by default or specify TPS_REF_IF_EXISTS to return NULL if the taskprocessor does 
  * not already exist
@@ -70,7 +70,7 @@ struct spd_taskqueue * spd_taskqueue_get(const char *name, enum spd_tps_options 
 /*!
  * \brief Unreference the specified taskprocessor and its reference count will decrement.
  *
- * Taskprocessors use astobj2 and will unlink from the taskprocessor singleton container and destroy
+ * Taskprocessors use obj and will unlink from the taskprocessor singleton container and destroy
  * themself when the taskprocessor reference count reaches zero.
  * \param tps taskprocessor to unreference
  * \return NULL
@@ -92,7 +92,7 @@ void *spd_taskqueue_unreference(struct spd_taskqueue *tps);
 /*!
  * \brief Return the name of the taskprocessor singleton
  */
-const char *spd_taskqueue_name(struct ast_taskqueue *tps);
+const char *spd_taskqueue_name(struct spd_taskqueue *tps);
 
 /* initialize the taskprocessor container */
 int spd_taskqueue_init(void);

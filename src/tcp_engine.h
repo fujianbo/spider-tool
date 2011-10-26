@@ -44,7 +44,7 @@ extern "C" {
  * or equivalent with a timeout of 'poll_timeout' milliseconds, and if the
  * following accept() is successful it creates a thread in charge of
  * running the session, whose body is desc->worker_fn(). The argument of
- * worker_fn() is a struct ast_tcptls_session_instance, which contains the address
+ * worker_fn() is a struct spd_tcptls_session_instance, which contains the address
  * of the other party, a pointer to desc, the file descriptors (fd) on which
  * we can do a select/poll (but NOT I/O), and a FILE *on which we can do I/O.
  * We have both because we want to support plain and SSL sockets, and

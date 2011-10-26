@@ -87,7 +87,7 @@ void spd_log(int level, const char *file, int line, const char *function, const 
 } while(0)
 
 /*! Send a verbose message (based on verbose level)
- 	\brief This works like ast_log, but prints verbose messages to the console depending on verbosity level set.
+ 	\brief This works like spd_log, but prints verbose messages to the console depending on verbosity level set.
  	spd_verbose(VERBOSE_PREFIX_3 "Whatever %s is happening\n", "nothing");
  	This will print the message to the console if the verbose level is set to a level >= 3
  	Note the abscence of a comma after the VERBOSE_PREFIX_3.  This is important.

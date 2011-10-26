@@ -101,8 +101,8 @@ static void __init_##name(void)                       \
   * \brief Retrieve thread storage
   *
   * \param ts This is a pointer to the thread storage structure declared by using
-  *      the AST_THREADSTORAGE macro.  If declared with 
-  *      AST_THREADSTORAGE(my_buf), then this argument would be (&my_buf).
+  *      the SPD_THREADSTORAGE macro.  If declared with 
+  *      SPD_THREADSTORAGE(my_buf), then this argument would be (&my_buf).
   * \param init_size This is the amount of space to be allocated the first time
   *      this thread requests its data. Thus, this should be the size that the
   *      code accessing this thread storage is assuming the size to be.
@@ -277,9 +277,9 @@ int spd_thread_dynamic_str_build_helper(struct spd_dynamic_str **buf, size_t len
  * \arg max_len This is the maximum length to allow the string buffer to grow
  *      to.  If this is set to 0, then there is no maximum length.
  * \arg ts This is a pointer to the thread storage structure declared by using
- *      the AST_THREADSTORAGE macro.  If declared with 
+ *      the SPD_THREADSTORAGE macro.  If declared with 
  *
- *      AST_THREADSTORAGE(my_buf, my_buf_init), then this argument would be 
+ *      SPD_THREADSTORAGE(my_buf, my_buf_init), then this argument would be 
  *      (&my_buf).
  * \arg fmt This is the format string (printf style)
  *
@@ -289,7 +289,7 @@ int spd_thread_dynamic_str_build_helper(struct spd_dynamic_str **buf, size_t len
  * Example usage:
  *
  * \code
- * AST_THREADSTORAGE(my_str, my_str_init);
+ * SPD_THREADSTORAGE(my_str, my_str_init);
  * #define MY_STR_INIT_SIZE   128
  * ...
  * void my_func(int arg1, int arg2)

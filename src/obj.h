@@ -148,7 +148,7 @@ typedef void (*obj_destructor_fn)(void *);
  * \param debug_msg
  * \return A pointer to user-data.
  *
- * Allocates a struct astobj2 with sufficient space for the
+ * Allocates a struct obj with sufficient space for the
  * user-defined structure.
  * \note
  * - storage is zeroed; XXX maybe we want a flag to enable/disable this.
@@ -694,7 +694,7 @@ void *__obj_find(struct obj_container *c, void *arg, enum search_flags flags);
  */
 
 /*! \brief
- * The astobj2 iterator
+ * The obj iterator
  *
  * \note You are not supposed to know the internals of an iterator!
  * We would like the iterator to be opaque, unfortunately
@@ -744,7 +744,7 @@ struct obj_iterator {
 	 */
 	OBJ_ITERATOR_DONTLOCK = (1 << 0),
 	/*! Indicates that the iterator was dynamically allocated by
-	 * astobj2 API and should be freed by ao2_iterator_destroy().
+	 * obj API and should be freed by ao2_iterator_destroy().
 	 */
 	OBJ_ITERATOR_MALLOCD = (1 << 1),
 	/*! Indicates that before the iterator returns an object from

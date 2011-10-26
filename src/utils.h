@@ -61,7 +61,7 @@ static inline void * _spd_malloc(size_t len, const char *file, int lineno, const
  /*!
  * \brief A wrapper for calloc()
  *
- * spd_calloc() is a wrapper for calloc() that will generate an Asterisk log
+ * spd_calloc() is a wrapper for calloc() that will generate an spider log
  * message in the case that the allocation fails.
  */
  #define spd_calloc(value, len)  \

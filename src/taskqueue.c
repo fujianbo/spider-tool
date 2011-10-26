@@ -29,7 +29,7 @@
 	int(*execute)(void *data);
 	/*! \brief The data pointer for the task execute() function */
 	void *data;
-	/*! \brief AST_LIST_ENTRY overhead */
+	/*! \brief SPD_LIST_ENTRY overhead */
 	SPD_LIST_ENTRY(tps_task)list;
  };
 
