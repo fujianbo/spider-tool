@@ -22,7 +22,7 @@
 #include "linkedlist.h"
 #include "const.h"
 #include "threadprivdata.h"
-#include "time.h"
+#include "times.h"
 
 long int spd_random(void)
 {
@@ -213,4 +213,89 @@ char *term_color(char *outbuf, const char *inbuf, int fgcolor, int bgcolor, int 
     		COLOR_BLACK + 10);
 	}
 	return outbuf;
+}
+
+int spd_timeout_write(int fd, char * s, int len, int timeoutms)
+{
+	struct timeval start = spd_tvnow();
+	int res = 0;
+	int elapsed = 0;
+
+	while(len) {
+		if(spd_waitfor_pollout(fd, timeoutms - elapsed)) {
+			return -1;
+		}
+		res = write(fd, s, len);
+		if(res < 0 && errno != EINTR && errno != EAGAIN) {
+			spd_log(LOG_DEBUG, "write , fatal error %s\n", strerror(errno));
+			return -1;
+		}
+
+		if(res < 0) {
+			res = 0;
+		}
+
+		/* Update how much data we have left to write */
+		len -= res;
+		s += res;
+		res = 0;
+
+		elapsed = spd_tvdiff_ms(spd_tvnow(),start);
+		if(elapsed >= timeoutms) {
+			res = len ? -1 : 0;
+			break;
+		}
+	}
+
+	return res;
+}
+
+int spd_timeoutf_write(FILE * f, int fd, const char * s, size_t len, int timeoutms)
+{
+	struct timeval start = spd_tvnow();
+	int elapsed = 0;
+	int n = 0;
+	
+	while(len) {
+		if(spd_waitfor_pollout(fd, timeoutms - elapsed)) {
+			/* poll returned a fatal error, so bail out immediately. */
+			return -1;
+		}
+		/* Clear any errors from a previous write */
+		clearerr(f);
+		fwrite(s, 1, len, f);
+		if(ferror(f) && errno != EAGAIN && errno != EINTR) { 
+			/* fatal error from fwrite() */
+			if (!feof(f)) {
+				/* Don't spam the logs if it was just that the connection is closed. */
+				spd_log(LOG_ERROR, "fwrite() returned error: %s\n", strerror(errno));
+			}
+			n = -1;
+			break;
+		}
+
+		len -= n;
+		s += n;
+		elapsed = spd_tvdiff_ms(spd_tvnow(), start);
+		if(elapsed >= timeoutms) {
+			n = len ? -1 : 0;
+			break;
+		}
+	}
+
+	while(fflush(f)) {
+		if(errno == EAGAIN || errno == EINTR) {
+			continue;
+		}
+
+		if(!feof) {
+			/* Don't spam the logs if it was just that the connection is closed. */
+			spd_log(LOG_ERROR, "fflush() returned error: %s\n", strerror(errno));
+		}
+
+		n = -1;
+		break;
+	}
+
+	return n < 0 ? -1 : 0; 
 }

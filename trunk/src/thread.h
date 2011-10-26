@@ -35,7 +35,7 @@ int spd_pthread_create_detached_stack(pthread_t *thread, pthread_attr_t *attr, v
   pthread_attr_t attr;
   
   pthread_attr_init(&attr);
-  ast_pthread_create(&thread, &attr, bridge_call_thread, data);
+  spd_pthread_create(&thread, &attr, bridge_call_thread, data);
   pthread_attr_destroy(&attr);
  */
 #define spd_pthread_create(a,b,c,d)      \

@@ -308,7 +308,7 @@ char *__spd_str_helper2(struct spd_str **buf, ssize_t max_len,
  *
  * \param buf This is the address of a pointer to a struct ast_str.
  *	If it is retrieved using spd_str_thread_get, the
-	struct ast_threadstorage pointer will need to
+	struct spd_threadstorage pointer will need to
  *      be updated in the case that the buffer has to be reallocated to
  *      accommodate a longer string than what it currently has space for.
  * \param max_len This is the maximum length to allow the string buffer to grow
@@ -326,7 +326,7 @@ char *__spd_str_helper2(struct spd_str **buf, ssize_t max_len,
  * ...
  * void my_func(const char *fmt, ...)
  * {
- *      struct ast_str *buf;
+ *      struct spd_str *buf;
  *      va_list ap;
  *
  *      if (!(buf = spd_str_thread_get(&my_str, MY_STR_INIT_SIZE)))

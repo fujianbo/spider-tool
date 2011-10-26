@@ -266,7 +266,7 @@ void spd_str_join(char *s, size_t len, char *const w[]);
 /*!
  * \brief Compute a hash value on a case-insensitive string
  *
- * Uses the same hash algorithm as ast_str_hash, but converts
+ * Uses the same hash algorithm as spd_str_hash, but converts
  * all characters to lowercase prior to computing a hash. This
  * allows for easy case-insensitive lookups in a hash table.
  */

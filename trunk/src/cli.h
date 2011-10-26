@@ -161,7 +161,7 @@ int spd_cli_register_multiple(struct spd_cli_entry *e, int len);
 /*! 
  * \brief Unregisters a command or an array of commands
  * \param e which cli entry to unregister
- * Unregister your own command.  You must pass a completed ast_cli_entry structure
+ * Unregister your own command.  You must pass a completed spd_cli_entry structure
  * \return 0
  */
 int spd_cli_unregister(struct spd_cli_entry *e);
