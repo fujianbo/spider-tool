@@ -45,21 +45,23 @@
 #include "time.h"
 #include "io.h"
 #include "obj.h"
+#include "cli.h"
 
 /* max remote concol conn */
 #define SPD_MAX_CONNECTS  128
 /* \brief Welcome msg when starting cli interface */
 
-#define WELCOME_MESSAGE                  \	
-    spd_verbose("             \n\n\t\tspider  0.1 copyright(c) 2011  ti-net inc\n");\
+#define WELCOME_MESSAGE \ 
+	spd_verbose("             \n\n\t\tspider  0.1 copyright(c) 2011  ti-net inc\n"); \
 	spd_verbose("                creat by lidp  lidp@ti-net.com.cn\n\n\n");
+
 
 #define PIDFILE    "spider.pid"
 static char *pfile = PIDFILE;
 
 struct spd_flags spd_options ;
 
-static int SPD_VERSION = 0.1;
+static float SPD_VERSION = 0.1;
 
 static int spd_socket = -1;
 static int spd_consock = -1;
@@ -119,13 +121,36 @@ void spd_unregister_atexit(void(*func)(void))
             break;
         }
     }
-    SPD_LIST_TRAVERSE_SAFE_END
+    SPD_LIST_TRAVERSE_SAFE_END;
     SPD_LIST_UNLOCK(&atexits);
     
     if(ae) {
-        free(ae);
+        spd_safe_free(ae);
     }
 }
+static char *handle_show_version(struct spd_cli_entry *e, int cmd, struct spd_cli_arg *arg)
+{
+	switch(cmd) {
+		case CLI_USAGE:
+			e->command = "core show version";
+			e->usage = " Usage: core show version\n"
+					" show spider version information.\n";
+			return NULL;
+		case CLI_COMPLETE:
+			return NULL;	
+	}
+
+	if(arg->argc != 3)
+		return CLI_SHOWUSAGE;
+
+	spd_cli(arg->fd, "spider version %f\n", SPD_VERSION);
+
+	return CLI_SUCCESS;
+}
+
+static struct spd_cli_entry spider_cli[] = {
+	SPD_CLI_DEFINE(handle_show_version, "Display version info"),
+};
 
 static int show_usage()
 {
@@ -135,7 +160,7 @@ static int show_usage()
 }
 static int show_version()
 {
-	printf(" spider version  %ld \n", SPD_VERSION);
+	printf(" spider version  %f \n", SPD_VERSION);
 	return 0;
 }
 
@@ -315,7 +340,6 @@ static void read_mainconfig(void)
 	spd_config_destroy(cfg);
 }
 
-
 /*
  *  http://student.zjzk.cn/course_ware/data_structure/web/paixu/paixu8.2.1.1.htm
  */
@@ -357,6 +381,11 @@ static int binary_search(int array[], int len, int key)
 	return -1;
 }
 
+static void term_handler()
+{
+	spd_log(LOG_NOTICE, "server term\n");
+}
+
 /* Main entry point */
 int main(int argc, char *argv[])
 {
@@ -366,6 +395,7 @@ int main(int argc, char *argv[])
     char hostname[MAXHOSTNAMELEN];
     char filename[80];
  	struct rlimit limit;
+	struct sigaction term_action; 
 	
     if(argc > sizeof(old_argv) / sizeof(old_argv[0]) -1) {
         fprintf(stderr, "truncationg argument size to %d\n", (int)(sizeof(old_argv) / sizeof(old_argv[0])) -1 );
@@ -377,7 +407,7 @@ int main(int argc, char *argv[])
     old_argv[x] = NULL;
 
     if(gethostname(hostname, sizeof(hostname) -1)) 
-	spd_copy_string(hostname, "<Unknown>", sizeof(hostname));
+		spd_copy_string(hostname, "<Unknown>", sizeof(hostname));
     	
 	if(argv[0] && (strstr(argv[0], "rspider")) != NULL) {
 		spd_set_flag(&spd_options, SPD_OPT_FLAG_REMOTE | SPD_OPT_FLAG_NO_FORK);
@@ -417,26 +447,45 @@ int main(int argc, char *argv[])
 				spd_set_flag(&spd_options, SPD_OPT_FLAG_CONSOLE);
 		}
 	}
-	
-    read_mainconfig();
-     for (x = 0; x < SPD_MAX_CONNECTS; x++)	
-		consoles[x].fd = -1;
 
-     if(option_verbose) {
-        spd_register_verbose(console_verboser);
+	/* catch TERM and INT signals */
+	memset(&term_action, 0, sizeof(term_action));
+	term_action.sa_handler = term_handler;
+	sigaction(SIGINT,&term_action, NULL);
+	sigaction(SIGTERM,&term_action, NULL);
+
+	if(spd_opt_console || option_verbose || spd_opt_remote) {
+        if(spd_register_verbose(console_verboser)) {
+			spd_log(LOG_WARNING, "Unable to regster verbose \n");
+		}
         WELCOME_MESSAGE;
      }
-	 
-	 memset(&limit, 0, sizeof(limit));
-	 limit.rlim_cur = RLIM_INFINITY;
-	 limit.rlim_max = RLIM_INFINITY;
-	 if(setrlimit(RLIMIT_CORE, &limit)) {
-		spd_log(LOG_WARNING, " unable to disable core size res limit %s\n", strerror(errno));
-	 }
+	if(spd_opt_console) {
+		spd_verbose("[Booting...\n");
+		spd_verbose("[ Reading Master Configuration ]\n");
+	}
 
-	 if(getrlimit(RLIMIT_CORE, &limit)) {
-		spd_log(LOG_WARNING, "unable to check rlimit of fd%s\n", strerror(errno));
-	 }
+	read_mainconfig();
+
+	for (x = 0; x < SPD_MAX_CONNECTS; x++)	
+		consoles[x].fd = -1;
+
+	/* in debug mode */
+	if(spd_opt_core_dump) {
+	 	memset(&limit, 0, sizeof(limit));
+	 	limit.rlim_cur = RLIM_INFINITY;
+	 	limit.rlim_max = RLIM_INFINITY;
+	 	if(setrlimit(RLIMIT_CORE, &limit)) {
+			spd_log(LOG_WARNING, " unable to disable core size res limit %s\n", strerror(errno));
+	 	}
+
+	 	if(getrlimit(RLIMIT_CORE, &limit)) {
+			spd_log(LOG_WARNING, "unable to check rlimit of fd%s\n", strerror(errno));
+		}
+	}
+
+	/* catch TERM and INT signals */
+
 
 	 /* init logger engine */
      init_logger();

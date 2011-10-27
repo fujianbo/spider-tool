@@ -580,7 +580,7 @@ struct __dummy_##name
  #define SPD_LIST_INSERT_BEFORE_CURRENT(head, cur) do {              \
     if(__list_prev) {                                              \
         (head)->cur.next = __list_prev->cur.next;                  \
-        __lis_prev->cur.next = head;                               \
+        __list_prev->cur.next = head;                               \
     } else {                                                      \
         (head)->cur.next = __list_head->first;                 \
         __list_head->first = (head);                        \

@@ -492,7 +492,7 @@ int obj_container_count(struct obj_container *c);
  *       for the reference that the container now holds to the object.
  */
 
-#define obj_link(arg1, arg2, arg3)  __obj_link((arg1), (arg2), 0)
+#define obj_link(arg1, arg2)  __obj_link((arg1), (arg2), 0)
 #define obj_t_link(arg1, arg2, arg3) __obj_link((arg1), (arg2), 0)
 #define obj_link_nolock(arg1, arg2, arg3) __obj_link((arg1), (arg2), OBJ_NOLOCK)
 

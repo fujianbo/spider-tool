@@ -17,6 +17,10 @@
  
  #include "obj.h"
  #include "taskqueue.h"
+ #include "logger.h"
+ #include "utils.h"
+ #include "strings.h"
+ #include "thread.h"
 
 /*!
   *\brief tps_task struct is queued to a taskqueue
@@ -86,7 +90,7 @@ static int tps_taskqueue_depth(struct spd_taskqueue *tps);
 /* initialize the taskprocessor container */
 int spd_taskqueue_init(void)
 {
-	if(!(tps_singletons = obj_container_alloc(TPS_MAX_BUCKETS), tps_hash_cb, tps_cmp_cb)) {
+	if(!(tps_singletons = obj_container_alloc(TPS_MAX_BUCKETS, tps_hash_cb, tps_cmp_cb))) {
 		spd_log(LOG_ERROR, "spd taskqueue container failed to init! \n");
 		return -1;
 	}
@@ -97,7 +101,7 @@ int spd_taskqueue_init(void)
 /* alloc a task, if failed ,return NULL */
 static struct tps_task* tps_task_alloc(int(*exe_rutine)(void *data), void *data)
 {
-	struct tps_task *task = NULL;
+	struct tps_task *task;
 
 	if((task = spd_calloc(1, sizeof(*task)))) {
 		task->execute = exe_rutine;
@@ -153,14 +157,14 @@ static void *tps_work_thread(void * data)
 
 		task->execute(task->data);
 
-		spd_mutex_lock(tps->tskq_lock);
+		spd_mutex_lock(&tps->tskq_lock);
 		if(tps->stats) {
 			tps->stats->task_processed_count++;
 			if(size > tps->stats->max_qsize) {
 				tps->stats->max_qsize = size;
 			}
 		}
-		spd_mutex_unlock(tps->tskq_lock);
+		spd_mutex_unlock(&tps->tskq_lock);
 
 		tps_task_free(task);
 		
@@ -183,7 +187,7 @@ static int tps_hash_cb(const void * obj, const int flags)
 static int tps_cmp_cb(void * obj, void * arg, int flags)
 {
 	struct spd_taskqueue *tps = obj, *rhs = arg;
-	return !strcacecmp(tps->name, rhs->name) ? CMP_MATCH |CMP_STOP : 0;
+	return !strcasecmp(tps->name, rhs->name) ? CMP_MATCH |CMP_STOP : 0;
 }
 
 static void tps_taskqueue_destroy(void * t)
@@ -208,8 +212,7 @@ static void tps_taskqueue_destroy(void * t)
 	if(tps->stats) {
 		spd_safe_free(tps->stats);
 	}
-
-	spd_safe_free((char *)tps->name);
+	free((char *)tps->name);
 }
 
 
@@ -235,7 +238,7 @@ static int tps_taskqueue_depth(struct spd_taskqueue * tps)
 {
 	if(!tps) {
 		spd_log(LOG_ERROR, "no taskqueue specified !\n");
-		return NULL;
+		return -1;
 	}
 
 	return tps->tps_queue_size;
@@ -257,7 +260,7 @@ const char *spd_taskqueue_name(struct spd_taskqueue *tps)
 struct spd_taskqueue *spd_taskqueue_get(const char * name, enum spd_tps_options option)
 {
 	struct spd_taskqueue *p, tmp_tps = {
-		.name = name;
+		.name = name,
 	};
 
 	if(spd_strlen_zero(name)) {
@@ -328,7 +331,7 @@ void *spd_taskqueue_unreference(struct spd_taskqueue * tps)
 		obj_lock(tps_singletons);
 		obj_unlink(tps_singletons, tps);
 		if(obj_ref(tps, -1) > 1) {
-			obj_link(tps_singletons, tps)
+			obj_link(tps_singletons, tps);
 		}
 		obj_unlock(tps_singletons);
 	}
@@ -337,20 +340,20 @@ void *spd_taskqueue_unreference(struct spd_taskqueue * tps)
 
 int spd_taskqueue_push(struct spd_taskqueue * tps, int(* task_exe)(void * data), void * data)
 {
-	struct tps_task task;
+	struct tps_task *task;
 
 	if(!tps || !task_exe) {
 		spd_log(LOG_ERROR, " %s is missing !!\n",(tps)? "task calback" : "taskqueue");
 		return -1;
 	}
 
-	if(!(task = tps_task_alloc()(task_exe, data))) {
+	if(!(task = tps_task_alloc(task_exe, data))) {
 		spd_log(LOG_ERROR, " failed to allocate task! can not push to '%s'\n", tps->name);
 		return -1;
 	}
 
 	spd_mutex_lock(&tps->tskq_lock);
-	SPD_LIST_INSERT_TAIL(&tps->tps_queue, list);
+	SPD_LIST_INSERT_TAIL(&tps->tps_queue, task,list);
 	tps->tps_queue_size++;
 	spd_cond_signal(&tps->poll_cond);
 	spd_mutex_unlock(&tps->tskq_lock);

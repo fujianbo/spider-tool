@@ -32,6 +32,14 @@ enum spd_option_flags {
 	SPD_OPT_FLAG_RECONNECT = (1 << 5),
 };
 
+#define spd_opt_no_fork    spd_test_flag(&spd_options, SPD_OPT_FLAG_NO_FORK)
+#define spd_opt_console    spd_test_flag(&spd_options, SPD_OPT_FLAG_CONSOLE)
+#define spd_opt_remote     spd_test_flag(&spd_options, SPD_OPT_FLAG_REMOTE)
+#define spd_opt_core_dump  spd_test_flag(&spd_options, SPD_OPT_FLAG_CORE_DUMP)
+#define spd_opt_reconnect  spd_test_flag(&spd_options, SPD_OPT_FLAG_RECONNECT)
+
+
+
 #if defined(__cplusplus) || defined(c_plusplus)
 }
 #endif

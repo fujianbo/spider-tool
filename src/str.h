@@ -392,7 +392,7 @@ static inline int __attribute__((format(printf, 3, 0))) spd_str_append_va(struct
  * All the rest is the same as spd_str_set_va()
  */
 
-int __attribute__((format(printf, 3, 4))) spd_str_set(
+static inline int __attribute__((format(printf, 3, 4))) spd_str_set(
 	struct spd_str **buf, ssize_t max_len, const char *fmt, ...)
 {
 	int res;
@@ -411,7 +411,7 @@ int __attribute__((format(printf, 3, 4))) spd_str_set(
  * The arguments, return values, and usage of this function are the same as
  * spd_str_set(), but the new data is appended to the current value.
  */
-int __attribute__((format(printf, 3, 4))) spd_str_append(
+static inline int __attribute__((format(printf, 3, 4))) spd_str_append(
 	struct spd_str **buf, ssize_t max_len, const char *fmt, ...)
 {
 	int res;
@@ -438,7 +438,7 @@ static inline char *spd_str_set_escapecommas(struct spd_str **buf, ssize_t maxle
 }
 
 /*!\brief Append a non-NULL terminated substring to the end of a dynamic string, with escaping of commas. */
-char *spd_str_append_escapecommas(struct spd_str **buf, ssize_t maxlen, const char *src, size_t maxsrc)
+static inline char *spd_str_append_escapecommas(struct spd_str **buf, ssize_t maxlen, const char *src, size_t maxsrc)
 {
 	return __spd_str_helper2(buf, maxlen, src, maxsrc, 1, 1);
 }

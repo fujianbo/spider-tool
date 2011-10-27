@@ -111,12 +111,12 @@ struct spd_flags {
 
 extern unsigned int __unsigned_int_flags_dummy;
 
-#define spd_test_flag(p, flag) ({ \
-        typeof ((p)->flags) __p = (p)->flags;  \
-        typeof ((p)->flags) (__unsigned_int_flags_dummy) __x = 0; \
-        (void) (&__p == &__x);   \
-        ((p)->flags &(flag));   \
-})
+#define spd_test_flag(p,flag) 		({ \
+					typeof ((p)->flags) __p = (p)->flags; \
+					typeof (__unsigned_int_flags_dummy) __x = 0; \
+					(void) (&__p == &__x); \
+					((p)->flags & (flag)); \
+					})
 
 #define spd_set_flag(p, flag) do { \
     typeof((p)->flags) __p = (p)->flags;   \
