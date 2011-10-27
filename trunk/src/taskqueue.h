@@ -51,7 +51,7 @@ enum spd_tps_options {
 	/*! \brief return a reference to a v, create one if it does not exist */
 	TPS_REF_DEFAULT = 0,
 	/*! \brief return a reference to a taskqueue ONLY if it already exists */
-	TPS_REF_IF_EXISTS = (1<< 0);
+	TPS_REF_IF_EXISTS = (1<< 0),
 };
 
 /*!

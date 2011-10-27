@@ -279,6 +279,8 @@ void spd_log(int level, const char *file, int line, const char *function, const 
 
     if(!(buf = spd_dynamic_str_get(&log_buf, LOG_BUF_INIT_SIZE)))
         return;
+
+	/* we donot have  init logger , so just log to console */
     if(SPD_RWLIST_EMPTY(&spd_logchains)) {
         if(level != __LOG_VERBOSE) {
             int res;
@@ -297,17 +299,8 @@ void spd_log(int level, const char *file, int line, const char *function, const 
     tm = localtime(&t);
     memset(date, 0, sizeof(date));
     strftime(date, sizeof(date), dateformat, tm);
-    SPD_RWLIST_WRLOCK(&spd_logchains);
 
-	/*
-       if(spd_logfiles.message) {
-            va_start(ap, fmt);
-            fprintf(message, "%s spider[%ld]: ", date, (long)getpid());
-            vfprintf(message, fmt, ap);
-            fflush(message);
-            va_end(ap);
-       }*/
-
+	SPD_RWLIST_WRLOCK(&spd_logchains);
     SPD_RWLISt_TRAVERSE(&spd_logchains, chan, list) {
     	/* console log */
         if((chan->logmark & (1 << level)) && (chan->type == LOGTYPE_CONSOLE)) {
@@ -427,7 +420,7 @@ int spd_unregister_verbose(void(* verboser)(const char * string))
             break;
         }
     }
-    SPD_LIST_TRAVERSE_SAFE_END
+    SPD_LIST_TRAVERSE_SAFE_END;
     SPD_RWLIST_UNLOCK(&verbosers);
 
     return cur ? 0 : -1;

@@ -27,7 +27,7 @@ static SPD_RWLIST_HEAD_STATIC(spd_cli_entrys, spd_cli_entry);
  */
 static const char cli_rsvd[] = "[]{}|*%";
 
-int spd_cli(int fd, const char *fmt, ...)
+void spd_cli(int fd, const char *fmt, ...)
 {
  	int res;
 	struct spd_str *buf;
@@ -42,7 +42,7 @@ int spd_cli(int fd, const char *fmt, ...)
 	va_end(ap);
 
 	if(res != SPD_STR_BUILD_FAILED) {
-		spd_timeout_write(fd, spd_str_buffer(buf), spd_str_len(buf), 100) /* 100 ms default */
+		spd_timeout_write(fd, spd_str_buffer(buf), spd_str_len(buf), 100); /* 100 ms default */
 	}
 }
 
@@ -64,7 +64,7 @@ static char *__spd_cli_generator(const char *text, const char *word, int state, 
 char *spd_cli_complete(const char * word, const char * const choices[ ], int state)
 {
 	int i, which = 0, len;
-	len = spd_str_len(word) ? 0 : strlen(word);
+	len = spd_strlen_zero(word) ? 0 : strlen(word);
 	for(i = 0; choices[i]; i++) {
 		if((!len || !strncasecmp(word, choices[i], len)) && ++ which > state)
 			return spd_strdup(choices[i]);

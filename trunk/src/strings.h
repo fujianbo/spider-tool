@@ -261,7 +261,7 @@ int spd_snprintf(char *buf, int size, const char *fmt,...);
   string.  It will also place a space in the result buffer in between each
   string from 'w'.
 */
-void spd_str_join(char *s, size_t len, char *const w[]);
+void spd_str_join(char *s, size_t len, const char *const w[]);
 
 /*!
  * \brief Compute a hash value on a case-insensitive string

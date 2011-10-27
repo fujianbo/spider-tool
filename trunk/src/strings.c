@@ -175,7 +175,7 @@ int spd_snprintf(char *buf, int  size, const char *fmt,...)
 	return ret;
 }
 
-void spd_str_join(char *s, size_t len, char *const w[])
+void spd_str_join(char *s, size_t len, const char *const w[])
 {
     int x, ofs = 0;
     const char *src;
