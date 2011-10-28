@@ -30,6 +30,7 @@ enum spd_option_flags {
     /* whether allow core dump  */
 	SPD_OPT_FLAG_CORE_DUMP = (1 << 4),
 	SPD_OPT_FLAG_RECONNECT = (1 << 5),
+	SPD_OPT_FLAG_MUTE = (1 << 6),
 };
 
 #define spd_opt_no_fork    spd_test_flag(&spd_options, SPD_OPT_FLAG_NO_FORK)
@@ -37,7 +38,7 @@ enum spd_option_flags {
 #define spd_opt_remote     spd_test_flag(&spd_options, SPD_OPT_FLAG_REMOTE)
 #define spd_opt_core_dump  spd_test_flag(&spd_options, SPD_OPT_FLAG_CORE_DUMP)
 #define spd_opt_reconnect  spd_test_flag(&spd_options, SPD_OPT_FLAG_RECONNECT)
-
+#define spd_opt_mute       spd_test_flag(&spd_options, SPD_OPT_FLAG_MUTE)
 
 
 #if defined(__cplusplus) || defined(c_plusplus)
