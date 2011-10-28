@@ -58,6 +58,8 @@
 
 #define PIDFILE    "spider.pid"
 static char *pfile = PIDFILE;
+static char *spd_config_SPD_PID = "/var/run/spider.pid";
+static char *spd_config_SPD_SOCKET = "/var/run/spider.socket";
 
 struct spd_flags spd_options ;
 
@@ -180,6 +182,8 @@ static void deamonize()
 		spd_log(LOG_ERROR, "error when fork\n");
 		exit(0); /* error */
 	} else {
+		/* Change the file mode mask */
+        umask(0);
 		if(setsid() < 0) {
 			spd_log(LOG_ERROR, "error when change session id");
 			exit(0);
@@ -381,6 +385,198 @@ static int binary_search(int array[], int len, int key)
 	return -1;
 }
 
+static pthread_t lthread;
+
+static void network_verboser(const char *s)
+{
+	spd_network_puts_mutable(s);
+}
+static void *netconsole_thread(void *nconsole)
+{
+	struct console *conn = nconsole;
+
+	char hostname[MAXHOSTNAMELEN] = "";
+	char tmp[512];
+	int res;
+	struct pollfd fds[2];
+	
+	if(gethostname(hostname, sizeof(hostname) -1))
+		spd_copy_string(hostname, "<Unknown>", sizeof(hostname));
+	snprintf(tmp, sizeof(tmp), "%s/%ld/%f\n", hostname, (long)spd_mainpid, SPD_VERSION);
+	fdprint(conn->fd, tmp);
+	for(;;) {
+		fds[0].fd = conn->fd;
+		fds[0].events = POLLIN;
+		fds[0].revents = 0;
+		fds[1].fd = conn->p[0];
+		fds[1].events = POLLIN;
+		fds[1].revents = 0;
+		res = poll(fds, 2, -1);
+		if(res < 0) {
+			if(errno != EINTR)
+				spd_log(LOG_WARNING, "poll returned < 0: %s\n", strerror(errno));
+			continue;
+		}
+		if(fds[0].revents) {
+			res = read(conn->fd, tmp, sizeof(tmp));
+			if(res < 1) {
+				break;
+			}
+			tmp[res] = 0;
+			spd_cli_command(conn->fd, tmp);
+		}
+		if(fds[1].revents) {
+			res = read(conn->p[0], tmp, sizeof(tmp));
+			if(res < 1) {
+				spd_log(LOG_ERROR, "read returned : %d\n", res);
+				break;
+			}
+			res = write(conn->fd, tmp,res);
+			if(res < 1)
+				break;
+		}	
+	}
+	if(option_verbose > 2)
+		spd_verbose(VERBOSE_PREFIX_3 "Remote UNIX connection disconnected\n");
+	close(conn->fd);
+	close(conn->p[0]);
+	close(conn->p[1]);
+	conn->fd = -1;
+	
+}
+static void *listener_thread(void *nothing)
+{
+	struct sockaddr_un sunaddr;
+	int s;
+	socklen_t len;
+	int x;
+	int flags;
+	struct pollfd fds[1];
+	pthread_attr_t attr;
+	pthread_attr_init(&attr);
+	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+
+	for(;;) {
+		if(spd_socket  < 0)
+			return NULL;
+
+		fds[0].fd = spd_socket;
+		fds[0].events = POLLIN;
+		s = poll(fds, 1, -1);
+		pthread_testcancel();
+
+		if(s < 0) {
+			if(errno != EINTR)
+				spd_log(LOG_WARNING, "poll returned error: %s\n", strerror(errno));
+			continue;
+		}
+
+		s = accept(spd_socket, (struct sockaddr *)&sunaddr, &len);
+
+		if(s < 0) {
+			if(errno != EINTR) {
+				spd_log(LOG_WARNING, " accept return error : %s \n", strerror(errno));
+			continue;
+			}
+		} else {
+			for(x = 0; x < SPD_MAX_CONNECTS; x++) {
+				if(consoles[x].fd < 0) {
+					if(socketpair(AF_UNIX, SOCK_STREAM, 0, consoles[x].p)) {
+						spd_log(LOG_ERROR, "Unable to create pipe : %s\n", strerror(errno));
+						consoles[x].fd = -1;
+						fdprint(s, "Server failed to create pipe\n");
+						close(s);
+						break;
+					}
+
+					flags = fcntl(consoles[x].p[1], F_GETFL);
+					fcntl(consoles[x].p[1], F_SETFL, flags | O_NONBLOCK);
+					consoles[x].fd = s;
+					consoles[x].mute = spd_opt_mute;
+					if(spd_pthread_create_background(&consoles[x].t, &attr, netconsole_thread, &consoles[x])) {
+						spd_log(LOG_ERROR, "Unable to spawn thread to handler connection : %s\n", strerror(errno));
+						close(consoles[x].p[0]);
+						close(consoles[x].p[1]);
+						consoles[x].fd = -1;
+						close(s);
+					}
+					break;
+				}
+			}
+			if(x >= SPD_MAX_CONNECTS) {
+				fdprint(s, "No more connect \n");
+				spd_log(LOG_WARNING, "No more connect allowd \n");
+				close(s);
+			} else if(consoles[x].fd > 0) {
+				if(option_verbose)
+				spd_verbose(VERBOSE_PREFIX_3 "remote UNIX connect\n");
+			}
+		}
+
+		
+		
+	}
+}
+static int start_domainserver()
+{
+	struct sockaddr_un sunaddr;
+	int res;
+        int x;
+
+	for (x = 0; x < SPD_MAX_CONNECTS; x++)	
+		consoles[x].fd = -1;
+	unlink(spd_config_SPD_SOCKET);
+	spd_socket = socket(AF_UNIX, SOCK_STREAM, 0);
+	if(spd_socket < 0) {
+		spd_log(LOG_WARNING, " failed to create socket for domainserver \n", strerror(errno));
+		return -1;
+	}
+
+	memset(&sunaddr, 0, sizeof(sunaddr));
+	sunaddr.sun_family = AF_UNIX;
+	spd_copy_string(sunaddr.sun_path, spd_config_SPD_SOCKET, sizeof(sunaddr.sun_path));
+	res = bind(spd_socket, (struct sockaddr *)&sunaddr, sizeof(sunaddr));
+	if(res) {
+		spd_log(LOG_WARNING, "Unable to bind socket to %s : %s\n", spd_config_SPD_SOCKET, strerror(errno));
+		close(spd_socket);
+		spd_socket = -1;
+		return -1;
+	}
+
+	res = listen(spd_socket, 2);
+	if(res < 0) {
+		spd_log(LOG_WARNING, "Unable to listen on socket %s : %s\n", spd_config_SPD_SOCKET, strerror(errno));
+		close(spd_socket);
+		spd_socket = -1;
+		return -1;
+	}
+
+	spd_register_verbose(network_verboser);
+	spd_pthread_create_background(&lthread, NULL, listener_thread, NULL);
+	
+	return 0;
+}
+static int spd_tryconn(void)
+{
+	struct sockaddr_un sunaddr;
+	int res;
+	spd_consock = socket(AF_UNIX, SOCK_STREAM, 0);
+	if(spd_consock < 0) {
+		spd_log(LOG_WARNING, "Unable to create socket: %s\n", strerror(errno));
+		return 0;
+	}
+	memset(&sunaddr, 0, sizeof(sunaddr));
+	spd_copy_string(sunaddr.sun_path, (char *)spd_config_SPD_SOCKET, sizeof(sunaddr.sun_path));
+	res = connect(spd_consock, (struct sockaddr *)&sunaddr, sizeof(sunaddr));
+
+	if(res) {
+		close(spd_consock);
+		spd_consock = -1;
+		return 0;
+	} else 
+		return -1;
+}
+
 static void term_handler()
 {
 	spd_log(LOG_NOTICE, "server term\n");
@@ -394,6 +590,7 @@ int main(int argc, char *argv[])
 	int is_deamon = 0;
     char hostname[MAXHOSTNAMELEN];
     char filename[80];
+	FILE *f;
  	struct rlimit limit;
 	struct sigaction term_action; 
 	
@@ -413,7 +610,6 @@ int main(int argc, char *argv[])
 		spd_set_flag(&spd_options, SPD_OPT_FLAG_REMOTE | SPD_OPT_FLAG_NO_FORK);
 	}
 
-	spd_mainpid = getpid();
 	if(getenv("HOME"))
 		snprintf(filename, sizeof(filename), "%s/.spider_history", getenv("HOME"));
 
@@ -444,7 +640,7 @@ int main(int argc, char *argv[])
 			case 'R':
 				spd_set_flag(&spd_options, SPD_OPT_FLAG_NO_FORK| SPD_OPT_FLAG_RECONNECT);
 			case 'c':
-				spd_set_flag(&spd_options, SPD_OPT_FLAG_CONSOLE);
+				spd_set_flag(&spd_options, SPD_OPT_FLAG_CONSOLE |SPD_OPT_FLAG_NO_FORK );
 		}
 	}
 
@@ -467,9 +663,6 @@ int main(int argc, char *argv[])
 
 	read_mainconfig();
 
-	for (x = 0; x < SPD_MAX_CONNECTS; x++)	
-		consoles[x].fd = -1;
-
 	/* in debug mode */
 	if(spd_opt_core_dump) {
 	 	memset(&limit, 0, sizeof(limit));
@@ -484,21 +677,37 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	/* catch TERM and INT signals */
+	if(spd_tryconn()) {
+		
+	}
 
-
-	 /* init logger engine */
-     init_logger();
-     spd_log(LOG_DEBUG, " welcome\n");
-	 spd_log(LOG_NOTICE, "sys name : %s debug level: %d  verbose level: %d\n",
+	/* run in background  */
+	if(!spd_opt_no_fork) {
+		deamonize();
+		//daemon(0,0);
+		spd_mainpid = getpid();
+		unlink(spd_config_SPD_PID);
+		f = fopen(spd_config_SPD_PID, "w");
+		if(f) {
+			fprintf(f, "%ld\n", (long)spd_mainpid);
+			fclose(f);
+		} else {
+			spd_log(LOG_WARNING, "cant not open spdier pid file  %s\n", strerror(errno));
+		}
+	}
+	
+	/* we start domain socket server every time the server start inorder
+	    to support remote connection 
+	*/
+	start_domainserver();
+	
+	/* init logger engine */
+    init_logger();
+    spd_log(LOG_DEBUG, " welcome\n");
+	spd_log(LOG_NOTICE, "sys name : %s debug level: %d  verbose level: %d\n",
             spd_config_SPD_SYSTEM_NAME, option_debug, option_verbose);
 	 
-	 if(is_deamon) {
-	 	spd_log(LOG_NOTICE, "run in background mode\n");
-	 	deamonize();
-	 }
-
-	 for(;;);
+	//for(;;);
 }
 
  
