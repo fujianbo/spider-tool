@@ -182,9 +182,7 @@ static void deamonize()
 		spd_log(LOG_ERROR, "error when fork\n");
 		exit(0); /* error */
 	} else {
-		/* Change the file mode mask */
-        umask(0);
-		if(setsid() < 0) {
+		 if(setsid()< 0) {
 			spd_log(LOG_ERROR, "error when change session id");
 			exit(0);
 		}
@@ -198,6 +196,11 @@ static void deamonize()
 		exit(0);
 	} 
 
+	/* Change the file mode mask */
+    umask(0);
+	
+	chdir("/");
+	
 	/* child child proc, we are no longer the  session leader  and process group leader */
 	/* ignore fd leak */
 	fd = open("/dev/null", O_RDONLY);
@@ -707,7 +710,10 @@ int main(int argc, char *argv[])
 	spd_log(LOG_NOTICE, "sys name : %s debug level: %d  verbose level: %d\n",
             spd_config_SPD_SYSTEM_NAME, option_debug, option_verbose);
 	 
-	//for(;;);
+	for(;;) {
+		sleep(1);
+		spd_log(LOG_DEBUG, " welcome\n");
+	}
 }
 
  

@@ -17,6 +17,9 @@
 extern "C" {
 #endif
 
+int option_debug ;
+int option_verbose;
+
 /* spider main options definenations */
 enum spd_option_flags {
     /* Do not fork() */
