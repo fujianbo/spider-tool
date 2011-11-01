@@ -10,12 +10,22 @@
  * at the top of the source tree.
  */
 
- #ifndef _SPIDER_TIMES_H
- #define _SPIDER_TIMES_H
+#ifndef _SPIDER_TIMES_H
+#define _SPIDER_TIMES_H
 
- #if defined (__cplusplus) || defined(c_plusplus)
- extern "C" {
- #endif
+#include <sys/time.h>
+
+#if defined (__cplusplus) || defined(c_plusplus)
+extern "C" {
+#endif
+
+
+/* We have to let the compiler learn what types to use for the elements of a
+   struct timeval since on linux, it's time_t and suseconds_t, but on *BSD,
+   they are just a long. */
+extern struct timeval tv;
+typedef typeof(tv.tv_sec) spd_time_t;
+typedef typeof(tv.tv_usec) spd_suseconds_t;
 
 /*!
  * \brief Computes the difference (in seconds) between two \c struct \c timeval instances.
@@ -107,6 +117,26 @@ static inline int spd_tvcmp(struct timeval a, struct timeval b)
 static inline int spd_tveq(struct timeval a, struct timeval b)
 {
 	return (a.tv_sec == b.tv_sec && a.tv_usec == b.tv_usec);
+}
+
+static inline struct timeval spd_tv(spd_time_t sec, spd_suseconds_t su)
+{
+	struct timeval tv;
+
+	tv.tv_sec = sec;
+	tv.tv_usec = su;
+
+	return su;
+}
+
+/*!
+ * \brief Returns a timeval corresponding to the duration of n samples at rate r.
+ * Useful to convert samples to timevals, or even milliseconds to timevals
+ * in the form spd_samp2tv(milliseconds, 1000)
+ */
+static inline struct timeval spd_samp2tv(unsigned int _nsamp, unsigned int _rate)
+{
+	return spd_tv(_nsamp / _rate, (_nsamp % _rate) * (1000000 / _rate));
 }
 
 struct timeval spd_tvsub(struct timeval a, struct timeval b);

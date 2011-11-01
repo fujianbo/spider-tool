@@ -55,8 +55,6 @@ extern "C" {
 #define spd_config_SPD_CONFIG_DIR  "/etc/spider"
 
 
-int option_debug ;
-int option_verbose;
 
 #if defined(__cplusplus) || defined(c_plusplus)
 }
