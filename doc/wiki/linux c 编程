@@ -1,0 +1,146 @@
+1.C语言 杀死进程方式
+
+ 1) 读取进程运行时文件，文件内为进程Pid号码
+ 2) 读取进程号，调用系统调用kill,给kill发SIGTERM 信号。
+
+代码：
+static int kill_spider_backgroud()
+{
+	char path[MAX_PATH];
+	FILE *f;
+	int pid = 0; /* pid number from pid file */
+
+	/* set global dirs */
+
+	spd_snprintf(path, sizeof(path),"%s/%s", spd_global_dirs_PID_DIR, pfile);
+
+	if((f = fopen(path, "r")) == 0) {
+		fprintf(stderr, "Can't open pid file %s", path);
+		return -1;
+	}
+	if(fscanf(f, "d", &pid)!= 1) {
+		spd_log(LOG_ERROR, "unenble to get pid !\n");
+	}
+	
+	/* send signal SIGTERM to kill */
+	if(pid > 0) {
+		spd_log(LOG_DEBUG, "Killing  %d\n", pid);
+		kill(pid, SIGTERM);
+	}
+
+	fclose(f);
+
+	return 0;
+}
+
+2. 使进程在后台运行
+
+守护进程最重要的特性是后台运行。在这一点上DOS下的常驻内存程序TSR与之相似。其次，守护进程必须与其运行前的环境隔离开来。这些环境包括未关闭的文件描述符，控制终端，会话和进程组，工作目录以及文件创建掩模等。这些环境通常是守护进程从执行它的父进程（特别是shell）中继承下来的。最后，守护进程的启动方式有其特殊之处。它可以在Linux系统启动时从启动脚本/etc/rc.d中启动，可以由作业规划进程crond启动，还可以由用户终端（通常是shell）执行。 
+总之，除开这些特殊性以外，守护进程与普通进程基本上没有什么区别。因此，编写守护进程实际上是把一个普通进程按照上述的守护进程的特性改造成为守护进程.
+
+   分四步： 
+1） 创建子进程，脱离父进程，
+   为避免挂起控制终端将Daemon放入后台执行。方法是在进程中调用fork使父进程终止，让Daemon在子进程中后台执行。 
+2） 脱离控制终端，登录会话和进程组 :
+  进程属于一个进程组，进程组号（GID）就是进程组长的进程号（PID）。登录会话可以包含多个进程组。这些进程组共享一个控制终端。这个控制终端通常是创建进程的登录终端。 
+  控制终端，登录会话和进程组通常是从父进程继承下来的。我们的目的就是要摆脱它们，使之不受它们的影响。方法是在第1点的基础上，调用setsid()使进程成为会话组长：
+3） 禁止进程重新打开控制终端 :
+ 现在，进程已经成为无终端的会话组长。但它可以重新申请打开一个控制终端。可以通过使进程不再成为会话组长来禁止进程重新打开控制终端：
+4）关闭打开的文件描述符:
+  进程从创建它的父进程那里继承了打开的文件描述符。如不关闭，将会浪费系统资源，造成进程所在的文件系统无法卸下以及引起无法预料的错误
+
+static void deamonize()
+{
+	int fd;
+	int pid;
+
+	if(pid = fork()) {
+		exit(0); /*  parent process, exit it */
+	} else if(pid < 0) {
+		spd_log(LOG_ERROR, "error when fork\n");
+		exit(0); /* error */
+	} else {
+		if(setsid() < 0) {
+			spd_log(LOG_ERROR, "error when change session id");
+			exit(0);
+		}
+	}
+	
+	/* child proc, for now , we are  session leader  and process group  leader */
+	if(pid = fork()) {
+		exit(0); /* kill child */
+	} else if(pid < 0) {
+		spd_log(LOG_ERROR, "error when fork\n");
+		exit(0);
+	} 
+
+	/* child child proc, we are no longer the  session leader  and process group leader */
+	/* ignore fd leak */
+	fd = open("/dev/null", O_RDONLY);
+	if(fd != 0) {
+		dup2(fd, 0);
+		close(fd);
+	}
+	fd = open("/dev/null", O_WRONLY);
+	if(fd != 1) {
+		dup2(fd, 1);
+		close(fd);
+	}
+	fd = open("/dev/null", O_WRONLY);
+	if(fd != 2) {
+		dup2(fd, 2);
+		close(fd);
+	}
+	
+}
+
+3. 字符串操作函数 strstr
+ /*
+  The  strstr()  function finds the first occurrence of the substring needle 
+  in the string haystack.  The terminating  '\0' characters are not compared.
+ */
+char *strstr_r(char *s1, char *s2)
+{
+   /*  s1 : hellwoleddlfjwo, s2: wol */
+   const char *p1, *p2;
+   if((*s2) == '\0') /* Early versions of Linux libc,strstr  would not allow an empty needle argument */
+       return s1;
+
+   while( (s1 = strchr(s1, *s2)) != NULL) {
+       p1 = s1;     /* found first character of s2, see if the rest matches */
+       p2 = s2;
+       while((*p1++ == *p2++)) {
+          if(*p1 == '\0')
+              return s1; /* both strings ended together */
+       }
+       if(*p2 == '\0') {
+          break;
+       }
+       s1++;
+   }
+
+    return s1;
+}
+
+4. 字符串strchr 
+
+/*
+   The strchr() and strrchr() functions return a pointer to the matched character or NULL 
+   if  the  character  is  not found.   
+ */
+char *strchr_r(const char *str, int c)
+{
+    if(!str)
+       return NULL;
+
+    char ch = (char)c;
+
+    while((*str) && ((*str) != ch))
+        str++;
+    if((*str) == ch)
+        return (char *)str;
+
+    return NULL;
+}
+
+
