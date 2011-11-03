@@ -1,0 +1,16 @@
+使用netstat查看各个状态的数量
+netstat -na |awk ‘{print $6}’|sort |uniq -c |sort -nr
+发现很多的CLOSE_WAIT，并且还在不断增加中。
+觉得可能是CLOSE_WAIT得不到释放，占用很多资源，
+于是修改sysctl.conf中关于tcp连接的连接时间等设置，结果问题依旧。
+怀疑收到攻击，使用
+netstat -na |grep CLOSE_WAIT|awk ‘{print $5}’|awk -F”:” ‘{print $1}’|sort |uniq -c |sort -nr |wc -l 查看连接过来的地址，发现都是地址来源都是正常的
+首先检查
+使用 ps -fe |grep programname 查看获得进程的pid
+再使用 ps -Lf pid 查看对应进程下的线程数，发现数值为303，远小于实际应该的数量。于是初步判断是由于线程数不够造成的原因。查找资料发现可以通过设置 ulimit -s 来增加每进程线程数。
+每进程可用线程数 = VIRT上限/stack size
+其中 VIRT 上限: 32位x86 = 3G 64位x64=64G
+statck size 默认是 10240 因此在默认情况下
+32位系统上单进程最多可以创建300个线程，
+64系统在内存充足的情况下最多可以创建 6400 个线程。
+在机器硬件固定的情况下，可以通过 ulimit -s 降低stack size 的设置值来获得更多的每进程线程数。

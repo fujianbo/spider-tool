@@ -1,0 +1,15 @@
+介绍：
+本篇文章 我将从一个开发者的角度介绍asterisk服务器架构，关于相关api的介绍在代码中很详细。
+从high level 开始，然后输入细节。
+
+1.Modular Architecture
+asterisk 是一个高度模块化的application，整个asterisk包括core 及众多模块构成。
+这种架构方式在流行的开源软件中如 freeswitch,apache, linux。
+asterisk的核心代码在main/目录下,其他模块都在运行时加载，可配制，当模块加载时注册其提供给内核的功能,比如我们熟知的dialplan applictions.
+
+
+
+
+
+
+
