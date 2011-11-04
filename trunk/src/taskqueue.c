@@ -21,7 +21,7 @@
  #include "utils.h"
  #include "strings.h"
  #include "thread.h"
-
+ #include "options.h"
 /*!
   *\brief tps_task struct is queued to a taskqueue
   * tps_task are processed in FIFO order and freed by the taskprocessing

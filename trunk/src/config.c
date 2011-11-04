@@ -26,7 +26,7 @@
 #include "linkedlist.h"
 #include "threadprivdata.h"
 #include "const.h"
-
+#include "options.h"
 
 #define MAX_NEXT_COMMENT 128
 #define COBUF_LEN  250

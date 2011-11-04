@@ -15,6 +15,7 @@
 #include "threadprivdata.h"
 #include "logger.h"
 #include "const.h"
+#include "options.h"
 
 /* make sure spd_sockaddr_tostring_fmt is thread_safe */
 SPD_THREADPRIVDATA(spd_sockaddr_string_buf);
