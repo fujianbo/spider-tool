@@ -28,6 +28,7 @@ extern "C" {
 #include "thread.h"
 #include "logger.h"
 #include "const.h"
+#include "options.h"
 
 /******************** client part ********************************************/
 

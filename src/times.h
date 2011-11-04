@@ -126,7 +126,7 @@ static inline struct timeval spd_tv(spd_time_t sec, spd_suseconds_t su)
 	tv.tv_sec = sec;
 	tv.tv_usec = su;
 
-	return su;
+	return tv;
 }
 
 /*!

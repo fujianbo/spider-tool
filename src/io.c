@@ -12,6 +12,7 @@
 #include "io.h"
 #include "utils.h"
 #include "logger.h"
+#include "options.h"
 
  /*! \brief Create an I/O context */
  struct io_context *spd_io_context_create(void)
