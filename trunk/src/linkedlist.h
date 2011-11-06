@@ -585,7 +585,7 @@ struct __dummy_##name
         (head)->cur.next = __list_head->first;                 \
         __list_head->first = (head);                        \
     }                                                    \
-    __new_prev = (head);                                 \
+    __list_prev = (head);                                 \
  } while (0)
 
 #define SPD_RWLIST_INSERT_BEFORE_CURRENT SPD_LIST_INSERT_BEFORE_CURRENT
