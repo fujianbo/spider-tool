@@ -1,0 +1,219 @@
+1 . DialPlan
+
+ freeswitch 分机号都保存在conf/directory 目录下
+系统启动时加载分机信息到内存，当收到注册包时在directory目录下的usr 被搜寻，搜寻依据是注册请求的to ,from 头域的域名为系统所在的域名，
+
+
+分机配置文件的分级结构：
+
+  domain 
+       groups
+            group
+              
+                  usr
+  
+                  usr
+             
+            group  
+        groups          
+  domain
+
+directory 目录下包含若干xml文件，可以每个用户一个xml profile,系统启动时动态加载，
+除了通过文件方式配置用户外，可以通过 mod_xml_curl模块 访问web server, web server 在
+访问数据库，实现大批量分机的添加。
+
+可以在用户的配置文件中设置一些附加给此用户的变量。
+
+directory 目录的内容加载后可以被系统的所有模块获取，这样减少数据冗余。
+
+dialplan 全局变量 用 $${default_areacode}"  访问，通道变量用${default_areacode}"访问
+
+conf/var.xml文件定义了系统的全局变量。
+
+单个用户 的配置文件模板
+
+<include>
+	<user id="1000"> //id 代表用户名，认证时用户名。
+		<params>
+			<param name="password" value="$${default_password}"/>
+		</params>
+	<variables>
+		<variable name="toll_allow value="domestic,international,local"/> //此用户的 channel会设置此变量，用户的权限
+                 其她可设置的变量：               
+		 accountcode ：用户账户，会出现在CDR中。
+  		user_context： 用户打电话时走dialplan中context名为  user_context 的值
+		effective_caller_id_name： 呼叫其他用户时显示给对方的用户名，（只有被叫在系统上注册才有效）
+		effective_caller_id_number ：给对方显示的用户号，（只有被叫在系统上注册才有效）
+		outbound_caller_id_name：通过 sip中继外乎时给对方送的用户名
+		outbound_caller_id_number ：通过 sip中继外乎时给对方送的用户号码
+		callgroup ：附加属性，
+
+
+	</variables> 
+	</user>
+</include>
+
+
+一个分机默认配置包含：
+A username for SIP and for authorization
+A voicemail password
+A means of allowing/restricting dialling
+A means of handling caller ID being sent out
+Several arbitrary variables that can be used or ignored as needed
+
+
+配置一个分机过程：
+
+
+#>cd /usr/local/freeswitch/conf/directory/default
+#>cp 1000.xml 1030.xml
+
+Replace all occurrences of "1000" with "1030"
+
+修改default dialplan
+
+重新加载配置文件使配置生效：
+
+reloadxml
+
+控制台查看哪些分机主上已经注册：
+
+sofia status profile internal
+
+freeswitch的dialplan单独一个目录，分机的conext 为dialplan目录下的conext.xml
+
+与外部链接：
+
+
+freeswitch通过 sip网关联系外部世界，freeswitch此时在sip server 来看是一个user.
+
+配置网关方式：
+创建中继文件：
+
+conf/sip_profiles/external/test.xml 
+
+<include>
+<gateway name="custom"> 
+<param name="username" value="MY_USER_NAME"/> //sip provider提供的用户名及密码
+<param name="password" value="MY_PASSWORD"/>
+<param name="realm" value="iptel.org"/>
+<!-- iptel.org requires a 'proxy' parameter -->
+<param name="proxy" value="sip.iptel.org"/>
+</gateway>-->
+</include>
+
+使配置生效：
+cli 执行：
+sofia profile external restart reloadxml （此命令会把正在通话的分机挂掉，更安全的方式是用 sofia profile external rescan reloadxml）
+cli执行 sofia status 
+ 返回系统sip 配置信息
+ 主要分两类：1.网关(gateway) 2.本地注册用户（profile）
+
+
+
+mod_xml_curl
+
+此模块为与Asterisk realtime 机制差不多，可以通过此模让freeswitch 需要时动态访问外部数据库或Web Server.这样可以实现动态控制freeswitch核心。
+
+比如 分机的添加可以通过在数据库配置，freeswitch通过此模块来加载分机。
+通过此模块可以绑定：
+1 .dialplan 
+ 
+<param name="gateway-url" value="http://localhost:8080" bindings="Dialplan"/>
+
+每次呼叫，系统都会先访问8080
+
+
+
+
+
+sofia.conf 文件：
+
+global_settings 节点：
+  子节点： 
+        log-level
+	tracelevel
+        debug-presence
+	debug-sla
+	auto-restart
+	rewrite-multicasted-fs-path
+  	to_host
+	original_server_host
+	original_hostname
+
+profiles 节点：  conf/sip_profiles/*.xml
+   默认有两个 
+	    internalx.ml
+            external.xml
+
+
+高性能：memory pool，taskqueue, multithread,hash,state Machine
+内核启动流程：
+
+两个函数
+switch_core_init 负责核心的初始化
+
+       apr_initialize()，
+       
+       switch_core_session_init，
+       switch_core_hash_init，
+       switch_console_init，
+       switch_event_init，
+       switch_xml_init，
+	switch_log_init，
+	switch_core_state_machine_init
+	switch_scheduler_task_thread_start
+	switch_nat_late_init，
+	switch_rtp_init，
+switch_loadable_module_init 各个模块的初始化
+
+
+呼叫流程：呼入
+ sip协议栈 从传输层收到sip消息，最终转到SIPUA层，进入 sofia_event_callback->sofia_queue_message
+
+
+sofia_msg_thread_start->sofia_msg_thread_run->
+sofia_process_dispatch_event-----------------            
+->our_sofia_event_callback->sofia_handle_sip_i_invite->switch_core_session_request
+              
+switch_core_session_thread_launch -> switch_core_session_thread_launch--->switch_ivr_originate()
+
+
+外乎:   fifo, conferrance,switch_ivr_originate
+     enterprise_originate_thread-> switch_ivr_originate----switch_core_session_outgoing_channel---->sofia_outgoing_channel->switch_core_session_request->
+
+
+
+freeswitch 内核几个概念：session,channle, tec_private,event,
+核心通过一个有限状态机来管理呼叫过程中每个状态对应的回调。
+
+一个呼叫进入系统后建立一条channel,此channle属于一个 server 维护的session，核心通过状态机来调度session以实现事件的流转。
+一个典型的呼叫流程 uac1-uas, uas-uac2, uac1-bridge-uac2,呼叫进入系统，系统建立session后启动switch_core_session_thread_launch 线程不断监听session状态，根据状态调用相应的回调，当然，这里的状态机是一个状态有限的，freeswitch 状态机分 以下状态：
+on_init，
+on_routing，
+on_execute，
+on_hangup，
+on_exchange_media
+on_soft_execute，
+on_consume_media，
+on_hibernate，
+on_reset，
+on_park，
+on_reporting，
+on_destroy。
+实际呼叫过程为这些状态的流转。
+
+uac1-uas: 呼入系统，系统建立session:
+
+sofia_handle_sip_i_invite->switch_core_session_request->switch_core_session_thread_launch,
+解析请求后从CS_NEW -> CS_INIT，  初始化后进入dialplan : CS_INIT -> CS_ROUTING, 状态机回调 switch_core_standard_on_routing 查找dialplan
+系统根据主叫，被叫的sip设置查找其对应的dialplan，然后加载到内存，
+呼叫状态 转换：CS_ROUTING -> CS_EXECUT，状态机调用 switch_core_standard_on_execute，然后按照规则一条一条执行刚加载的dialplan，这里即是可编程软交换的体现，根据需求灵活控制提供给一个呼叫的服务。当执行到bridge action 时，是让系统呼叫uac2, 调用switch_ivr_originate 外乎uac2,创建uac2在服务器端的session,channel,
+最后启动状态机线程switch_core_session_thread_launch进入状态机模式，CS_NEW -> CS_INIT-> CS_ROUTING-> CS_CONSUME_MEDIA，
+usc2最终应答 200 ok，服务器 根据200 ok sdp消息体与uac1提供的sdp协商，成功后发200 ok给 uac1,呼叫桥接成功。uac2状态机转换CS_CONSUME_MEDIA -> CS_EXCHANGE_MEDIA，媒体流桥接开始。
+
+
+
+
+freeswitch core programming  address
+http://freeswitch.wikidot.com/core-thread
