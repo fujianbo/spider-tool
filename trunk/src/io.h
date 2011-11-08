@@ -13,12 +13,123 @@
 #ifndef _SPIDER_IO_H
 #define _SPIDER_IO_H
 
-#include "poll.h"
-
 
 #if defined(__cplusplus) || defined(c_plusplus)
 extern "C" {
 #endif
+
+#ifdef HAVE_EPOLL
+
+#include <sys/epoll.h>
+
+#define SPD_IO_IN 	EPOLLIN		/*! Input ready */
+#define SPD_IO_OUT 	EPOLLOUT	/*! Output ready */
+#define SPD_IO_PRI	EPOLLPRI	/*! Priority input ready */
+
+/* Implicitly polled for */
+#define SPD_IO_ERR	EPOLLERR	/*! Error condition (errno or getsockopt) */
+#define SPD_IO_HUP	EPOLLHUP	/*! Hangup */
+
+#define SPD_IO_CONTEXT_NONE	(-1)
+
+typedef int spd_io_context_t;
+
+struct spd_io_rec;
+
+/*
+ * A spider IO callback takes its io_rec, a file descriptor, list of events, and
+ * callback data as arguments and returns 0 if it should not be
+ * run again, or non-zero if it should be run again.
+ */
+typedef int (*spd_io_cb)(struct spd_io_rec *ior, int fd, short events, void *cbdata);
+
+struct spd_io_rec {
+	spd_io_cb callback;
+	void *data;
+	int fd;
+};
+
+static inline void spd_io_init(struct spd_io_rec *ior, spd_io_cb callback, void *data)
+{
+	ior->callback = callback;
+	ior->data = data;
+	ior->fd = -1;
+}
+
+#define spd_ioactive(rec) ((rec)->fd != -1)
+
+/*! Creates a context
+ *
+ * Create a context for I/O operations
+ *
+ * \param slots	number of slots (file descriptors) to allocate initially (the number grows as necessary)
+ *
+ * \return the created I/O context
+ */
+
+#define spd_io_context_create(slots) epoll_create(slots)
+
+/*! Destroys a context
+ *
+ * \param ioc	context to destroy
+ *
+ * Destroy an I/O context and release any associated memory
+ */
+#define spd_io_context_destroy(ioc) close(ioc)
+ 
+
+/*! Adds an IO context
+ *
+ * \param ioc		context to use
+ * \param fd		fd to monitor
+ * \param events	events to wait for
+ *
+ * \return 0 on success or -1 on failure
+ */
+#define spd_io_add(ioc, ior,filedesc, mask) ({ \
+	const typeof(ior) __ior = (ior); \
+	const typeof(filedesc) __filedesc = (filedesc); \
+	struct epoll_event ev = {         \
+		.events = (mask), \
+		.data = {.ptr = __ior},      \
+	};       \
+	int ret; \
+	\
+	if(!(ret = epoll_ctl((ioc), EPOLL_CTL_ADD, __filedesc, &ev))) \
+		ior->fd = __filedesc; \
+	ret;     \
+})
+
+/*! Removes an IO context
+ *
+ * \param ioc	io_context to remove it from
+ * \param ior	io_rec to remove
+ *
+ * \return 0 on success or -1 on failure.
+ */
+ #define spd_io_remove(ioc, ior) ({ \
+	struct epoll_event ev;  \
+	const typeof(ior) __ior = (ior);  \
+	int ret;  \
+	\
+	if(!(ret = epoll_ctl((ioc), EPOLL_CTL_DEL, __ior->fd, &ev))) \
+		ior->fd = -1; \
+	ret; \
+ })
+
+/*! Waits for IO
+ *
+ * \param ioc		context to act upon
+ * \param howlong	how many milliseconds to wait
+ *
+ * Wait for I/O to happen, returning after
+ * howlong milliseconds, and after processing
+ * any necessary I/O.  Returns the number of
+ * I/O events which took place.
+ */
+ int spd_io_wait(spd_io_context_t ioc, int howlong);
+ 
+#else  /* HAVE_EPOLL */
 
 /*! Input ready */
 #define SPD_IO_IN         POLLIN
@@ -144,6 +255,8 @@ int spd_io_context_wait(struct io_context *ioc, int howlong);
  * Debugging: Dump everything in the I/O array
  */
 void spd_io_context_dump(struct io_context *ioc);
+
+#endif /* HAVE_EPOLL */
 
 #if defined(__cplusplus) || defined(c_plusplus)
 }

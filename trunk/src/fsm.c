@@ -48,7 +48,11 @@ int spd_fsm_destroy(struct spd_fsm *self)
 		self->lock = spd_mutex_destroy(&self->lock);
 
 		spd_safe_free(self);
+		
+		return 0;
 	}
+
+	return -1;
 }
 
 static struct spd_fsm_entry *spd_fsm_entry_create()

@@ -14,6 +14,33 @@
 #include "logger.h"
 #include "options.h"
 
+
+#ifdef HAVE_EPOLL
+
+int spd_io_wait(spd_io_context_t ioc, int howlong)
+{
+	struct epoll_event events[16];
+	struct spd_io_rec *ior;
+	int x;
+	int nevents;
+
+	nevents = epoll_wait(ioc, events, ARRAY_LEN(events), howlong)
+
+	for(x = 0; x < nevents; x++) {
+		ior = events[x].data.ptr;
+		if(ior->callback) {
+			if (!ior->callback(ior, ior->fd, events[x].events, ior->data)) {
+				/* Time to delete them since they returned a 0 */
+				spd_io_remove(ioc, ior);
+			}
+		}
+	}
+
+	return nevents;
+}
+
+#else
+
  /*! \brief Create an I/O context */
  struct io_context *spd_io_context_create(void)
  {
@@ -251,3 +278,5 @@ void spd_io_context_dump(struct io_context *ioc)
 	}
 	spd_debug(1, "================================================\n");
 }
+
+#endif
