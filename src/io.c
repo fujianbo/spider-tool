@@ -13,9 +13,10 @@
 #include "utils.h"
 #include "logger.h"
 #include "options.h"
+#include "poll.h"
 
 
-#ifdef HAVE_EPOLL
+#ifdef USE_HAVE_EPOLL
 
 int spd_io_wait(spd_io_context_t ioc, int howlong)
 {
