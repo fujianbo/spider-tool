@@ -31,6 +31,7 @@
 #include <unistd.h>
 #include <dirent.h>
 #include <sys/stat.h>
+#include<sys/poll.h>
 
 #include "linkedlist.h"
 #include "lock.h"

@@ -18,7 +18,7 @@
 extern "C" {
 #endif
 
-#ifdef HAVE_EPOLL
+#ifdef USE_HAVE_EPOLL
 
 #include <sys/epoll.h>
 
