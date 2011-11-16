@@ -10,6 +10,13 @@
  * at the top of the source tree.
  */
 
+#ifndef _SPIDER_FDEVENT_H
+#define _SPIDER_FDEVENT_H
+
+#if defined(__cplusplus) || defined(c_plusplus)
+extern "C" {
+#endif
+
 #include <sys/epoll.h>  
   
 #define BV(x) (1 << x)  
@@ -42,4 +49,10 @@ int fdevent_register(fdevents *ev,int fd,fdevent_handler handler,void *ctx);
 int fdevent_unregister(fdevents *ev,int fd);  
 int fdevent_event_add(fdevents *ev,int fd,int events);  
 int fdevent_event_del(fdevents *ev,int fd);  
-int fdevent_loop(fdevents *ev, int timeout_ms);  
+int fdevent_loop(fdevents *ev, int timeout_ms);
+int fdevent_fcntl_set(fdevents *ev, int fd);
+
+#if defined(__cplusplus) || defined(c_plusplus)
+}
+#endif
+#endif
