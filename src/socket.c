@@ -450,6 +450,11 @@ int spd_bind(int fd, struct spd_sockaddr *addr)
 	return bind(fd, (struct sockaddr *)&addr->ss, addr->len);
 }
 
+int spd_listen(int fd, int backlog)
+{
+	return listen(fd, backlog);	
+}
+
 int spd_accept(int fd, struct spd_sockaddr *addr)
 {	
 	addr->len = sizeof(struct spd_sockaddr);

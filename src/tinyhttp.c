@@ -24,6 +24,9 @@
 #define SUCCESS  0
 #define ERROR   -1
 
+#define tinyhttp_conf  "/etc/tinyhttp/tinyhttp.conf"
+#define DEFAULT_PORT   8080
+
 typedef struct event_handle{
     int socket_fd;
     int file_fd;
@@ -279,3 +282,99 @@ int main(){
 
     return SUCCESS;
 }
+
+static int init_network(struct spd_sockaddr *addr)
+{
+	int server_fd = -1;
+	int x = 1;
+	int flags;
+	
+	if(spd_sockaddr_isnull(addr)) {
+		spd_log(LOG_DEBUG, "server is disabled\n");
+		return -1;
+	}
+
+	server_fd = socket(spd_sockaddr_is_ipv6(addr) ? 
+						AF_INET6 : AF_INET, SOCK_STREAM, 0);
+
+	if(server_fd < 0) {
+		spd_log(LOG_ERROR, "Unable to alloca server fd %s\n", strerror(errno));
+		return -1;
+	}
+
+	setsockopt(server_fd, SOL_SOCEK, SO_REUSEADDR, &x, sizeof(x));
+
+	if(spd_bind(server_fd, addr)) {
+		spd_log(LOG_ERROR, "Uable bind http server to %s  : %s\n", 
+					spd_sockaddr_tostring_default(addr), strerror(errno));
+		goto error;
+	}
+
+	if(spd_listen(server_fd, 10)) {
+		spd_log(LOG_ERROR, "Uable listen on %s : %s\n",
+					spd_sockaddr_tostring_default(addr), strerror(errno));
+		goto error;
+	}
+
+	flags = fcntl(server_fd, F_GETFL);
+	fcntl(server_fd, F_SETFL,flags | O_NONBLOCK);
+	fcntl(server_fd, F_SETFD, FD_CLOEXEC);
+	
+	return server_fd;
+	
+	error :
+		close(server_fd);
+		server_fd = -1;
+		return server_fd;
+}
+
+static void __init_tinyhttp()
+{
+	struct spd_config *cfg;
+	struct spd_variable *v;
+
+	struct spd_sockaddr *server_addr = NULL;
+	uint32_t bindport = DEFAULT_PORT;
+	int num_addrs = 0;
+	int max_workers = 1;
+	
+	cfg = spd_config_load(tinyhttp_conf);
+	if(!cfg) {
+		spd_log(LOG_WARNING, "Unble to open config file %s\n", tinyhttp_conf);
+		return;
+	}
+
+	v = spd_variable_browse(v->name,"general");
+
+	for(; v; v = v->next) {
+		if(!strcasecmp(v->name, "bindport")) {
+			bindport = atoi(v->value);
+		} else if(!strcasecmp(v->name, "bindaddr")) {
+			if(!(num_addrs = spd_sockaddr_resolve(&server_addr, v->value, 0, SPD_AF_UNSPEC))) {
+				spd_log(LOG_WARNING, "Invalid bind address %s\n", v->value);
+			} else {
+				spd_log(LOG_NOTICE, "Got %d addresses\n", num_addrs);
+			}
+		} else if(!strcasecmp(v->name, "max_worker")) {
+			max_workers = atoi(v->value);
+		} else {
+			spd_log(LOG_WARNING, "Ignore unkown options %s in %s\n", v->name, tinyhttp_conf);
+		}
+	}
+
+	spd_config_destroy(cfg);
+
+	if(!spd_sockaddr_get_port(server_addr)) {
+		spd_sockaddr_set_port(server_addr, bindport);
+	}
+
+	init_network(server_addr);
+
+	
+}
+
+void init_tinyhttp()
+{
+	__init_tinyhttp();
+}
+
