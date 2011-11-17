@@ -501,6 +501,17 @@ int spd_bind(int fd, struct spd_sockaddr *addr);
 /*!
  *
  * \brief
+ * Wrapper around listen(2) that uses struct spd_sockaddr.
+ *
+ * \details
+ * For parameter and return information, see the man page for
+ * listen(2).
+ */
+int spd_listen(int fd, int backlog);
+
+/*!
+ *
+ * \brief
  * Wrapper around connect(2) that uses struct spd_sockaddr.
  *
  * \details
