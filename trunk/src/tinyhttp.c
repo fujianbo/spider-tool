@@ -26,6 +26,10 @@
 
 #define tinyhttp_conf  "/etc/tinyhttp/tinyhttp.conf"
 #define DEFAULT_PORT   8080
+#define DEFAULT_MAX_FDS  1024
+
+/* server signal */
+static volatile sig_atomic_t is_shutdown = 0;
 
 typedef struct event_handle{
     int socket_fd;
@@ -283,6 +287,10 @@ int main(){
     return SUCCESS;
 }
 
+fdevent_handler handle_connection(int fd, int events)
+{
+	
+}
 static int init_network(struct spd_sockaddr *addr)
 {
 	int server_fd = -1;
@@ -332,12 +340,15 @@ static void __init_tinyhttp()
 {
 	struct spd_config *cfg;
 	struct spd_variable *v;
+	int server_fd = -1;
 
 	struct spd_sockaddr *server_addr = NULL;
 	uint32_t bindport = DEFAULT_PORT;
 	int num_addrs = 0;
-	int max_workers = 1;
-	
+	int max_workers = 0;
+	int max_fds = DEFAULT_MAX_FDS;
+	struct fdevents ev = NULL;
+
 	cfg = spd_config_load(tinyhttp_conf);
 	if(!cfg) {
 		spd_log(LOG_WARNING, "Unble to open config file %s\n", tinyhttp_conf);
@@ -357,6 +368,8 @@ static void __init_tinyhttp()
 			}
 		} else if(!strcasecmp(v->name, "max_worker")) {
 			max_workers = atoi(v->value);
+		} else if(!strcasecmp(v->name, "max_fd")) {
+			
 		} else {
 			spd_log(LOG_WARNING, "Ignore unkown options %s in %s\n", v->name, tinyhttp_conf);
 		}
@@ -368,8 +381,63 @@ static void __init_tinyhttp()
 		spd_sockaddr_set_port(server_addr, bindport);
 	}
 
-	init_network(server_addr);
+	/* prepare  socket */
+	server_fd = init_network(server_addr);
 
+	if(server_fd < 0) {
+		spd_log(LOG_ERROR, "failed init network\n");
+		return;
+	}
+	
+    /* start watcher and workers  */
+	if(max_workers > 0) {
+		int is_child = 0;
+		while(!is_child && !is_shutdown) {
+			if(max_workers > 0) {
+				switch (fork()) {
+					case -1:
+						return -1;
+					case 0:
+						is_child = 1;
+						break;
+					default :
+						max_workers--;
+						break;
+				}
+			} else {
+				int status;
+				if(wait(&status) != -1) {
+					max_workers++;
+				} else {
+					switch(errno) {
+						case INTR:
+							break;
+						default :
+							spd_log(LOG_ERROR, "failed wait %s\n", strerror(errno));
+							break;
+					}
+				}
+			}
+		}
+		if(is_shutdown) {
+			/* kill all childs */
+			kill(0, SIGTERM);
+		}
+		if(!is_child)
+			return 0;
+	}
+
+	/* prepare fd event */
+	
+	if((ev = fdevent_init(max_fds)) == NULL) {
+		spd_log(LOG_ERROR, "failed to init fd event\n");
+		return;
+	}
+
+	fdevent_register(ev, server_fd,handle_connection,NULL);
+	fdevent_event_add(ev, server_fd, FDEVENT_IN);
+	fdevent_loop(ev, 1000);
+	
 	
 }
 
