@@ -45,64 +45,17 @@ typedef struct event_handle{
 
 typedef int ( * EVENT_HANDLE )( struct event_handle * ev );
 
-int create_listen_fd( int port ){
-    int listen_fd;
-    struct sockaddr_in my_addr;
-    if( ( listen_fd = socket( AF_INET, SOCK_STREAM, 0 ) ) == -1 ){
-        perror( "create socket error" );
-        exit( 1 );
-    }
-    int flag;
-    int olen = sizeof(int);
-    if( setsockopt( listen_fd, SOL_SOCKET, SO_REUSEADDR
-                        , (const void *)&flag, olen ) == -1 ){
-        perror( "setsockopt error" );
-    }
-    flag = 5;
-    if( setsockopt( listen_fd, IPPROTO_TCP, TCP_DEFER_ACCEPT, &flag, olen ) == -1 ){
-        perror( "setsockopt error" );
-    }
-    flag = 1;
-    if( setsockopt( listen_fd, IPPROTO_TCP, TCP_CORK, &flag, olen ) == -1 ){
-        perror( "setsockopt error" );
-    }
-    int flags = fcntl( listen_fd, F_GETFL, 0 );
-    fcntl( listen_fd, F_SETFL, flags|O_NONBLOCK );
-    my_addr.sin_family = AF_INET;
-    my_addr.sin_port = htons( port );
-    my_addr.sin_addr.s_addr = INADDR_ANY;
-    bzero( &( my_addr.sin_zero ), 8 );
-    if( bind( listen_fd, ( struct sockaddr * )&my_addr,
-    sizeof( struct sockaddr_in ) ) == -1 ) {
-        perror( "bind error" );
-        exit( 1 );
-    }
-    if( listen( listen_fd, 1 ) == -1 ){
-        perror( "listen error" );
-        exit( 1 );
-    }
-    return listen_fd;
-}
-
 int create_accept_fd( int listen_fd ){
-    int addr_len = sizeof( struct sockaddr_in );
-    struct sockaddr_in remote_addr;
-    int accept_fd = accept( listen_fd,
-        ( struct sockaddr * )&remote_addr, &addr_len );
+
+	int addr_len = sizeof( struct spd_sockaddr);
+    struct spd_sockaddr remote_addr;
+
+	int accept_fd = spd_accept(listen_fd, &remote_addr);
+	
     int flags = fcntl( accept_fd, F_GETFL, 0 );
     fcntl( accept_fd, F_SETFL, flags|O_NONBLOCK );
-    return accept_fd;
-}
 
-int fork_process( int process_num ){
-    int i;
-    int pid=-1;
-    for( i = 0; i < process_num; i++ ){
-        if( pid != 0 ){
-            pid = fork();
-        }
-    }
-    return pid;
+	return accept_fd;
 }
 
 int init_evhandle(EH ev,int socket_fd,int epoll_fd,EVENT_HANDLE r_handle,EVENT_HANDLE w_handle){
@@ -187,7 +140,7 @@ int clean_request(EH ev){
     ev->request_len = 0;
 }
 
-int read_hook_v2( EH ev ){
+int read_hook( EH ev ){
     char in_buf[MAX_REQLEN];
     memset( in_buf, 0, MAX_REQLEN );
     int recv_num = recv( ev->socket_fd, &in_buf, MAX_REQLEN, 0 );
@@ -210,7 +163,7 @@ int read_hook_v2( EH ev ){
     return recv_num;
 }
 
-int write_hook_v1( EH ev ){
+int write_hook(EH ev){
     struct stat file_info;
     ev->file_fd = open( ev->request, O_RDONLY );
     if( ev->file_fd == ERROR ){
@@ -236,61 +189,6 @@ int write_hook_v1( EH ev ){
     return SUCCESS;
 }
 
-int main(){
-    int listen_fd = create_listen_fd(3389);
-    int pid = fork_process( 3 );
-    if( pid == 0 ){
-        int accept_handles = 0;
-        struct epoll_event ev, events[20];
-        int epfd = epoll_create( 256 );
-        int ev_s = 0;
-
-        ev.data.fd = listen_fd;
-        ev.events = EPOLLIN|EPOLLET;
-        epoll_ctl( epfd, EPOLL_CTL_ADD, listen_fd, &ev );
-        struct event_handle ev_handles[256];
-        for( ;; ){
-            ev_s = epoll_wait( epfd, events, 20, 500 );
-            int i = 0;
-            for( i = 0; i<ev_s; i++ ){
-                if( events[i].data.fd == listen_fd ){
-                    if( accept_handles < MAX_PROCESS_CONN ){
-                        accept_handles++;
-                        int accept_fd = create_accept_fd( listen_fd );
-                        init_evhandle(&ev_handles[accept_handles],accept_fd,epfd,read_hook_v2,write_hook_v1);
-                        ev.data.ptr = &ev_handles[accept_handles];
-                        ev.events = EPOLLIN|EPOLLET;
-                        epoll_ctl( epfd, EPOLL_CTL_ADD, accept_fd, &ev );
-                    }
-                }
-                else if( events[i].events&EPOLLIN ){
-                    EVENT_HANDLE current_handle = ( ( EH )( events[i].data.ptr ) )->read_handle;
-                    EH current_event = ( EH )( events[i].data.ptr );
-                    ( *current_handle )( current_event );
-                }
-                else if( events[i].events&EPOLLOUT ){
-                    EVENT_HANDLE current_handle = ( ( EH )( events[i].data.ptr ) )->write_handle;
-                    EH current_event = ( EH )( events[i].data.ptr );
-                    if( ( *current_handle )( current_event )  == 0 ){
-                        accept_handles--;
-                    }
-                }
-            }
-        }
-    }
-    else{
-        //manager the process
-        int child_process_status;
-        wait( &child_process_status );
-    }
-
-    return SUCCESS;
-}
-
-fdevent_handler handle_connection(int fd, int events)
-{
-	
-}
 static int init_network(struct spd_sockaddr *addr)
 {
 	int server_fd = -1;
@@ -347,7 +245,6 @@ static void __init_tinyhttp()
 	int num_addrs = 0;
 	int max_workers = 0;
 	int max_fds = DEFAULT_MAX_FDS;
-	struct fdevents ev = NULL;
 
 	cfg = spd_config_load(tinyhttp_conf);
 	if(!cfg) {
@@ -369,7 +266,7 @@ static void __init_tinyhttp()
 		} else if(!strcasecmp(v->name, "max_worker")) {
 			max_workers = atoi(v->value);
 		} else if(!strcasecmp(v->name, "max_fd")) {
-			
+			max_fds = atoi(v->value);
 		} else {
 			spd_log(LOG_WARNING, "Ignore unkown options %s in %s\n", v->name, tinyhttp_conf);
 		}
@@ -428,17 +325,44 @@ static void __init_tinyhttp()
 	}
 
 	/* prepare fd event */
-	
-	if((ev = fdevent_init(max_fds)) == NULL) {
-		spd_log(LOG_ERROR, "failed to init fd event\n");
-		return;
-	}
+	int accept_handles = 0;
+    struct epoll_event ev, events[max_fds];
+    int epfd = epoll_create(max_fds);
+    int ev_s = 0;
 
-	fdevent_register(ev, server_fd,handle_connection,NULL);
-	fdevent_event_add(ev, server_fd, FDEVENT_IN);
-	fdevent_loop(ev, 1000);
+    ev.data.fd = listen_fd;
+    ev.events = EPOLLIN|EPOLLET;
+    epoll_ctl( epfd, EPOLL_CTL_ADD, listen_fd, &ev );
+    struct event_handle ev_handles[256];
 	
-	
+    for( ;; ){
+        ev_s = epoll_wait( epfd, events, max_fds, 1000);
+        int i = 0;
+        for( i = 0; i<ev_s; i++ ){
+            if(events[i].data.fd == server_fd){
+                if(accept_handles < MAX_PROCESS_CONN){
+                        accept_handles++;
+                        int accept_fd = create_accept_fd(server_fd);
+                        init_evhandle(&ev_handles[accept_handles],accept_fd,epfd,read_hook,write_hook);
+                        ev.data.ptr = &ev_handles[accept_handles];
+                        ev.events = EPOLLIN|EPOLLET;
+                        epoll_ctl( epfd, EPOLL_CTL_ADD, accept_fd, &ev );
+                    }
+                }
+                else if( events[i].events&EPOLLIN ){
+                    EVENT_HANDLE current_handle = ( ( EH )( events[i].data.ptr ) )->read_handle;
+                    EH current_event = ( EH )( events[i].data.ptr );
+                    ( *current_handle )( current_event );
+                }
+                else if( events[i].events&EPOLLOUT ){
+                    EVENT_HANDLE current_handle = ( ( EH )( events[i].data.ptr ) )->write_handle;
+                    EH current_event = ( EH )( events[i].data.ptr );
+                    if( ( *current_handle )( current_event )  == 0 ){
+                        accept_handles--;
+                    }
+                }
+            }
+        }
 }
 
 void init_tinyhttp()
