@@ -30,6 +30,11 @@ int spd_pthread_create_stack(pthread_t *thread, pthread_attr_t *attr, void*(*sta
 int spd_pthread_create_detached_stack(pthread_t *thread, pthread_attr_t *attr, void*(*start_routine)(void*), 
 			void *data, size_t stacksize, const char *file, const char *caller, int line, const char *start_fn);
 
+/*
+ *\breif  yeild thread for xx ms
+ */
+void spd_thread_sleep(uint64_t ms);
+
 /* usage :
   pthread_t thread; 
   pthread_attr_t attr;

@@ -69,4 +69,14 @@ int spd_pthread_create_detached_stack(pthread_t *thread, pthread_attr_t *attr, v
 
 	return res;
 }
- 
+
+void spd_thread_sleep(uint64_t ms)
+{
+	struct timespec interval;
+
+	interval.tv_sec = (long)(ms/1000);
+	interval.tv_nsec = (long)(ms%1000) * 1000000;
+
+	nanosleep(&interval, 0);
+}
+
