@@ -1,0 +1,76 @@
+\hypertarget{structspd__tcp__session__arg}{
+\section{spd\_\-tcp\_\-session\_\-arg Struct Reference}
+\label{structspd__tcp__session__arg}\index{spd\_\-tcp\_\-session\_\-arg@{spd\_\-tcp\_\-session\_\-arg}}
+}
+
+
+arguments for the accepting thread  
+
+
+
+
+{\ttfamily \#include $<$tcp\_\-engine.h$>$}
+
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{structspd__tcp__session__arg_add2916fad7ffe730b717a2eaa3af1777}{
+struct \hyperlink{structspd__sockaddr}{spd\_\-sockaddr} {\bfseries serveraddr}}
+\label{structspd__tcp__session__arg_add2916fad7ffe730b717a2eaa3af1777}
+
+\item 
+\hypertarget{structspd__tcp__session__arg_abd229c8c704c199499058a8454636423}{
+struct \hyperlink{structspd__sockaddr}{spd\_\-sockaddr} {\bfseries peeraddr}}
+\label{structspd__tcp__session__arg_abd229c8c704c199499058a8454636423}
+
+\item 
+\hypertarget{structspd__tcp__session__arg_a6eb3e070fd300b6375b5317a1f53f435}{
+struct \hyperlink{structspd__sockaddr}{spd\_\-sockaddr} {\bfseries oldaddr}}
+\label{structspd__tcp__session__arg_a6eb3e070fd300b6375b5317a1f53f435}
+
+\item 
+\hypertarget{structspd__tcp__session__arg_a669ffe34776a3367e6225a627a502e6f}{
+int {\bfseries poll\_\-timeout}}
+\label{structspd__tcp__session__arg_a669ffe34776a3367e6225a627a502e6f}
+
+\item 
+\hypertarget{structspd__tcp__session__arg_a56b3185eab5ef4eb745bd36de1881038}{
+int {\bfseries server\_\-fd}}
+\label{structspd__tcp__session__arg_a56b3185eab5ef4eb745bd36de1881038}
+
+\item 
+\hypertarget{structspd__tcp__session__arg_ab8202b971e2506ae78abe9d595bd42f4}{
+pthread\_\-t {\bfseries master}}
+\label{structspd__tcp__session__arg_ab8202b971e2506ae78abe9d595bd42f4}
+
+\item 
+\hypertarget{structspd__tcp__session__arg_ac015effc58bcab5bea3170e7c7cfa53c}{
+void $\ast$($\ast$ {\bfseries precheck\_\-func} )(void $\ast$)}
+\label{structspd__tcp__session__arg_ac015effc58bcab5bea3170e7c7cfa53c}
+
+\item 
+\hypertarget{structspd__tcp__session__arg_a3e7a2fb41f02b462df216cf56d269ee9}{
+void $\ast$($\ast$ {\bfseries accept\_\-func} )(void $\ast$)}
+\label{structspd__tcp__session__arg_a3e7a2fb41f02b462df216cf56d269ee9}
+
+\item 
+\hypertarget{structspd__tcp__session__arg_a23943ff609f6a23365b1bb234cc464ce}{
+void $\ast$($\ast$ {\bfseries work\_\-func} )(void $\ast$)}
+\label{structspd__tcp__session__arg_a23943ff609f6a23365b1bb234cc464ce}
+
+\item 
+\hypertarget{structspd__tcp__session__arg_a53e01dfdf07f6a394394e6e31a8e6afc}{
+const char $\ast$ {\bfseries name}}
+\label{structspd__tcp__session__arg_a53e01dfdf07f6a394394e6e31a8e6afc}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+arguments for the accepting thread The following code implements a generic mechanism for starting services on a TCP socket. The service is configured in the struct session\_\-args, and then started by calling server\_\-start(desc) on the descriptor. server\_\-start() first verifies if an instance of the service is active, and in case shuts it down. Then, if the service must be started, creates a socket and a thread in charge of doing the accept().
+
+The body of the thread is desc-\/$>$accept\_\-fn(desc), which the user can define freely. We supply a sample implementation, server\_\-root(), structured as an infinite loop. At the beginning of each iteration it runs periodic\_\-fn() if defined (e.g. to perform some cleanup etc.) then issues a poll() or equivalent with a timeout of 'poll\_\-timeout' milliseconds, and if the following accept() is successful it creates a thread in charge of running the session, whose body is desc-\/$>$worker\_\-fn(). The argument of worker\_\-fn() is a struct spd\_\-tcptls\_\-session\_\-instance, which contains the address of the other party, a pointer to desc, the file descriptors (fd) on which we can do a select/poll (but NOT I/O), and a FILE $\ast$on which we can do I/O. We have both because we want to support plain and SSL sockets, and going through a FILE $\ast$ lets us provide the encryption/decryption on the stream without using an auxiliary thread. 
+
+The documentation for this struct was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+tcp\_\-engine.h\end{DoxyCompactItemize}

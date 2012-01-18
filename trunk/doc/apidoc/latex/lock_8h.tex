@@ -1,0 +1,136 @@
+\hypertarget{lock_8h}{
+\section{lock.h File Reference}
+\label{lock_8h}\index{lock.h@{lock.h}}
+}
+
+
+General Spider locking definitions.  
+
+
+{\ttfamily \#include $<$pthread.h$>$}\par
+{\ttfamily \#include $<$netdb.h$>$}\par
+{\ttfamily \#include $<$time.h$>$}\par
+{\ttfamily \#include $<$sys/param.h$>$}\par
+{\ttfamily \#include $<$unistd.h$>$}\par
+{\ttfamily \#include $<$errno.h$>$}\par
+{\ttfamily \#include $<$string.h$>$}\par
+{\ttfamily \#include $<$stdio.h$>$}\par
+\subsection*{Defines}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{lock_8h_aa23b225dbc778bc7dea8fed801297a33}{
+\#define {\bfseries SPD\_\-PTHREADT\_\-NULL}~(pthread\_\-t) -\/1}
+\label{lock_8h_aa23b225dbc778bc7dea8fed801297a33}
+
+\item 
+\hypertarget{lock_8h_a831f348d72b6e8e9c9c2a325f9c480e4}{
+\#define {\bfseries SPD\_\-PTHREADT\_\-STOP}~(pthread\_\-t) -\/2}
+\label{lock_8h_a831f348d72b6e8e9c9c2a325f9c480e4}
+
+\item 
+\hypertarget{lock_8h_a9a4b324d8380fae65acef50d8ecd979e}{
+\#define {\bfseries PTHREAD\_\-MUTEX\_\-INIT\_\-VALUE}~PTHREAD\_\-MUTEX\_\-INITIALIZER}
+\label{lock_8h_a9a4b324d8380fae65acef50d8ecd979e}
+
+\item 
+\hypertarget{lock_8h_aa1241f5e28cab08c4eff445fd6710730}{
+\#define {\bfseries SPD\_\-MUTEX\_\-KIND}~PTHREAD\_\-MUTEX\_\-RECURSIVE\_\-NP}
+\label{lock_8h_aa1241f5e28cab08c4eff445fd6710730}
+
+\item 
+\#define {\bfseries DEADLOCK\_\-AVOIDANCE}(lock)
+\item 
+\hypertarget{lock_8h_a1731a17e559666c5a95cda780b3839b3}{
+\#define {\bfseries SPD\_\-MUTEX\_\-INIT\_\-VALUE}~((spd\_\-mutex\_\-t) PTHREAD\_\-MUTEX\_\-INIT\_\-VALUE)}
+\label{lock_8h_a1731a17e559666c5a95cda780b3839b3}
+
+\item 
+\hypertarget{lock_8h_ad83cda33835dd8ef85e5b55f0ef15ae8}{
+\#define {\bfseries SPD\_\-MUTEX\_\-INIT\_\-VALUE\_\-NOTRACKING}~((spd\_\-mutex\_\-t) PTHREAD\_\-MUTEX\_\-INIT\_\-VALUE}
+\label{lock_8h_ad83cda33835dd8ef85e5b55f0ef15ae8}
+
+\item 
+\hypertarget{lock_8h_a44b7b7f092cff4068a44818a621d3420}{
+\#define {\bfseries spd\_\-mutex\_\-ini\_\-notracking}(m)~spd\_\-mutex\_\-int(m)}
+\label{lock_8h_a44b7b7f092cff4068a44818a621d3420}
+
+\item 
+\hypertarget{lock_8h_a76ab1929b4a671a026d5f2858d63d625}{
+\#define {\bfseries spd\_\-pthread\_\-mutex\_\-init}(pmutex, a)~pthread\_\-mutex\_\-init(pmutex,a)}
+\label{lock_8h_a76ab1929b4a671a026d5f2858d63d625}
+
+\item 
+\hypertarget{lock_8h_aa15618be7e9eac85e70b16c355f4ba73}{
+\#define {\bfseries \_\-\_\-SPD\_\-MUTEX\_\-DEFINE}(scop, mutex, init\_\-val, track)~scop spd\_\-mutex\_\-t mutex = init\_\-val}
+\label{lock_8h_aa15618be7e9eac85e70b16c355f4ba73}
+
+\item 
+\hypertarget{lock_8h_a4407eda550b665173abeec2e19a3ebf5}{
+\#define {\bfseries SPD\_\-MUTEX\_\-DEFINE\_\-STATIC}(mutex)~\_\-\_\-SPD\_\-MUTEX\_\-DEFINE(static, mutex, SPD\_\-MUTEX\_\-INIT\_\-VALUE, 1)}
+\label{lock_8h_a4407eda550b665173abeec2e19a3ebf5}
+
+\item 
+\hypertarget{lock_8h_a66f1c4b72b5ccad27df495e3da60e729}{
+\#define {\bfseries SPD\_\-MUTEX\_\-DEFINE\_\-STATIC\_\-NOTRAKING}(mutex)~\_\-\_\-SPD\_\-MUTEX\_\-DEFINE(static, mutex, SPD\_\-MUTEX\_\-INIT\_\-VALUE\_\-NOTRACKING, 0)}
+\label{lock_8h_a66f1c4b72b5ccad27df495e3da60e729}
+
+\item 
+\hypertarget{lock_8h_aa47210aed64cd32b97dab66201a09dda}{
+\#define {\bfseries SPD\_\-RWLOCK\_\-INIT\_\-VALUE}~PTHREAD\_\-RWLOCK\_\-INITIALIZER}
+\label{lock_8h_aa47210aed64cd32b97dab66201a09dda}
+
+\item 
+\hypertarget{lock_8h_a8a102aae42d2b1f8eed78bf87f07513d}{
+\#define {\bfseries \_\-\_\-SPD\_\-RWLOCK\_\-DEFINE}(scop, rwlock)~scop spd\_\-rwlock\_\-t rwlock = SPD\_\-RWLOCK\_\-INIT\_\-VALUE}
+\label{lock_8h_a8a102aae42d2b1f8eed78bf87f07513d}
+
+\item 
+\hypertarget{lock_8h_a2c812c236ad0e3f8c2b057232dde5e69}{
+\#define {\bfseries SPD\_\-RWLOCK\_\-DEFINE\_\-STATIC}(rwlock)~\_\-\_\-SPD\_\-RWLOCK\_\-DEFINE(static, rwlock)}
+\label{lock_8h_a2c812c236ad0e3f8c2b057232dde5e69}
+
+\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{lock_8h_a3db3f3a3a2b084f8670c2971aeb8158a}{
+typedef pthread\_\-mutex\_\-t {\bfseries spd\_\-mutex\_\-t}}
+\label{lock_8h_a3db3f3a3a2b084f8670c2971aeb8158a}
+
+\item 
+\hypertarget{lock_8h_a65ffd41e59170e78d492da32bbc583bb}{
+typedef pthread\_\-cond\_\-t {\bfseries spd\_\-cond\_\-t}}
+\label{lock_8h_a65ffd41e59170e78d492da32bbc583bb}
+
+\item 
+\hypertarget{lock_8h_aad2879429e4f014e4087e32fa2a6f908}{
+typedef pthread\_\-rwlock\_\-t {\bfseries spd\_\-rwlock\_\-t}}
+\label{lock_8h_aad2879429e4f014e4087e32fa2a6f908}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+General Spider locking definitions. 
+\begin{DoxyItemize}
+\item See 
+\end{DoxyItemize}
+
+\subsection{Define Documentation}
+\hypertarget{lock_8h_a851106e971b4611a38cb4be8b39d9fcf}{
+\index{lock.h@{lock.h}!DEADLOCK\_\-AVOIDANCE@{DEADLOCK\_\-AVOIDANCE}}
+\index{DEADLOCK\_\-AVOIDANCE@{DEADLOCK\_\-AVOIDANCE}!lock.h@{lock.h}}
+\subsubsection[{DEADLOCK\_\-AVOIDANCE}]{\setlength{\rightskip}{0pt plus 5cm}\#define DEADLOCK\_\-AVOIDANCE(lock)}}
+\label{lock_8h_a851106e971b4611a38cb4be8b39d9fcf}
+{\bfseries Value:}
+\begin{DoxyCode}
+do { \
+                int __res; \
+                if (!(__res = spd_mutex_unlock(lock))) { \
+                        usleep(1); \
+                        spd_mutex_lock(lock); \
+                } else { \
+                        ; \
+                } \
+        } while (0)
+\end{DoxyCode}

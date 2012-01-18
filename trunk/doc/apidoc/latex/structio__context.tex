@@ -1,0 +1,69 @@
+\hypertarget{structio__context}{
+\section{io\_\-context Struct Reference}
+\label{structio__context}\index{io\_\-context@{io\_\-context}}
+}
+
+
+Global IO variables are now in a struct in order to be made threadsafe.  
+
+
+
+
+{\ttfamily \#include $<$io.h$>$}
+
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+struct pollfd $\ast$ \hyperlink{structio__context_aa63a2d3e2dc319d7abf5135fbcc69678}{fds}
+\item 
+struct \hyperlink{structio__rec}{io\_\-rec} $\ast$ \hyperlink{structio__context_a9738fcd9c2a5ab1eda8f386c5e4e3503}{ior}
+\item 
+unsigned int \hyperlink{structio__context_ad784e26b7cd7e03761d0846362748ef4}{fdcnt}
+\item 
+unsigned int \hyperlink{structio__context_af59f406dc073350e6babc8eddd4e0872}{maxfdcnt}
+\item 
+int \hyperlink{structio__context_ac9a730f2bc91e9c3e76bf1f39a486dde}{current\_\-ioc}
+\item 
+int \hyperlink{structio__context_ae910ea202fa1769e63e4680b70888b3a}{needshrink}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Global IO variables are now in a struct in order to be made threadsafe. 
+
+\subsection{Member Data Documentation}
+\hypertarget{structio__context_ac9a730f2bc91e9c3e76bf1f39a486dde}{
+\index{io\_\-context@{io\_\-context}!current\_\-ioc@{current\_\-ioc}}
+\index{current\_\-ioc@{current\_\-ioc}!io_context@{io\_\-context}}
+\subsubsection[{current\_\-ioc}]{\setlength{\rightskip}{0pt plus 5cm}int {\bf io\_\-context::current\_\-ioc}}}
+\label{structio__context_ac9a730f2bc91e9c3e76bf1f39a486dde}
+Currently used io callback \hypertarget{structio__context_ad784e26b7cd7e03761d0846362748ef4}{
+\index{io\_\-context@{io\_\-context}!fdcnt@{fdcnt}}
+\index{fdcnt@{fdcnt}!io_context@{io\_\-context}}
+\subsubsection[{fdcnt}]{\setlength{\rightskip}{0pt plus 5cm}unsigned int {\bf io\_\-context::fdcnt}}}
+\label{structio__context_ad784e26b7cd7e03761d0846362748ef4}
+First available fd \hypertarget{structio__context_aa63a2d3e2dc319d7abf5135fbcc69678}{
+\index{io\_\-context@{io\_\-context}!fds@{fds}}
+\index{fds@{fds}!io_context@{io\_\-context}}
+\subsubsection[{fds}]{\setlength{\rightskip}{0pt plus 5cm}struct pollfd$\ast$ {\bf io\_\-context::fds}}}
+\label{structio__context_aa63a2d3e2dc319d7abf5135fbcc69678}
+Poll structure \hypertarget{structio__context_a9738fcd9c2a5ab1eda8f386c5e4e3503}{
+\index{io\_\-context@{io\_\-context}!ior@{ior}}
+\index{ior@{ior}!io_context@{io\_\-context}}
+\subsubsection[{ior}]{\setlength{\rightskip}{0pt plus 5cm}struct {\bf io\_\-rec}$\ast$ {\bf io\_\-context::ior}}}
+\label{structio__context_a9738fcd9c2a5ab1eda8f386c5e4e3503}
+Associated I/O records \hypertarget{structio__context_af59f406dc073350e6babc8eddd4e0872}{
+\index{io\_\-context@{io\_\-context}!maxfdcnt@{maxfdcnt}}
+\index{maxfdcnt@{maxfdcnt}!io_context@{io\_\-context}}
+\subsubsection[{maxfdcnt}]{\setlength{\rightskip}{0pt plus 5cm}unsigned int {\bf io\_\-context::maxfdcnt}}}
+\label{structio__context_af59f406dc073350e6babc8eddd4e0872}
+Maximum available fd \hypertarget{structio__context_ae910ea202fa1769e63e4680b70888b3a}{
+\index{io\_\-context@{io\_\-context}!needshrink@{needshrink}}
+\index{needshrink@{needshrink}!io_context@{io\_\-context}}
+\subsubsection[{needshrink}]{\setlength{\rightskip}{0pt plus 5cm}int {\bf io\_\-context::needshrink}}}
+\label{structio__context_ae910ea202fa1769e63e4680b70888b3a}
+Whether something has been deleted 
+
+The documentation for this struct was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+io.h\end{DoxyCompactItemize}

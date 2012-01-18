@@ -1,0 +1,115 @@
+\hypertarget{taskqueue_8h}{
+\section{taskqueue.h File Reference}
+\label{taskqueue_8h}\index{taskqueue.h@{taskqueue.h}}
+}
+
+
+An API for managing task processing threads that can be shared across modules.  
+
+
+\subsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \hyperlink{taskqueue_8h_a3129ecb53ced5df45584e6b05278b93a}{spd\_\-tps\_\-options} \{ \hyperlink{taskqueue_8h_a3129ecb53ced5df45584e6b05278b93aae248d04bb7a6b5e0906e4906af4ee35a}{TPS\_\-REF\_\-DEFAULT} =  0, 
+\hyperlink{taskqueue_8h_a3129ecb53ced5df45584e6b05278b93aabe990199e3796a0f60ff62ab1e36e3c0}{TPS\_\-REF\_\-IF\_\-EXISTS} =  (1$<$$<$ 0)
+ \}
+\begin{DoxyCompactList}\small\item\em spd\_\-tps\_\-options for specification of c options \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+struct spd\_\-taskqueue $\ast$ \hyperlink{taskqueue_8h_aa4930fff236a7e14a8e8921539d71b38}{spd\_\-taskqueue\_\-get} (const char $\ast$name, enum \hyperlink{taskqueue_8h_a3129ecb53ced5df45584e6b05278b93a}{spd\_\-tps\_\-options} option)
+\begin{DoxyCompactList}\small\item\em Get a reference to a taskprocessor with the specified name and create the taskprocessor if necessary. \item\end{DoxyCompactList}\item 
+void $\ast$ \hyperlink{taskqueue_8h_ac9bdba4f20061089a14c4558cb8c9a28}{spd\_\-taskqueue\_\-unreference} (struct spd\_\-taskqueue $\ast$tps)
+\begin{DoxyCompactList}\small\item\em Unreference the specified taskprocessor and its reference count will decrement. \item\end{DoxyCompactList}\item 
+int \hyperlink{taskqueue_8h_a2ba2932605e457d16543f37d7fbb18d4}{spd\_\-taskqueue\_\-push} (struct spd\_\-taskqueue $\ast$tps, int($\ast$task\_\-exe)(void $\ast$data), void $\ast$data)
+\begin{DoxyCompactList}\small\item\em Push a task into the specified taskprocessor queue and signal the taskprocessor thread. \item\end{DoxyCompactList}\item 
+\hypertarget{taskqueue_8h_a21c0dbf24843d4520e99548b64a3b807}{
+const char $\ast$ \hyperlink{taskqueue_8h_a21c0dbf24843d4520e99548b64a3b807}{spd\_\-taskqueue\_\-name} (struct spd\_\-taskqueue $\ast$tps)}
+\label{taskqueue_8h_a21c0dbf24843d4520e99548b64a3b807}
+
+\begin{DoxyCompactList}\small\item\em Return the name of the taskprocessor singleton. \item\end{DoxyCompactList}\item 
+\hypertarget{taskqueue_8h_a1c336fcf4eda0a99a43956bcab177ee6}{
+int {\bfseries spd\_\-taskqueue\_\-init} (void)}
+\label{taskqueue_8h_a1c336fcf4eda0a99a43956bcab177ee6}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+An API for managing task processing threads that can be shared across modules. \begin{DoxyNote}{Note}
+A taskqueue is a named singleton containing a processing thread and a task queue that serializes tasks pushed into it by \mbox{[}a\mbox{]} module(s) that reference the taskqueue. A taskqueue is created the first time its name is requested via the \hyperlink{taskqueue_8h_aa4930fff236a7e14a8e8921539d71b38}{spd\_\-taskqueue\_\-get()} function and destroyed when the taskqueue reference count reaches zero.
+\end{DoxyNote}
+Modules that obtain a reference to a taskqueue can queue tasks into the taskqueue to be processed by the singleton processing thread when the task is popped off the front of the queue. A task is a wrapper around a task-\/handling function pointer and a data pointer. It is the responsibility of the task handling function to free memory allocated for the task data pointer. A task is pushed into a taskqueue queue using the spd\_\-taskqueue\_\-push(taskqueue, taskhandler, taskdata) function and freed by the taskqueue after the task handling function returns. A module releases its reference to a taskqueue using the \hyperlink{taskqueue_8h_ac9bdba4f20061089a14c4558cb8c9a28}{spd\_\-taskqueue\_\-unreference()} function which may result in the destruction of the taskprocessor if the taskqueue's reference count reaches zero. Tasks waiting to be processed in the taskqueue queue when the taskqueue reference count reaches zero will be purged and released from the taskqueue queue without being processed. 
+
+\subsection{Enumeration Type Documentation}
+\hypertarget{taskqueue_8h_a3129ecb53ced5df45584e6b05278b93a}{
+\index{taskqueue.h@{taskqueue.h}!spd\_\-tps\_\-options@{spd\_\-tps\_\-options}}
+\index{spd\_\-tps\_\-options@{spd\_\-tps\_\-options}!taskqueue.h@{taskqueue.h}}
+\subsubsection[{spd\_\-tps\_\-options}]{\setlength{\rightskip}{0pt plus 5cm}enum {\bf spd\_\-tps\_\-options}}}
+\label{taskqueue_8h_a3129ecb53ced5df45584e6b05278b93a}
+
+
+spd\_\-tps\_\-options for specification of c options 
+
+Specify whether a v should be created via \hyperlink{taskqueue_8h_aa4930fff236a7e14a8e8921539d71b38}{spd\_\-taskqueue\_\-get()} if the taskqueue does not already exist. The default behavior is to create a taskqueue if it does not already exist and provide its reference to the calling function. To only return a reference to a taskqueue if and only if it exists, use the TPS\_\-REF\_\-IF\_\-EXISTS option in \hyperlink{taskqueue_8h_aa4930fff236a7e14a8e8921539d71b38}{spd\_\-taskqueue\_\-get()}. \begin{Desc}
+\item[Enumerator: ]\par
+\begin{description}
+\index{TPS\_\-REF\_\-DEFAULT@{TPS\_\-REF\_\-DEFAULT}!taskqueue.h@{taskqueue.h}}\index{taskqueue.h@{taskqueue.h}!TPS\_\-REF\_\-DEFAULT@{TPS\_\-REF\_\-DEFAULT}}\item[{\em 
+\hypertarget{taskqueue_8h_a3129ecb53ced5df45584e6b05278b93aae248d04bb7a6b5e0906e4906af4ee35a}{
+TPS\_\-REF\_\-DEFAULT}
+\label{taskqueue_8h_a3129ecb53ced5df45584e6b05278b93aae248d04bb7a6b5e0906e4906af4ee35a}
+}]return a reference to a v, create one if it does not exist \index{TPS\_\-REF\_\-IF\_\-EXISTS@{TPS\_\-REF\_\-IF\_\-EXISTS}!taskqueue.h@{taskqueue.h}}\index{taskqueue.h@{taskqueue.h}!TPS\_\-REF\_\-IF\_\-EXISTS@{TPS\_\-REF\_\-IF\_\-EXISTS}}\item[{\em 
+\hypertarget{taskqueue_8h_a3129ecb53ced5df45584e6b05278b93aabe990199e3796a0f60ff62ab1e36e3c0}{
+TPS\_\-REF\_\-IF\_\-EXISTS}
+\label{taskqueue_8h_a3129ecb53ced5df45584e6b05278b93aabe990199e3796a0f60ff62ab1e36e3c0}
+}]return a reference to a taskqueue ONLY if it already exists \end{description}
+\end{Desc}
+
+
+
+\subsection{Function Documentation}
+\hypertarget{taskqueue_8h_aa4930fff236a7e14a8e8921539d71b38}{
+\index{taskqueue.h@{taskqueue.h}!spd\_\-taskqueue\_\-get@{spd\_\-taskqueue\_\-get}}
+\index{spd\_\-taskqueue\_\-get@{spd\_\-taskqueue\_\-get}!taskqueue.h@{taskqueue.h}}
+\subsubsection[{spd\_\-taskqueue\_\-get}]{\setlength{\rightskip}{0pt plus 5cm}struct spd\_\-taskqueue$\ast$ spd\_\-taskqueue\_\-get (const char $\ast$ {\em name}, \/  enum {\bf spd\_\-tps\_\-options} {\em option})\hspace{0.3cm}{\ttfamily  \mbox{[}read\mbox{]}}}}
+\label{taskqueue_8h_aa4930fff236a7e14a8e8921539d71b38}
+
+
+Get a reference to a taskprocessor with the specified name and create the taskprocessor if necessary. 
+
+The default behavior of instantiating a taskprocessor if one does not already exist can be disabled by specifying the TPS\_\-REF\_\-IF\_\-EXISTS spd\_\-tps\_\-options as the second argument to spd\_\-taskprocessor\_\-get(). 
+\begin{DoxyParams}{Parameters}
+\item[{\em name}]The name of the taskprocessor \item[{\em create}]Use 0 by default or specify TPS\_\-REF\_\-IF\_\-EXISTS to return NULL if the taskprocessor does not already exist return A pointer to a reference counted taskprocessor under normal conditions, or NULL if the TPS\_\-REF\_\-IF\_\-EXISTS reference type is specified and the taskprocessor does not exist \end{DoxyParams}
+\hypertarget{taskqueue_8h_a2ba2932605e457d16543f37d7fbb18d4}{
+\index{taskqueue.h@{taskqueue.h}!spd\_\-taskqueue\_\-push@{spd\_\-taskqueue\_\-push}}
+\index{spd\_\-taskqueue\_\-push@{spd\_\-taskqueue\_\-push}!taskqueue.h@{taskqueue.h}}
+\subsubsection[{spd\_\-taskqueue\_\-push}]{\setlength{\rightskip}{0pt plus 5cm}int spd\_\-taskqueue\_\-push (struct spd\_\-taskqueue $\ast$ {\em tps}, \/  int($\ast$)(void $\ast$data) {\em task\_\-exe}, \/  void $\ast$ {\em data})}}
+\label{taskqueue_8h_a2ba2932605e457d16543f37d7fbb18d4}
+
+
+Push a task into the specified taskprocessor queue and signal the taskprocessor thread. 
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em tps}]The taskprocessor structure \item[{\em task\_\-exe}]The task handling function to push into the taskprocessor queue \item[{\em datap}]The data to be used by the task handling function \end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+\item[{\em 0}]success \item[{\em -\/1}]failure \end{DoxyRetVals}
+\begin{DoxySince}{Since}
+1.6.1 
+\end{DoxySince}
+\hypertarget{taskqueue_8h_ac9bdba4f20061089a14c4558cb8c9a28}{
+\index{taskqueue.h@{taskqueue.h}!spd\_\-taskqueue\_\-unreference@{spd\_\-taskqueue\_\-unreference}}
+\index{spd\_\-taskqueue\_\-unreference@{spd\_\-taskqueue\_\-unreference}!taskqueue.h@{taskqueue.h}}
+\subsubsection[{spd\_\-taskqueue\_\-unreference}]{\setlength{\rightskip}{0pt plus 5cm}void$\ast$ spd\_\-taskqueue\_\-unreference (struct spd\_\-taskqueue $\ast$ {\em tps})}}
+\label{taskqueue_8h_ac9bdba4f20061089a14c4558cb8c9a28}
+
+
+Unreference the specified taskprocessor and its reference count will decrement. 
+
+Taskprocessors use obj and will unlink from the taskprocessor singleton container and destroy themself when the taskprocessor reference count reaches zero. 
+\begin{DoxyParams}{Parameters}
+\item[{\em tps}]taskprocessor to unreference \end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+NULL 
+\end{DoxyReturn}
