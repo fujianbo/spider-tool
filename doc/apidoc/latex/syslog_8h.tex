@@ -1,0 +1,103 @@
+\hypertarget{syslog_8h}{
+\section{syslog.h File Reference}
+\label{syslog_8h}\index{syslog.h@{syslog.h}}
+}
+
+
+System log interface support.  
+
+
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{syslog_8h_ae80600d7e4b37a7f1595ac12e3fe82d6}{spd\_\-syslog\_\-facility} (const char $\ast$facility)
+\begin{DoxyCompactList}\small\item\em Maps a syslog facility name from a string to a syslog facility constant. \item\end{DoxyCompactList}\item 
+const char $\ast$ \hyperlink{syslog_8h_aff38df0e46d301fcd5fa23843b14f699}{spd\_\-syslog\_\-facility\_\-name} (int facility)
+\begin{DoxyCompactList}\small\item\em Maps a syslog facility constant to a string. \item\end{DoxyCompactList}\item 
+int \hyperlink{syslog_8h_a3a1a98edf14dfad1bd9a9fe5d4e904a5}{spd\_\-syslog\_\-priority} (const char $\ast$priority)
+\begin{DoxyCompactList}\small\item\em Maps a syslog priority name from a string to a syslog priority constant. \item\end{DoxyCompactList}\item 
+const char $\ast$ \hyperlink{syslog_8h_ac4b3a78a06ca5e0e81f6897d3856db9b}{spd\_\-syslog\_\-priority\_\-name} (int priority)
+\begin{DoxyCompactList}\small\item\em Maps a syslog priority constant to a string. \item\end{DoxyCompactList}\item 
+int \hyperlink{syslog_8h_a06e515d11479a4d88617c1618768c343}{spd\_\-syslog\_\-loglevel\_\-to\_\-priority} (int loglevel)
+\begin{DoxyCompactList}\small\item\em Maps an log level (i.e. LOG\_\-ERROR) to a syslog priority constant. \item\end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+System log interface support. 
+
+\subsection{Function Documentation}
+\hypertarget{syslog_8h_ae80600d7e4b37a7f1595ac12e3fe82d6}{
+\index{syslog.h@{syslog.h}!spd\_\-syslog\_\-facility@{spd\_\-syslog\_\-facility}}
+\index{spd\_\-syslog\_\-facility@{spd\_\-syslog\_\-facility}!syslog.h@{syslog.h}}
+\subsubsection[{spd\_\-syslog\_\-facility}]{\setlength{\rightskip}{0pt plus 5cm}int spd\_\-syslog\_\-facility (const char $\ast$ {\em facility})}}
+\label{syslog_8h_ae80600d7e4b37a7f1595ac12e3fe82d6}
+
+
+Maps a syslog facility name from a string to a syslog facility constant. 
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em facility}]Facility name to map (i.e. \char`\"{}daemon\char`\"{})\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+\item[{\em syslog}]facility constant (i.e. LOG\_\-DAEMON) if found \item[{\em -\/1}]if facility is not found \end{DoxyRetVals}
+\hypertarget{syslog_8h_aff38df0e46d301fcd5fa23843b14f699}{
+\index{syslog.h@{syslog.h}!spd\_\-syslog\_\-facility\_\-name@{spd\_\-syslog\_\-facility\_\-name}}
+\index{spd\_\-syslog\_\-facility\_\-name@{spd\_\-syslog\_\-facility\_\-name}!syslog.h@{syslog.h}}
+\subsubsection[{spd\_\-syslog\_\-facility\_\-name}]{\setlength{\rightskip}{0pt plus 5cm}const char$\ast$ spd\_\-syslog\_\-facility\_\-name (int {\em facility})}}
+\label{syslog_8h_aff38df0e46d301fcd5fa23843b14f699}
+
+
+Maps a syslog facility constant to a string. 
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em facility}]syslog facility constant to map (i.e. LOG\_\-DAEMON)\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+\item[{\em facility}]name (i.e. \char`\"{}daemon\char`\"{}) if found \item[{\em NULL}]if facility is not found \end{DoxyRetVals}
+\hypertarget{syslog_8h_a06e515d11479a4d88617c1618768c343}{
+\index{syslog.h@{syslog.h}!spd\_\-syslog\_\-loglevel\_\-to\_\-priority@{spd\_\-syslog\_\-loglevel\_\-to\_\-priority}}
+\index{spd\_\-syslog\_\-loglevel\_\-to\_\-priority@{spd\_\-syslog\_\-loglevel\_\-to\_\-priority}!syslog.h@{syslog.h}}
+\subsubsection[{spd\_\-syslog\_\-loglevel\_\-to\_\-priority}]{\setlength{\rightskip}{0pt plus 5cm}int spd\_\-syslog\_\-loglevel\_\-to\_\-priority (int {\em loglevel})}}
+\label{syslog_8h_a06e515d11479a4d88617c1618768c343}
+
+
+Maps an log level (i.e. LOG\_\-ERROR) to a syslog priority constant. 
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em level}]Asterisk log level constant (i.e. LOG\_\-ERROR)\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+\item[{\em syslog}]priority constant (i.e. LOG\_\-ERR) if found \item[{\em -\/1}]if priority is not found \end{DoxyRetVals}
+\hypertarget{syslog_8h_a3a1a98edf14dfad1bd9a9fe5d4e904a5}{
+\index{syslog.h@{syslog.h}!spd\_\-syslog\_\-priority@{spd\_\-syslog\_\-priority}}
+\index{spd\_\-syslog\_\-priority@{spd\_\-syslog\_\-priority}!syslog.h@{syslog.h}}
+\subsubsection[{spd\_\-syslog\_\-priority}]{\setlength{\rightskip}{0pt plus 5cm}int spd\_\-syslog\_\-priority (const char $\ast$ {\em priority})}}
+\label{syslog_8h_a3a1a98edf14dfad1bd9a9fe5d4e904a5}
+
+
+Maps a syslog priority name from a string to a syslog priority constant. 
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em priority}]Priority name to map (i.e. \char`\"{}notice\char`\"{})\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+\item[{\em syslog}]priority constant (i.e. LOG\_\-NOTICE) if found \item[{\em -\/1}]if priority is not found \end{DoxyRetVals}
+\hypertarget{syslog_8h_ac4b3a78a06ca5e0e81f6897d3856db9b}{
+\index{syslog.h@{syslog.h}!spd\_\-syslog\_\-priority\_\-name@{spd\_\-syslog\_\-priority\_\-name}}
+\index{spd\_\-syslog\_\-priority\_\-name@{spd\_\-syslog\_\-priority\_\-name}!syslog.h@{syslog.h}}
+\subsubsection[{spd\_\-syslog\_\-priority\_\-name}]{\setlength{\rightskip}{0pt plus 5cm}const char$\ast$ spd\_\-syslog\_\-priority\_\-name (int {\em priority})}}
+\label{syslog_8h_ac4b3a78a06ca5e0e81f6897d3856db9b}
+
+
+Maps a syslog priority constant to a string. 
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em priority}]syslog priority constant to map (i.e. LOG\_\-NOTICE)\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+\item[{\em priority}]name (i.e. \char`\"{}notice\char`\"{}) if found \item[{\em NULL}]if priority is not found \end{DoxyRetVals}

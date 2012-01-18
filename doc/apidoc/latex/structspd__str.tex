@@ -1,0 +1,74 @@
+\hypertarget{structspd__str}{
+\section{spd\_\-str Struct Reference}
+\label{structspd__str}\index{spd\_\-str@{spd\_\-str}}
+}
+
+
+The descriptor of a dynamic string XXX storage will be optimized later if needed We use the ts field to indicate the type of storage. Three special constants indicate malloc, alloca() or static variables, all other values indicate a struct \hyperlink{structspd__threadprivdata}{spd\_\-threadprivdata} pointer.  
+
+
+
+
+{\ttfamily \#include $<$str.h$>$}
+
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{structspd__str_aec599616e242e3a8d971db93effe3abe}{
+size\_\-t {\bfseries len}}
+\label{structspd__str_aec599616e242e3a8d971db93effe3abe}
+
+\item 
+\hypertarget{structspd__str_a615f55dbf020b304750c4743b9e2e25e}{
+size\_\-t {\bfseries used}}
+\label{structspd__str_a615f55dbf020b304750c4743b9e2e25e}
+
+\item 
+\hypertarget{structspd__str_a4a2be06020dc7f20d979e3a9075d6ad6}{
+struct \hyperlink{structspd__threadprivdata}{spd\_\-threadprivdata} $\ast$ {\bfseries str\_\-tpv}}
+\label{structspd__str_a4a2be06020dc7f20d979e3a9075d6ad6}
+
+\item 
+\hypertarget{structspd__str_a2bf4db32e80ff5945af3ce8589959764}{
+char {\bfseries buf} \mbox{[}0\mbox{]}}
+\label{structspd__str_a2bf4db32e80ff5945af3ce8589959764}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The descriptor of a dynamic string XXX storage will be optimized later if needed We use the ts field to indicate the type of storage. Three special constants indicate malloc, alloca() or static variables, all other values indicate a struct \hyperlink{structspd__threadprivdata}{spd\_\-threadprivdata} pointer. Support for dynamic strings.
+
+A dynamic string is just a C string prefixed by a few control fields that help setting/appending/extending it using a printf-\/like syntax.
+
+One should never declare a variable with this type, but only a pointer to it, e.g.
+
+struct \hyperlink{structspd__str}{spd\_\-str} $\ast$ds;
+
+The pointer can be initialized with the following:
+
+ds = spd\_\-str\_\-create(init\_\-len); creates a malloc()'ed dynamic string;
+
+ds = spd\_\-str\_\-alloca(init\_\-len); creates a string on the stack (not very dynamic!).
+
+ds = spd\_\-str\_\-thread\_\-get(ts, init\_\-len) creates a malloc()'ed dynamic string associated to the thread-\/local storage key ts
+
+Finally, the string can be manipulated with the following:
+
+spd\_\-str\_\-set(\&buf, max\_\-len, fmt, ...) spd\_\-str\_\-append(\&buf, max\_\-len, fmt, ...)
+
+and their varargs variant
+
+spd\_\-str\_\-set\_\-va(\&buf, max\_\-len, ap) spd\_\-str\_\-append\_\-va(\&buf, max\_\-len, ap)
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em max\_\-len}]The maximum allowed capacity of the \hyperlink{structspd__str}{spd\_\-str}. Note that if the value of max\_\-len is less than the current capacity of the spds\_\-str (as returned by spd\_\-str\_\-size), then the parameter is effectively ignored. 0 means unlimited, -\/1 means \char`\"{}at most the available space\char`\"{}\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+All the functions return $<$0 in case of error, or the length of the string added to the buffer otherwise. Note that in most cases where an error is returned, characters ARE written to the \hyperlink{structspd__str}{spd\_\-str}. 
+\end{DoxyReturn}
+
+
+The documentation for this struct was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+str.h\end{DoxyCompactItemize}

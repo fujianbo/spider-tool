@@ -1,0 +1,1157 @@
+\hypertarget{linkedlist_8h}{
+\section{linkedlist.h File Reference}
+\label{linkedlist_8h}\index{linkedlist.h@{linkedlist.h}}
+}
+{\ttfamily \#include \char`\"{}lock.h\char`\"{}}\par
+\subsection*{Defines}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{linkedlist_8h_ab95c5b521340d5959d2904cec3c567ae}{SPD\_\-LIST\_\-LOCK}(head)~spd\_\-mutex\_\-lock(\&(head)-\/$>$lock)
+\begin{DoxyCompactList}\small\item\em Locks a list. \item\end{DoxyCompactList}\item 
+\#define \hyperlink{linkedlist_8h_a49146776f3dc4c46d0a727ad4b451287}{SPD\_\-RWLIST\_\-WRLOCK}(head)~spd\_\-rwlock\_\-wrlock(\&(head)-\/$>$lock)
+\begin{DoxyCompactList}\small\item\em Write locks a list. \item\end{DoxyCompactList}\item 
+\#define \hyperlink{linkedlist_8h_abb1b48aa5f0fcb757daf42dc83a39f73}{SPD\_\-RWLIST\_\-TIMEDWRLOCK}(head, ts)~spd\_\-rwlock\_\-timedwrlock(\&(head)-\/$>$lock, ts)
+\begin{DoxyCompactList}\small\item\em Write locks a list, with timeout. \item\end{DoxyCompactList}\item 
+\#define \hyperlink{linkedlist_8h_ac70e42489750abec21afa5564fdc2804}{SPD\_\-RWLIST\_\-RDLOCK}(head)~spd\_\-rwlock\_\-rdlock(\&(head)-\/$>$lock)
+\begin{DoxyCompactList}\small\item\em Read locks a list. \item\end{DoxyCompactList}\item 
+\#define \hyperlink{linkedlist_8h_ae9610f7f3937254cbeb125787a3a473c}{SPD\_\-RWLISK\_\-TIMEDRDLOCK}(head, ts)~spd\_\-rwlock\_\-timedrdlock(\&(head)-\/$>$lock, ts)
+\begin{DoxyCompactList}\small\item\em Read locks a list, with timeout. \item\end{DoxyCompactList}\item 
+\#define \hyperlink{linkedlist_8h_a2aed95e1ecf23e717ef75295a67dd4ad}{SPD\_\-LIST\_\-TRYLOCK}(head)~spd\_\-mutex\_\-trylock(\&(head)-\/$>$lock)
+\begin{DoxyCompactList}\small\item\em Locks a list without blocking if the list is locked. \item\end{DoxyCompactList}\item 
+\#define \hyperlink{linkedlist_8h_a6d3dbd04abd59c2e790bcc46c2d9db37}{SPD\_\-RWLISK\_\-TRYWRLOCK}(head)~spd\_\-rwlock\_\-trywrlock(\&(head)-\/$>$lock)
+\begin{DoxyCompactList}\small\item\em Write locks a list, without blocking if the list is locked. \item\end{DoxyCompactList}\item 
+\#define \hyperlink{linkedlist_8h_a54a8c8c639131dd924c90cd90f074f09}{SPD\_\-RWLIST\_\-TRYRDLOCK}(head)~spd\_\-rwlock\_\-tryrdlock(\&(head)-\/$>$lock)
+\begin{DoxyCompactList}\small\item\em Read locks a list, without blocking if the list is locked. \item\end{DoxyCompactList}\item 
+\#define \hyperlink{linkedlist_8h_a1a39f1e8d3d2cfcca8f49651b60234d1}{SPD\_\-LIST\_\-UNLOCK}(head)~spd\_\-mutex\_\-unlock(\&(head)-\/$>$lock)
+\begin{DoxyCompactList}\small\item\em Attempts to unlock a list. \item\end{DoxyCompactList}\item 
+\#define \hyperlink{linkedlist_8h_a30d48c66594427df823bcc9a2d4a3378}{SPD\_\-RWLIST\_\-UNLOCK}(head)~spd\_\-rwlock\_\-unlock(\&(head)-\/$>$lock)
+\begin{DoxyCompactList}\small\item\em Attempts to unlock a read/write based list. \item\end{DoxyCompactList}\item 
+\#define \hyperlink{linkedlist_8h_a925afe944cee7baaaffd18c765e991b8}{SPD\_\-RWLIST\_\-HEAD}(name, type)
+\begin{DoxyCompactList}\small\item\em Define a structure to be used to hold a list of spycified type. \item\end{DoxyCompactList}\item 
+\#define \hyperlink{linkedlist_8h_a3298476c20a947d49d3bb1357ce25833}{SPD\_\-LIST\_\-HEAD\_\-NOLOCK}(name, type)
+\begin{DoxyCompactList}\small\item\em Defines a structure to be used to hold a list of specified type (with no lock). \item\end{DoxyCompactList}\item 
+\#define \hyperlink{linkedlist_8h_a16e6ce1eb3c08de0c594d9e4fc743e8e}{SPD\_\-LIST\_\-HEAD\_\-INIT\_\-VALUE}
+\begin{DoxyCompactList}\small\item\em Initial values for a declaration of SPD\_\-LIST\_\-HEAD. \item\end{DoxyCompactList}\item 
+\#define \hyperlink{linkedlist_8h_aae84ecaa1c774852bd158016b6b92c9b}{SPD\_\-RWLIST\_\-HEAD\_\-INIT\_\-VALUE}
+\begin{DoxyCompactList}\small\item\em Initial values for a declaration of SPD\_\-RWLIST\_\-HEAD. \item\end{DoxyCompactList}\item 
+\#define \hyperlink{linkedlist_8h_a09ce9e3c93f14239f415aa98f11daad0}{SPD\_\-LIST\_\-HEAD\_\-NOLOCK\_\-INIT\_\-VALUE}
+\begin{DoxyCompactList}\small\item\em Defines initial values for a declaration of SPD\_\-LIST\_\-HEAD\_\-NOLOCK. \item\end{DoxyCompactList}\item 
+\#define \hyperlink{linkedlist_8h_a5390b63aeb6e12ae9ab007fc2799786d}{SPD\_\-LIST\_\-HEAD\_\-STATIC}(name, type)
+\begin{DoxyCompactList}\small\item\em Defines a structure to be used to hold a list of specified type, statically nitialized. \item\end{DoxyCompactList}\item 
+\#define \hyperlink{linkedlist_8h_a4efe27c1923ab67491aada69e62ccd86}{SPD\_\-RWLIST\_\-HEAD\_\-STATIC}(name, type)
+\begin{DoxyCompactList}\small\item\em Defines a structure to be used to hold a read/write list of specified type, statically initialized. \item\end{DoxyCompactList}\item 
+\#define \hyperlink{linkedlist_8h_a64ebd31929ff83a2cb6a024c293a5d89}{SPD\_\-LIST\_\-HEAD\_\-NOLOCK\_\-STATIC}(name, type)
+\begin{DoxyCompactList}\small\item\em Defines a structure to be used to hold a list of specified type, statically initialized. \item\end{DoxyCompactList}\item 
+\#define \hyperlink{linkedlist_8h_a4a7003b8ddc26caac0dc2388f8f73529}{SPD\_\-LIST\_\-HEAD\_\-SET}(head, entry)
+\begin{DoxyCompactList}\small\item\em Initializes a list head structure with a specified first entry. \item\end{DoxyCompactList}\item 
+\#define \hyperlink{linkedlist_8h_ad64b2fec4c4b560c135684ac2d609773}{SPD\_\-RWLIST\_\-HEAD\_\-SET}(head, entry)
+\begin{DoxyCompactList}\small\item\em Initializes an rwlist head structure with a specified first entry. \item\end{DoxyCompactList}\item 
+\#define \hyperlink{linkedlist_8h_a04a96d82e8315bd7f34d5d4832f6f866}{SPD\_\-LIST\_\-HEAD\_\-SET\_\-NOLOCK}(head, entry)
+\begin{DoxyCompactList}\small\item\em Initializes a list head structure with a specified first entry. \item\end{DoxyCompactList}\item 
+\#define \hyperlink{linkedlist_8h_a16d7b32a8d830307347698234577a57f}{SPD\_\-LIST\_\-ENTRY}(type)
+\begin{DoxyCompactList}\small\item\em Declare a forward link structure inside a list entry. \item\end{DoxyCompactList}\item 
+\hypertarget{linkedlist_8h_a250aabde434913897af2c05a24b5d6ab}{
+\#define {\bfseries SPD\_\-RWLIST\_\-ENTRY}~SPD\_\-LIST\_\-ENTRY}
+\label{linkedlist_8h_a250aabde434913897af2c05a24b5d6ab}
+
+\item 
+\#define \hyperlink{linkedlist_8h_af0179d1e394690462d6aed15fd352bf7}{SPD\_\-LIST\_\-FIRST}(head)~((head)-\/$>$first)
+\begin{DoxyCompactList}\small\item\em get the first entry contained in a lisk. \item\end{DoxyCompactList}\item 
+\hypertarget{linkedlist_8h_a59981b2bffb898294181735744c70972}{
+\#define {\bfseries SPD\_\-RWLIST\_\-FIRST}~SPD\_\-LIST\_\-FIRST}
+\label{linkedlist_8h_a59981b2bffb898294181735744c70972}
+
+\item 
+\#define \hyperlink{linkedlist_8h_aaf235126955c32a3007cc48c23b422f4}{SPD\_\-LIST\_\-LAST}(head)~((head)-\/$>$last)
+\begin{DoxyCompactList}\small\item\em Returns the last entry contained in a list. \item\end{DoxyCompactList}\item 
+\hypertarget{linkedlist_8h_a5dfd6a5622db384e0fe8d0de5047b8a5}{
+\#define {\bfseries SPD\_\-RWLIST\_\-LAST}~SPD\_\-LIST\_\-LAST}
+\label{linkedlist_8h_a5dfd6a5622db384e0fe8d0de5047b8a5}
+
+\item 
+\#define \hyperlink{linkedlist_8h_aead2163a47406ea9edb7da1de99e2f04}{SPD\_\-LIST\_\-NEXT}(cur, field)~((cur)-\/$>$field.next)
+\begin{DoxyCompactList}\small\item\em Returns the next entry in the list after the given entry. \item\end{DoxyCompactList}\item 
+\hypertarget{linkedlist_8h_aa51c1f07b3b5e30c5deb0c54387d1518}{
+\#define {\bfseries SPD\_\-RWLIST\_\-NEXT}~SPD\_\-LIST\_\-NEXT}
+\label{linkedlist_8h_aa51c1f07b3b5e30c5deb0c54387d1518}
+
+\item 
+\#define \hyperlink{linkedlist_8h_a49a4c04270a8f67bf3ab6bc13c2c66c3}{SPD\_\-LIST\_\-EMPTY}(head)~(SPD\_\-LIST\_\-FIRST(head) == NULL)
+\begin{DoxyCompactList}\small\item\em Checks whether the specified list contains any entries. \item\end{DoxyCompactList}\item 
+\hypertarget{linkedlist_8h_a6f7ab2a54cbe44c4bd12b105cc5d8893}{
+\#define {\bfseries SPD\_\-RWLIST\_\-EMPTY}(head)~SPD\_\-LIST\_\-EMPTY(head)}
+\label{linkedlist_8h_a6f7ab2a54cbe44c4bd12b105cc5d8893}
+
+\item 
+\#define \hyperlink{linkedlist_8h_aab55bb4679db16b0851bad02a4c7f89c}{SPD\_\-LIST\_\-TRAVERSE}(head, cur, field)~for((cur) = (head)-\/$>$first; (cur); (cur) = (cur)-\/$>$field.next)
+\begin{DoxyCompactList}\small\item\em Loops over (traverses) the entries in a list. \item\end{DoxyCompactList}\item 
+\hypertarget{linkedlist_8h_a13caed6ef74aa1393fdeae55e404c656}{
+\#define {\bfseries SPD\_\-RWLISt\_\-TRAVERSE}~SPD\_\-LIST\_\-TRAVERSE}
+\label{linkedlist_8h_a13caed6ef74aa1393fdeae55e404c656}
+
+\item 
+\#define \hyperlink{linkedlist_8h_a250d1e4f67bac41ee798c73b81c7997d}{SPD\_\-LIST\_\-TRAVERSE\_\-SAFE\_\-BEGIN}(head, cur, field)
+\begin{DoxyCompactList}\small\item\em Loops safely over (traverses) the entries in a list. \item\end{DoxyCompactList}\item 
+\hypertarget{linkedlist_8h_a60aee32f94919e8bf4765ff45fd015e9}{
+\#define {\bfseries SPD\_\-RWLIST\_\-TRAVERSE\_\-SAFE\_\-BEGIN}~SPD\_\-LIST\_\-TRAVERSE\_\-SAFE\_\-BEGIN}
+\label{linkedlist_8h_a60aee32f94919e8bf4765ff45fd015e9}
+
+\item 
+\#define \hyperlink{linkedlist_8h_ae31f01a5cead1ac7438b64c024d56a1d}{SPD\_\-LIST\_\-REMOVE\_\-CURRENT}(head, field)
+\begin{DoxyCompactList}\small\item\em Removes the {\itshape current\/} entry from a list during a traversal. \item\end{DoxyCompactList}\item 
+\hypertarget{linkedlist_8h_a9f7eda6e13ad136c2a47ed3f0353efbd}{
+\#define {\bfseries SPD\_\-RWLIST\_\-REMOVE\_\-CURRENT}~SPD\_\-LIST\_\-REMOVE\_\-CURRENT}
+\label{linkedlist_8h_a9f7eda6e13ad136c2a47ed3f0353efbd}
+
+\item 
+\#define {\bfseries SPD\_\-LIST\_\-MOVE\_\-CURRENT}(head, cur)
+\item 
+\hypertarget{linkedlist_8h_aea9862b2876beba1bc323b1235b8bc78}{
+\#define {\bfseries SPD\_\-RWLIST\_\-MOVE\_\-CURRENT}~SPD\_\-LIST\_\-MOVE\_\-CURRENT}
+\label{linkedlist_8h_aea9862b2876beba1bc323b1235b8bc78}
+
+\item 
+\#define \hyperlink{linkedlist_8h_a50fcdfccef856650a613603bad0457c1}{SPD\_\-LIST\_\-INSERT\_\-BEFORE\_\-CURRENT}(head, cur)
+\begin{DoxyCompactList}\small\item\em Inserts a list entry before the current entry during a traversal. \item\end{DoxyCompactList}\item 
+\hypertarget{linkedlist_8h_aded7e92bd9d4154209bc27050bdde548}{
+\#define {\bfseries SPD\_\-RWLIST\_\-INSERT\_\-BEFORE\_\-CURRENT}~SPD\_\-LIST\_\-INSERT\_\-BEFORE\_\-CURRENT}
+\label{linkedlist_8h_aded7e92bd9d4154209bc27050bdde548}
+
+\item 
+\hypertarget{linkedlist_8h_acb99e4ddfd04b644cbcc4d716bf80d2a}{
+\#define \hyperlink{linkedlist_8h_acb99e4ddfd04b644cbcc4d716bf80d2a}{SPD\_\-LIST\_\-TRAVERSE\_\-SAFE\_\-END}~\}}
+\label{linkedlist_8h_acb99e4ddfd04b644cbcc4d716bf80d2a}
+
+\begin{DoxyCompactList}\small\item\em Closes a safe loop traversal block. \item\end{DoxyCompactList}\item 
+\hypertarget{linkedlist_8h_ad76702c572d39335906d34790933e7ac}{
+\#define {\bfseries SPD\_\-RWLIST\_\-TRAVERSE\_\-SAFE\_\-END}~SPD\_\-LIST\_\-TRAVERSE\_\-SAFE\_\-END}
+\label{linkedlist_8h_ad76702c572d39335906d34790933e7ac}
+
+\item 
+\#define \hyperlink{linkedlist_8h_aed385dd96c60dc91d231aabe7b7c6019}{SPD\_\-LIST\_\-HEAD\_\-INIT}(head)
+\begin{DoxyCompactList}\small\item\em Initializes a list head structure. \item\end{DoxyCompactList}\item 
+\#define \hyperlink{linkedlist_8h_af242969a67d60ae300b6e9fbb756d155}{SPD\_\-RWLIST\_\-HEAD\_\-INIT}(head)
+\begin{DoxyCompactList}\small\item\em Initializes an rwlist head structure. \item\end{DoxyCompactList}\item 
+\#define \hyperlink{linkedlist_8h_af3ca902cc902f26712005dd94ac3743f}{SPD\_\-LIST\_\-HEAD\_\-DESTROY}(head)
+\begin{DoxyCompactList}\small\item\em Destroys a list head structure. \item\end{DoxyCompactList}\item 
+\#define \hyperlink{linkedlist_8h_a72f6589f96d56c9eeb722fba205dd11a}{SPD\_\-RWLIST\_\-HEAD\_\-DESTROY}(head)
+\begin{DoxyCompactList}\small\item\em Destroys an rwlist head structure. \item\end{DoxyCompactList}\item 
+\#define \hyperlink{linkedlist_8h_a07f3669822f37139d2813284f8122c43}{SPD\_\-LIST\_\-HEAD\_\-INIT\_\-NOLOCK}(head)
+\begin{DoxyCompactList}\small\item\em Initializes a list head structure. \item\end{DoxyCompactList}\item 
+\#define \hyperlink{linkedlist_8h_ae8a02e73fac346def0aec74a9fc6d51a}{SPD\_\-LIST\_\-INSERT\_\-AFTER}(head, cur, nextel, field)
+\begin{DoxyCompactList}\small\item\em Inserts a list entry after a given entry. \item\end{DoxyCompactList}\item 
+\hypertarget{linkedlist_8h_af30792994583bdb7c9a4faf5f20b23be}{
+\#define {\bfseries SPD\_\-RWLIST\_\-INSERT\_\-AFTER}~SPD\_\-LIST\_\-INSERT\_\-AFTER}
+\label{linkedlist_8h_af30792994583bdb7c9a4faf5f20b23be}
+
+\item 
+\#define \hyperlink{linkedlist_8h_a4f0948f5e14401e642ce5cf7986b0ab2}{SPD\_\-LIST\_\-INSERT\_\-HEAD}(head, cur, field)
+\begin{DoxyCompactList}\small\item\em Inserts a list entry at the head of a list. \item\end{DoxyCompactList}\item 
+\hypertarget{linkedlist_8h_a18766129125424d71f794f41b2675ad9}{
+\#define {\bfseries SPD\_\-RWLIST\_\-INSERT\_\-HEAD}~SPD\_\-LIST\_\-INSERT\_\-HEAD}
+\label{linkedlist_8h_a18766129125424d71f794f41b2675ad9}
+
+\item 
+\#define \hyperlink{linkedlist_8h_afb7d5d160952eb1884a5a61112f4d493}{SPD\_\-LIST\_\-INSERT\_\-TAIL}(head, cur, field)
+\begin{DoxyCompactList}\small\item\em Appends a list entry to the tail of a list. \item\end{DoxyCompactList}\item 
+\hypertarget{linkedlist_8h_a41edd5e9c6dd5a1b50d92e6c489f94e2}{
+\#define {\bfseries SPD\_\-RWLIST\_\-INSERT\_\-TAIL}~SPD\_\-LIST\_\-INSERT\_\-TAIL}
+\label{linkedlist_8h_a41edd5e9c6dd5a1b50d92e6c489f94e2}
+
+\item 
+\#define \hyperlink{linkedlist_8h_a41fa5ac30dc53a833d7a3c9bc1465d6a}{SPD\_\-LIST\_\-INSERT\_\-SORTALPHA}(head, elm, field, sortfield)
+\begin{DoxyCompactList}\small\item\em Inserts a list entry into a alphabetically sorted list. \item\end{DoxyCompactList}\item 
+\hypertarget{linkedlist_8h_ab4f3321e424968a80199db3f1510ced4}{
+\#define {\bfseries SPD\_\-RWLIST\_\-INSERT\_\-SORTALPHA}~SPD\_\-LIST\_\-INSERT\_\-SORTALPHA}
+\label{linkedlist_8h_ab4f3321e424968a80199db3f1510ced4}
+
+\item 
+\#define \hyperlink{linkedlist_8h_a2f5414e1e7fed519539b6d058148c95e}{SPD\_\-LIST\_\-APPEND\_\-LIST}(head, list, field)
+\begin{DoxyCompactList}\small\item\em Appends a whole list to the tail of a list. \item\end{DoxyCompactList}\item 
+\hypertarget{linkedlist_8h_a9eb16fef8c8e335cb92d458d0d3313ec}{
+\#define {\bfseries SPD\_\-RWLIST\_\-APPEND\_\-LIST}~SPD\_\-LIST\_\-APPEND\_\-LIST}
+\label{linkedlist_8h_a9eb16fef8c8e335cb92d458d0d3313ec}
+
+\item 
+\#define \hyperlink{linkedlist_8h_ab559f6389398fc7556f632a9a4a7e699}{SPD\_\-LIST\_\-INSERT\_\-LIST\_\-AFTER}(head, list, elm, field)
+\begin{DoxyCompactList}\small\item\em Inserts a whole list after a specific entry in a list. \item\end{DoxyCompactList}\item 
+\hypertarget{linkedlist_8h_a32abb4afc495f636a5c38d605295bfc8}{
+\#define {\bfseries SPD\_\-RWLIST\_\-INSERT\_\-LIST\_\-AFTER}~SPD\_\-LIST\_\-INSERT\_\-LIST\_\-AFTER}
+\label{linkedlist_8h_a32abb4afc495f636a5c38d605295bfc8}
+
+\item 
+\#define \hyperlink{linkedlist_8h_a8b055be2123a525d84fa252508c35279}{SPD\_\-LIST\_\-REMOVE\_\-HEAD}(head, field)
+\begin{DoxyCompactList}\small\item\em Removes and returns the head entry from a list. \item\end{DoxyCompactList}\item 
+\hypertarget{linkedlist_8h_a6fb4efb76205476c33ec49eb54f763f2}{
+\#define {\bfseries SPD\_\-RWLIST\_\-REMOVE\_\-HEAD}~SPD\_\-LIST\_\-REMOVE\_\-HEAD}
+\label{linkedlist_8h_a6fb4efb76205476c33ec49eb54f763f2}
+
+\item 
+\#define \hyperlink{linkedlist_8h_a8d1f7631602735d7bd55faa50235ca0a}{SPD\_\-LIST\_\-REMOVE}(head, elm, field)
+\begin{DoxyCompactList}\small\item\em Removes a specific entry from a list. \item\end{DoxyCompactList}\item 
+\hypertarget{linkedlist_8h_ab41a3560cd06956df349283bbef1a25d}{
+\#define {\bfseries SPD\_\-RWLIST\_\-REMOVE}~SPD\_\-LIST\_\-REMOVE}
+\label{linkedlist_8h_ab41a3560cd06956df349283bbef1a25d}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+$\backslash$ brief A set of macros to manage forword-\/linked list 
+
+\subsection{Define Documentation}
+\hypertarget{linkedlist_8h_a2f5414e1e7fed519539b6d058148c95e}{
+\index{linkedlist.h@{linkedlist.h}!SPD\_\-LIST\_\-APPEND\_\-LIST@{SPD\_\-LIST\_\-APPEND\_\-LIST}}
+\index{SPD\_\-LIST\_\-APPEND\_\-LIST@{SPD\_\-LIST\_\-APPEND\_\-LIST}!linkedlist.h@{linkedlist.h}}
+\subsubsection[{SPD\_\-LIST\_\-APPEND\_\-LIST}]{\setlength{\rightskip}{0pt plus 5cm}\#define SPD\_\-LIST\_\-APPEND\_\-LIST(head, \/  list, \/  field)}}
+\label{linkedlist_8h_a2f5414e1e7fed519539b6d058148c95e}
+{\bfseries Value:}
+\begin{DoxyCode}
+do {                    \
+        if (!(list)->first) {                                           \
+                break;                                                  \
+        }                                                               \
+        if (!(head)->first) {                                           \
+                (head)->first = (list)->first;                          \
+                (head)->last = (list)->last;                            \
+        } else {                                                        \
+                (head)->last->field.next = (list)->first;               \
+                (head)->last = (list)->last;                            \
+        }                                                               \
+        (list)->first = NULL;                                           \
+        (list)->last = NULL;                                            \
+} while (0)
+\end{DoxyCode}
+
+
+Appends a whole list to the tail of a list. 
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em head}]This is a pointer to the list head structure \item[{\em list}]This is a pointer to the list to be appended. \item[{\em field}]This is the name of the field (declared using \hyperlink{linkedlist_8h_a16d7b32a8d830307347698234577a57f}{SPD\_\-LIST\_\-ENTRY()}) used to link entries of this list together.\end{DoxyParams}
+Note: The source list (the {\itshape list\/} parameter) will be empty after calling this macro (the list entries are {\bfseries moved} to the target list). \hypertarget{linkedlist_8h_a49a4c04270a8f67bf3ab6bc13c2c66c3}{
+\index{linkedlist.h@{linkedlist.h}!SPD\_\-LIST\_\-EMPTY@{SPD\_\-LIST\_\-EMPTY}}
+\index{SPD\_\-LIST\_\-EMPTY@{SPD\_\-LIST\_\-EMPTY}!linkedlist.h@{linkedlist.h}}
+\subsubsection[{SPD\_\-LIST\_\-EMPTY}]{\setlength{\rightskip}{0pt plus 5cm}\#define SPD\_\-LIST\_\-EMPTY(head)~(SPD\_\-LIST\_\-FIRST(head) == NULL)}}
+\label{linkedlist_8h_a49a4c04270a8f67bf3ab6bc13c2c66c3}
+
+
+Checks whether the specified list contains any entries. 
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em head}]This is a pointer to the list head structure\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+zero if the list has entries 
+
+non-\/zero if not. 
+\end{DoxyReturn}
+\hypertarget{linkedlist_8h_a16d7b32a8d830307347698234577a57f}{
+\index{linkedlist.h@{linkedlist.h}!SPD\_\-LIST\_\-ENTRY@{SPD\_\-LIST\_\-ENTRY}}
+\index{SPD\_\-LIST\_\-ENTRY@{SPD\_\-LIST\_\-ENTRY}!linkedlist.h@{linkedlist.h}}
+\subsubsection[{SPD\_\-LIST\_\-ENTRY}]{\setlength{\rightskip}{0pt plus 5cm}\#define SPD\_\-LIST\_\-ENTRY(type)}}
+\label{linkedlist_8h_a16d7b32a8d830307347698234577a57f}
+{\bfseries Value:}
+\begin{DoxyCode}
+struct {                          \
+        struct type *next;            \
+    }
+\end{DoxyCode}
+
+
+Declare a forward link structure inside a list entry. 
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em type}]This is the type of each list entry.\end{DoxyParams}
+This macro declares a structure to be used to link list entries together. It must be used inside the definition of the structure named in {\itshape type\/}, as follows:
+
+
+\begin{DoxyCode}
+ struct list_entry {
+       ...
+       SPD_LIST_ENTRY(list_entry) list;
+ }
+\end{DoxyCode}
+
+
+The field name {\itshape list\/} here is arbitrary, and can be anything you wish. \hypertarget{linkedlist_8h_af0179d1e394690462d6aed15fd352bf7}{
+\index{linkedlist.h@{linkedlist.h}!SPD\_\-LIST\_\-FIRST@{SPD\_\-LIST\_\-FIRST}}
+\index{SPD\_\-LIST\_\-FIRST@{SPD\_\-LIST\_\-FIRST}!linkedlist.h@{linkedlist.h}}
+\subsubsection[{SPD\_\-LIST\_\-FIRST}]{\setlength{\rightskip}{0pt plus 5cm}\#define SPD\_\-LIST\_\-FIRST(head)~((head)-\/$>$first)}}
+\label{linkedlist_8h_af0179d1e394690462d6aed15fd352bf7}
+
+
+get the first entry contained in a lisk. 
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em pointer}]to the list head structure \end{DoxyParams}
+\hypertarget{linkedlist_8h_af3ca902cc902f26712005dd94ac3743f}{
+\index{linkedlist.h@{linkedlist.h}!SPD\_\-LIST\_\-HEAD\_\-DESTROY@{SPD\_\-LIST\_\-HEAD\_\-DESTROY}}
+\index{SPD\_\-LIST\_\-HEAD\_\-DESTROY@{SPD\_\-LIST\_\-HEAD\_\-DESTROY}!linkedlist.h@{linkedlist.h}}
+\subsubsection[{SPD\_\-LIST\_\-HEAD\_\-DESTROY}]{\setlength{\rightskip}{0pt plus 5cm}\#define SPD\_\-LIST\_\-HEAD\_\-DESTROY(head)}}
+\label{linkedlist_8h_af3ca902cc902f26712005dd94ac3743f}
+{\bfseries Value:}
+\begin{DoxyCode}
+{           \
+    (head)->first = NULL;                      \
+    (head)->last = NULL;                      \
+    spd_mutex_destroy(&(head)->lock)          \
+}
+\end{DoxyCode}
+
+
+Destroys a list head structure. 
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em head}]This is a pointer to the list head structure\end{DoxyParams}
+This macro destroys a list head structure by setting the head entry to {\itshape NULL\/} (empty list) and destroying the embedded lock. It does not free the structure from memory. \hypertarget{linkedlist_8h_aed385dd96c60dc91d231aabe7b7c6019}{
+\index{linkedlist.h@{linkedlist.h}!SPD\_\-LIST\_\-HEAD\_\-INIT@{SPD\_\-LIST\_\-HEAD\_\-INIT}}
+\index{SPD\_\-LIST\_\-HEAD\_\-INIT@{SPD\_\-LIST\_\-HEAD\_\-INIT}!linkedlist.h@{linkedlist.h}}
+\subsubsection[{SPD\_\-LIST\_\-HEAD\_\-INIT}]{\setlength{\rightskip}{0pt plus 5cm}\#define SPD\_\-LIST\_\-HEAD\_\-INIT(head)}}
+\label{linkedlist_8h_aed385dd96c60dc91d231aabe7b7c6019}
+{\bfseries Value:}
+\begin{DoxyCode}
+{              \
+    (head)->first = NULL;                      \
+    (head)->last = NULL;                      \
+    spd_mutex_init(&(head)->lock);             \
+    }
+\end{DoxyCode}
+
+
+Initializes a list head structure. 
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em head}]This is a pointer to the list head structure\end{DoxyParams}
+This macro initializes a list head structure by setting the head entry to {\itshape NULL\/} (empty list) and recreating the embedded lock. \hypertarget{linkedlist_8h_a07f3669822f37139d2813284f8122c43}{
+\index{linkedlist.h@{linkedlist.h}!SPD\_\-LIST\_\-HEAD\_\-INIT\_\-NOLOCK@{SPD\_\-LIST\_\-HEAD\_\-INIT\_\-NOLOCK}}
+\index{SPD\_\-LIST\_\-HEAD\_\-INIT\_\-NOLOCK@{SPD\_\-LIST\_\-HEAD\_\-INIT\_\-NOLOCK}!linkedlist.h@{linkedlist.h}}
+\subsubsection[{SPD\_\-LIST\_\-HEAD\_\-INIT\_\-NOLOCK}]{\setlength{\rightskip}{0pt plus 5cm}\#define SPD\_\-LIST\_\-HEAD\_\-INIT\_\-NOLOCK(head)}}
+\label{linkedlist_8h_a07f3669822f37139d2813284f8122c43}
+{\bfseries Value:}
+\begin{DoxyCode}
+{                               \
+        (head)->first = NULL;                                           \
+        (head)->last = NULL;                                            \
+}
+\end{DoxyCode}
+
+
+Initializes a list head structure. 
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em head}]This is a pointer to the list head structure\end{DoxyParams}
+This macro initializes a list head structure by setting the head entry to {\itshape NULL\/} (empty list). There is no embedded lock handling with this macro. \hypertarget{linkedlist_8h_a16e6ce1eb3c08de0c594d9e4fc743e8e}{
+\index{linkedlist.h@{linkedlist.h}!SPD\_\-LIST\_\-HEAD\_\-INIT\_\-VALUE@{SPD\_\-LIST\_\-HEAD\_\-INIT\_\-VALUE}}
+\index{SPD\_\-LIST\_\-HEAD\_\-INIT\_\-VALUE@{SPD\_\-LIST\_\-HEAD\_\-INIT\_\-VALUE}!linkedlist.h@{linkedlist.h}}
+\subsubsection[{SPD\_\-LIST\_\-HEAD\_\-INIT\_\-VALUE}]{\setlength{\rightskip}{0pt plus 5cm}\#define SPD\_\-LIST\_\-HEAD\_\-INIT\_\-VALUE}}
+\label{linkedlist_8h_a16e6ce1eb3c08de0c594d9e4fc743e8e}
+{\bfseries Value:}
+\begin{DoxyCode}
+{            \
+    .first = NULL,                       \
+    .last  = NULL,                         \
+    .lock  = SPD_MUTEX_INIT_VALUE,           \
+    }
+\end{DoxyCode}
+
+
+Initial values for a declaration of SPD\_\-LIST\_\-HEAD. 
+
+\hypertarget{linkedlist_8h_a3298476c20a947d49d3bb1357ce25833}{
+\index{linkedlist.h@{linkedlist.h}!SPD\_\-LIST\_\-HEAD\_\-NOLOCK@{SPD\_\-LIST\_\-HEAD\_\-NOLOCK}}
+\index{SPD\_\-LIST\_\-HEAD\_\-NOLOCK@{SPD\_\-LIST\_\-HEAD\_\-NOLOCK}!linkedlist.h@{linkedlist.h}}
+\subsubsection[{SPD\_\-LIST\_\-HEAD\_\-NOLOCK}]{\setlength{\rightskip}{0pt plus 5cm}\#define SPD\_\-LIST\_\-HEAD\_\-NOLOCK(name, \/  type)}}
+\label{linkedlist_8h_a3298476c20a947d49d3bb1357ce25833}
+{\bfseries Value:}
+\begin{DoxyCode}
+struct name {                               \
+        struct type *first;                     \
+        struct type *last;                      \
+    }
+\end{DoxyCode}
+
+
+Defines a structure to be used to hold a list of specified type (with no lock). 
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em name}]This will be the name of the defined structure. \item[{\em type}]This is the type of each list entry.\end{DoxyParams}
+This macro creates a structure definition that can be used to hold a list of the entries of type {\itshape type\/}. It does not actually declare (allocate) a structure; to do that, either follow this macro with the desired name of the instance you wish to declare, or use the specified {\itshape name\/} to declare instances elsewhere.
+
+Example usage: 
+\begin{DoxyCode}
+ static SPD_LIST_HEAD_NOLOCK(entry_list, entry) entries;
+\end{DoxyCode}
+
+
+This would define {\ttfamily struct} {\ttfamily entry\_\-list}, and declare an instance of it named {\itshape entries\/}, all intended to hold a list of type {\ttfamily struct} {\ttfamily entry}. \hypertarget{linkedlist_8h_a09ce9e3c93f14239f415aa98f11daad0}{
+\index{linkedlist.h@{linkedlist.h}!SPD\_\-LIST\_\-HEAD\_\-NOLOCK\_\-INIT\_\-VALUE@{SPD\_\-LIST\_\-HEAD\_\-NOLOCK\_\-INIT\_\-VALUE}}
+\index{SPD\_\-LIST\_\-HEAD\_\-NOLOCK\_\-INIT\_\-VALUE@{SPD\_\-LIST\_\-HEAD\_\-NOLOCK\_\-INIT\_\-VALUE}!linkedlist.h@{linkedlist.h}}
+\subsubsection[{SPD\_\-LIST\_\-HEAD\_\-NOLOCK\_\-INIT\_\-VALUE}]{\setlength{\rightskip}{0pt plus 5cm}\#define SPD\_\-LIST\_\-HEAD\_\-NOLOCK\_\-INIT\_\-VALUE}}
+\label{linkedlist_8h_a09ce9e3c93f14239f415aa98f11daad0}
+{\bfseries Value:}
+\begin{DoxyCode}
+{       \
+    .first = NULL,                       \
+    .last = NULL,                        \
+    }
+\end{DoxyCode}
+
+
+Defines initial values for a declaration of SPD\_\-LIST\_\-HEAD\_\-NOLOCK. 
+
+\hypertarget{linkedlist_8h_a64ebd31929ff83a2cb6a024c293a5d89}{
+\index{linkedlist.h@{linkedlist.h}!SPD\_\-LIST\_\-HEAD\_\-NOLOCK\_\-STATIC@{SPD\_\-LIST\_\-HEAD\_\-NOLOCK\_\-STATIC}}
+\index{SPD\_\-LIST\_\-HEAD\_\-NOLOCK\_\-STATIC@{SPD\_\-LIST\_\-HEAD\_\-NOLOCK\_\-STATIC}!linkedlist.h@{linkedlist.h}}
+\subsubsection[{SPD\_\-LIST\_\-HEAD\_\-NOLOCK\_\-STATIC}]{\setlength{\rightskip}{0pt plus 5cm}\#define SPD\_\-LIST\_\-HEAD\_\-NOLOCK\_\-STATIC(name, \/  type)}}
+\label{linkedlist_8h_a64ebd31929ff83a2cb6a024c293a5d89}
+{\bfseries Value:}
+\begin{DoxyCode}
+struct name {                                      \
+        struct type *first;                            \
+        struct type *last;                             \
+    } name = SPD_LIST_HEAD_NOLOCK_INIT_VALUE
+\end{DoxyCode}
+
+
+Defines a structure to be used to hold a list of specified type, statically initialized. 
+
+This is the same as SPD\_\-LIST\_\-HEAD\_\-STATIC, except without the lock included. \hypertarget{linkedlist_8h_a4a7003b8ddc26caac0dc2388f8f73529}{
+\index{linkedlist.h@{linkedlist.h}!SPD\_\-LIST\_\-HEAD\_\-SET@{SPD\_\-LIST\_\-HEAD\_\-SET}}
+\index{SPD\_\-LIST\_\-HEAD\_\-SET@{SPD\_\-LIST\_\-HEAD\_\-SET}!linkedlist.h@{linkedlist.h}}
+\subsubsection[{SPD\_\-LIST\_\-HEAD\_\-SET}]{\setlength{\rightskip}{0pt plus 5cm}\#define SPD\_\-LIST\_\-HEAD\_\-SET(head, \/  entry)}}
+\label{linkedlist_8h_a4a7003b8ddc26caac0dc2388f8f73529}
+{\bfseries Value:}
+\begin{DoxyCode}
+do { \
+    (head)->first = (entry);                  \
+    (head)->last  =(entry);                  \
+    spd_mutex_init(&(head)->lock);             \
+} while (0)
+\end{DoxyCode}
+
+
+Initializes a list head structure with a specified first entry. 
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em head}]This is a pointer to the list head structure \item[{\em entry}]pointer to the list entry that will become the head of the list\end{DoxyParams}
+This macro initializes a list head structure by setting the head entry to the supplied value and recreating the embedded lock. \hypertarget{linkedlist_8h_a04a96d82e8315bd7f34d5d4832f6f866}{
+\index{linkedlist.h@{linkedlist.h}!SPD\_\-LIST\_\-HEAD\_\-SET\_\-NOLOCK@{SPD\_\-LIST\_\-HEAD\_\-SET\_\-NOLOCK}}
+\index{SPD\_\-LIST\_\-HEAD\_\-SET\_\-NOLOCK@{SPD\_\-LIST\_\-HEAD\_\-SET\_\-NOLOCK}!linkedlist.h@{linkedlist.h}}
+\subsubsection[{SPD\_\-LIST\_\-HEAD\_\-SET\_\-NOLOCK}]{\setlength{\rightskip}{0pt plus 5cm}\#define SPD\_\-LIST\_\-HEAD\_\-SET\_\-NOLOCK(head, \/  entry)}}
+\label{linkedlist_8h_a04a96d82e8315bd7f34d5d4832f6f866}
+{\bfseries Value:}
+\begin{DoxyCode}
+do {          \
+    (head)->first = (entry);                  \
+    (head)->last = (entry);                            \
+ } while (0)
+\end{DoxyCode}
+
+
+Initializes a list head structure with a specified first entry. 
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em head}]This is a pointer to the list head structure \item[{\em entry}]pointer to the list entry that will become the head of the list\end{DoxyParams}
+This macro initializes a list head structure by setting the head entry to the supplied value. \hypertarget{linkedlist_8h_a5390b63aeb6e12ae9ab007fc2799786d}{
+\index{linkedlist.h@{linkedlist.h}!SPD\_\-LIST\_\-HEAD\_\-STATIC@{SPD\_\-LIST\_\-HEAD\_\-STATIC}}
+\index{SPD\_\-LIST\_\-HEAD\_\-STATIC@{SPD\_\-LIST\_\-HEAD\_\-STATIC}!linkedlist.h@{linkedlist.h}}
+\subsubsection[{SPD\_\-LIST\_\-HEAD\_\-STATIC}]{\setlength{\rightskip}{0pt plus 5cm}\#define SPD\_\-LIST\_\-HEAD\_\-STATIC(name, \/  type)}}
+\label{linkedlist_8h_a5390b63aeb6e12ae9ab007fc2799786d}
+{\bfseries Value:}
+\begin{DoxyCode}
+struct name {                     \
+        struct type *first;             \
+        struct type *last;               \
+        spd_mutex_t lock;                \
+    } name = SPD_LIST_HEAD_INIT_VALUE
+\end{DoxyCode}
+
+
+Defines a structure to be used to hold a list of specified type, statically nitialized. 
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em name}]This will be the name of the defined structure. \item[{\em type}]This is the type of each list entry.\end{DoxyParams}
+This macro creates a structure definition that can be used to hold a list of the entries of type {\itshape type\/}, and allocates an instance of it, initialized to be empty.
+
+Example usage: 
+\begin{DoxyCode}
+ static SPD_LIST_HEAD_STATIC(entry_list, entry);
+\end{DoxyCode}
+
+
+type {\ttfamily struct} {\ttfamily entry}. \hypertarget{linkedlist_8h_ae8a02e73fac346def0aec74a9fc6d51a}{
+\index{linkedlist.h@{linkedlist.h}!SPD\_\-LIST\_\-INSERT\_\-AFTER@{SPD\_\-LIST\_\-INSERT\_\-AFTER}}
+\index{SPD\_\-LIST\_\-INSERT\_\-AFTER@{SPD\_\-LIST\_\-INSERT\_\-AFTER}!linkedlist.h@{linkedlist.h}}
+\subsubsection[{SPD\_\-LIST\_\-INSERT\_\-AFTER}]{\setlength{\rightskip}{0pt plus 5cm}\#define SPD\_\-LIST\_\-INSERT\_\-AFTER(head, \/  cur, \/  nextel, \/  field)}}
+\label{linkedlist_8h_ae8a02e73fac346def0aec74a9fc6d51a}
+{\bfseries Value:}
+\begin{DoxyCode}
+do {       \
+    (nextel)->field.next = (cur)->field.next;             \
+    (cur)->field.next = (nextel);                     \
+    if((head)->last == (cur))                       \
+        (head)->last = (nextel);                    \
+} while (0)
+\end{DoxyCode}
+
+
+Inserts a list entry after a given entry. 
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em head}]This is a pointer to the list head structure \item[{\em listelm}]This is a pointer to the entry after which the new entry should be inserted. \item[{\em elm}]This is a pointer to the entry to be inserted. \item[{\em field}]This is the name of the field (declared using \hyperlink{linkedlist_8h_a16d7b32a8d830307347698234577a57f}{SPD\_\-LIST\_\-ENTRY()}) used to link entries of this list together. \end{DoxyParams}
+\hypertarget{linkedlist_8h_a50fcdfccef856650a613603bad0457c1}{
+\index{linkedlist.h@{linkedlist.h}!SPD\_\-LIST\_\-INSERT\_\-BEFORE\_\-CURRENT@{SPD\_\-LIST\_\-INSERT\_\-BEFORE\_\-CURRENT}}
+\index{SPD\_\-LIST\_\-INSERT\_\-BEFORE\_\-CURRENT@{SPD\_\-LIST\_\-INSERT\_\-BEFORE\_\-CURRENT}!linkedlist.h@{linkedlist.h}}
+\subsubsection[{SPD\_\-LIST\_\-INSERT\_\-BEFORE\_\-CURRENT}]{\setlength{\rightskip}{0pt plus 5cm}\#define SPD\_\-LIST\_\-INSERT\_\-BEFORE\_\-CURRENT(head, \/  cur)}}
+\label{linkedlist_8h_a50fcdfccef856650a613603bad0457c1}
+{\bfseries Value:}
+\begin{DoxyCode}
+do {              \
+    if(__list_prev) {                                              \
+        (head)->cur.next = __list_prev->cur.next;                  \
+        __list_prev->cur.next = head;                               \
+    } else {                                                      \
+        (head)->cur.next = __list_head->first;                 \
+        __list_head->first = (head);                        \
+    }                                                    \
+    __list_prev = (head);                                 \
+ } while (0)
+\end{DoxyCode}
+
+
+Inserts a list entry before the current entry during a traversal. 
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em head}]this is a pointer to the entry to be inserted. \item[{\em cur}]this is the name of cur,\end{DoxyParams}
+\begin{DoxyNote}{Note}
+this macro can be only used inside an SPD\_\-LIST\_\-TRAVRSE\_\-SAFE\_\-BEGIN(). 
+\end{DoxyNote}
+\hypertarget{linkedlist_8h_a4f0948f5e14401e642ce5cf7986b0ab2}{
+\index{linkedlist.h@{linkedlist.h}!SPD\_\-LIST\_\-INSERT\_\-HEAD@{SPD\_\-LIST\_\-INSERT\_\-HEAD}}
+\index{SPD\_\-LIST\_\-INSERT\_\-HEAD@{SPD\_\-LIST\_\-INSERT\_\-HEAD}!linkedlist.h@{linkedlist.h}}
+\subsubsection[{SPD\_\-LIST\_\-INSERT\_\-HEAD}]{\setlength{\rightskip}{0pt plus 5cm}\#define SPD\_\-LIST\_\-INSERT\_\-HEAD(head, \/  cur, \/  field)}}
+\label{linkedlist_8h_a4f0948f5e14401e642ce5cf7986b0ab2}
+{\bfseries Value:}
+\begin{DoxyCode}
+do { \
+    (cur)->field.next = (head)->first;             \
+    (head)->first = (cur);                        \
+    if(!(head)->last)                             \
+        (head)->last = (cur);                     \
+} while (0)
+\end{DoxyCode}
+
+
+Inserts a list entry at the head of a list. 
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em head}]This is a pointer to the list head structure \item[{\em cur}]This is a pointer to the entry to be inserted. \item[{\em field}]This is the name of the field (declared using \hyperlink{linkedlist_8h_a16d7b32a8d830307347698234577a57f}{SPD\_\-LIST\_\-ENTRY()}) used to link entries of this list together. \end{DoxyParams}
+\hypertarget{linkedlist_8h_ab559f6389398fc7556f632a9a4a7e699}{
+\index{linkedlist.h@{linkedlist.h}!SPD\_\-LIST\_\-INSERT\_\-LIST\_\-AFTER@{SPD\_\-LIST\_\-INSERT\_\-LIST\_\-AFTER}}
+\index{SPD\_\-LIST\_\-INSERT\_\-LIST\_\-AFTER@{SPD\_\-LIST\_\-INSERT\_\-LIST\_\-AFTER}!linkedlist.h@{linkedlist.h}}
+\subsubsection[{SPD\_\-LIST\_\-INSERT\_\-LIST\_\-AFTER}]{\setlength{\rightskip}{0pt plus 5cm}\#define SPD\_\-LIST\_\-INSERT\_\-LIST\_\-AFTER(head, \/  list, \/  elm, \/  field)}}
+\label{linkedlist_8h_ab559f6389398fc7556f632a9a4a7e699}
+{\bfseries Value:}
+\begin{DoxyCode}
+do {            \
+        (list)->last->field.next = (elm)->field.next;                   \
+        (elm)->field.next = (list)->first;                              \
+        if ((head)->last == elm) {                                      \
+                (head)->last = (list)->last;                            \
+        }                                                               \
+        (list)->first = NULL;                                           \
+        (list)->last = NULL;                                            \
+} while(0)
+\end{DoxyCode}
+
+
+Inserts a whole list after a specific entry in a list. 
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em head}]This is a pointer to the list head structure \item[{\em list}]This is a pointer to the list to be inserted. \item[{\em elm}]This is a pointer to the entry after which the new list should be inserted. \item[{\em field}]This is the name of the field (declared using \hyperlink{linkedlist_8h_a16d7b32a8d830307347698234577a57f}{SPD\_\-LIST\_\-ENTRY()}) used to link entries of the lists together.\end{DoxyParams}
+Note: The source list (the {\itshape list\/} parameter) will be empty after calling this macro (the list entries are {\bfseries moved} to the target list). \hypertarget{linkedlist_8h_a41fa5ac30dc53a833d7a3c9bc1465d6a}{
+\index{linkedlist.h@{linkedlist.h}!SPD\_\-LIST\_\-INSERT\_\-SORTALPHA@{SPD\_\-LIST\_\-INSERT\_\-SORTALPHA}}
+\index{SPD\_\-LIST\_\-INSERT\_\-SORTALPHA@{SPD\_\-LIST\_\-INSERT\_\-SORTALPHA}!linkedlist.h@{linkedlist.h}}
+\subsubsection[{SPD\_\-LIST\_\-INSERT\_\-SORTALPHA}]{\setlength{\rightskip}{0pt plus 5cm}\#define SPD\_\-LIST\_\-INSERT\_\-SORTALPHA(head, \/  elm, \/  field, \/  sortfield)}}
+\label{linkedlist_8h_a41fa5ac30dc53a833d7a3c9bc1465d6a}
+{\bfseries Value:}
+\begin{DoxyCode}
+do {   \
+    if(!(head)->first) {                                   \
+        (head)->first = (elm);                               \
+        (head)->last = (elm);                \
+    } else {                            \
+        typeof((head)->first) cur = (head)->first, prev = NULL;    \
+        while (cur && strcmp(cur->sortfield, elm->sortfield) < 0) { \
+            prev = cur;                                              \
+            cur = cur->field.next;                                     \
+        }                                                         \
+        if(!prev) {                                                   \
+            SPD_LIST_INSERT_HEAD(head, elm, field);                  \
+        } else if(!cur) {                                     \
+            SPD_LIST_INSERT_TAIL(head, elm, field);             \
+        } else {                                                \
+            SPD_LIST_INSERT_AFTER(head, prev, elm, field);          \
+        }                                                        \
+    }                                                           \
+} while(0)                                                      \
+\end{DoxyCode}
+
+
+Inserts a list entry into a alphabetically sorted list. 
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em head}]Pointer to the list head structure \item[{\em elm}]Pointer to the entry to be inserted \item[{\em field}]Name of the list entry field (declared using \hyperlink{linkedlist_8h_a16d7b32a8d830307347698234577a57f}{SPD\_\-LIST\_\-ENTRY()}) \item[{\em sortfield}]Name of the field on which the list is sorted \end{DoxyParams}
+\hypertarget{linkedlist_8h_afb7d5d160952eb1884a5a61112f4d493}{
+\index{linkedlist.h@{linkedlist.h}!SPD\_\-LIST\_\-INSERT\_\-TAIL@{SPD\_\-LIST\_\-INSERT\_\-TAIL}}
+\index{SPD\_\-LIST\_\-INSERT\_\-TAIL@{SPD\_\-LIST\_\-INSERT\_\-TAIL}!linkedlist.h@{linkedlist.h}}
+\subsubsection[{SPD\_\-LIST\_\-INSERT\_\-TAIL}]{\setlength{\rightskip}{0pt plus 5cm}\#define SPD\_\-LIST\_\-INSERT\_\-TAIL(head, \/  cur, \/  field)}}
+\label{linkedlist_8h_afb7d5d160952eb1884a5a61112f4d493}
+{\bfseries Value:}
+\begin{DoxyCode}
+do {       \
+    if(!(head)->first) {                                \
+        (head)->first = (cur);                      \
+        (head)->last = (cur);                       \
+    } else {                                \
+        (head)->last->field.next = (cur);             \
+        (head)->last = (cur);                 \
+    }                         \
+} while (0)
+\end{DoxyCode}
+
+
+Appends a list entry to the tail of a list. 
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em head}]This is a pointer to the list head structure \item[{\em elm}]This is a pointer to the entry to be appended. \item[{\em field}]This is the name of the field (declared using \hyperlink{linkedlist_8h_a16d7b32a8d830307347698234577a57f}{SPD\_\-LIST\_\-ENTRY()}) used to link entries of this list together.\end{DoxyParams}
+Note: The link field in the appended entry is {\bfseries not} modified, so if it is actually the head of a list itself, the entire list will be appended temporarily (until the next SPD\_\-LIST\_\-INSERT\_\-TAIL is performed). \hypertarget{linkedlist_8h_aaf235126955c32a3007cc48c23b422f4}{
+\index{linkedlist.h@{linkedlist.h}!SPD\_\-LIST\_\-LAST@{SPD\_\-LIST\_\-LAST}}
+\index{SPD\_\-LIST\_\-LAST@{SPD\_\-LIST\_\-LAST}!linkedlist.h@{linkedlist.h}}
+\subsubsection[{SPD\_\-LIST\_\-LAST}]{\setlength{\rightskip}{0pt plus 5cm}\#define SPD\_\-LIST\_\-LAST(head)~((head)-\/$>$last)}}
+\label{linkedlist_8h_aaf235126955c32a3007cc48c23b422f4}
+
+
+Returns the last entry contained in a list. 
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em head}]This is a pointer to the list head structure \end{DoxyParams}
+\hypertarget{linkedlist_8h_ab95c5b521340d5959d2904cec3c567ae}{
+\index{linkedlist.h@{linkedlist.h}!SPD\_\-LIST\_\-LOCK@{SPD\_\-LIST\_\-LOCK}}
+\index{SPD\_\-LIST\_\-LOCK@{SPD\_\-LIST\_\-LOCK}!linkedlist.h@{linkedlist.h}}
+\subsubsection[{SPD\_\-LIST\_\-LOCK}]{\setlength{\rightskip}{0pt plus 5cm}\#define SPD\_\-LIST\_\-LOCK(head)~spd\_\-mutex\_\-lock(\&(head)-\/$>$lock)}}
+\label{linkedlist_8h_ab95c5b521340d5959d2904cec3c567ae}
+
+
+Locks a list. 
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em head}]a pointor to the list head structure\end{DoxyParams}
+This macro attempts to place an exclusive lock in the list head structure pointed to by head. 
+\begin{DoxyRetVals}{Return values}
+\item[{\em 0}]on success \item[{\em non-\/zero}]on failure \end{DoxyRetVals}
+\hypertarget{linkedlist_8h_a7f8bb0ec1d45ffea2988d9d97b4e84d1}{
+\index{linkedlist.h@{linkedlist.h}!SPD\_\-LIST\_\-MOVE\_\-CURRENT@{SPD\_\-LIST\_\-MOVE\_\-CURRENT}}
+\index{SPD\_\-LIST\_\-MOVE\_\-CURRENT@{SPD\_\-LIST\_\-MOVE\_\-CURRENT}!linkedlist.h@{linkedlist.h}}
+\subsubsection[{SPD\_\-LIST\_\-MOVE\_\-CURRENT}]{\setlength{\rightskip}{0pt plus 5cm}\#define SPD\_\-LIST\_\-MOVE\_\-CURRENT(head, \/  cur)}}
+\label{linkedlist_8h_a7f8bb0ec1d45ffea2988d9d97b4e84d1}
+{\bfseries Value:}
+\begin{DoxyCode}
+do {    \
+    typeof ((head)->first) __list_cur = __ new_prev;          \
+    SPD_LIST_REMOVE_CURRENT(cur);                             \
+    SPD_LIST_INSERT_TAIL((head), __list_cur, cur);            \
+    } while (0)
+\end{DoxyCode}
+\hypertarget{linkedlist_8h_aead2163a47406ea9edb7da1de99e2f04}{
+\index{linkedlist.h@{linkedlist.h}!SPD\_\-LIST\_\-NEXT@{SPD\_\-LIST\_\-NEXT}}
+\index{SPD\_\-LIST\_\-NEXT@{SPD\_\-LIST\_\-NEXT}!linkedlist.h@{linkedlist.h}}
+\subsubsection[{SPD\_\-LIST\_\-NEXT}]{\setlength{\rightskip}{0pt plus 5cm}\#define SPD\_\-LIST\_\-NEXT(cur, \/  field)~((cur)-\/$>$field.next)}}
+\label{linkedlist_8h_aead2163a47406ea9edb7da1de99e2f04}
+
+
+Returns the next entry in the list after the given entry. 
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em elm}]This is a pointer to the current entry. \item[{\em field}]This is the name of the field (declared using \hyperlink{linkedlist_8h_a16d7b32a8d830307347698234577a57f}{SPD\_\-LIST\_\-ENTRY()}) used to link entries of this list together. \end{DoxyParams}
+\hypertarget{linkedlist_8h_a8d1f7631602735d7bd55faa50235ca0a}{
+\index{linkedlist.h@{linkedlist.h}!SPD\_\-LIST\_\-REMOVE@{SPD\_\-LIST\_\-REMOVE}}
+\index{SPD\_\-LIST\_\-REMOVE@{SPD\_\-LIST\_\-REMOVE}!linkedlist.h@{linkedlist.h}}
+\subsubsection[{SPD\_\-LIST\_\-REMOVE}]{\setlength{\rightskip}{0pt plus 5cm}\#define SPD\_\-LIST\_\-REMOVE(head, \/  elm, \/  field)}}
+\label{linkedlist_8h_a8d1f7631602735d7bd55faa50235ca0a}
+{\bfseries Value:}
+\begin{DoxyCode}
+({                              \
+        __typeof(elm) __res = NULL; \
+        if ((head)->first == (elm)) {                                   \
+                __res = (head)->first;                      \
+                (head)->first = (elm)->field.next;                      \
+                if ((head)->last == (elm))                      \
+                        (head)->last = NULL;                    \
+        } else {                                                                \
+      
+                typeof(elm) curelm = (head)->first;                     \
+                while (curelm && (curelm->field.next != (elm)))                 \
+      
+                        curelm = curelm->field.next;                    \
+                if (curelm) { \
+                        __res = (elm); \
+                        curelm->field.next = (elm)->field.next;                 \
+      
+                        if ((head)->last == (elm))                              \
+      
+                                (head)->last = curelm;                          \
+      
+                } \
+        }                                                               \
+        (elm)->field.next = NULL;                                       \
+        (__res); \
+})
+\end{DoxyCode}
+
+
+Removes a specific entry from a list. 
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em head}]This is a pointer to the list head structure \item[{\em elm}]This is a pointer to the entry to be removed. \item[{\em field}]This is the name of the field (declared using \hyperlink{linkedlist_8h_a16d7b32a8d830307347698234577a57f}{SPD\_\-LIST\_\-ENTRY()}) used to link entries of this list together. \end{DoxyParams}
+\begin{DoxyWarning}{Warning}
+The removed entry is {\bfseries not} freed nor modified in any way. 
+\end{DoxyWarning}
+\hypertarget{linkedlist_8h_ae31f01a5cead1ac7438b64c024d56a1d}{
+\index{linkedlist.h@{linkedlist.h}!SPD\_\-LIST\_\-REMOVE\_\-CURRENT@{SPD\_\-LIST\_\-REMOVE\_\-CURRENT}}
+\index{SPD\_\-LIST\_\-REMOVE\_\-CURRENT@{SPD\_\-LIST\_\-REMOVE\_\-CURRENT}!linkedlist.h@{linkedlist.h}}
+\subsubsection[{SPD\_\-LIST\_\-REMOVE\_\-CURRENT}]{\setlength{\rightskip}{0pt plus 5cm}\#define SPD\_\-LIST\_\-REMOVE\_\-CURRENT(head, \/  field)}}
+\label{linkedlist_8h_ae31f01a5cead1ac7438b64c024d56a1d}
+{\bfseries Value:}
+\begin{DoxyCode}
+__new_prev->field.next = NULL;                                                  \
+      
+        __new_prev = __list_prev;                                                       \
+      
+        if (__list_prev)                                                                \
+      
+                __list_prev->field.next = __list_next;                                  \
+      
+        else                                                                            \
+      
+                (head)->first = __list_next;                                            \
+      
+        if (!__list_next)                                                               \
+      
+                (head)->last = __list_prev;
+\end{DoxyCode}
+
+
+Removes the {\itshape current\/} entry from a list during a traversal. 
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em field}]This is the name of the field (declared using \hyperlink{linkedlist_8h_a16d7b32a8d830307347698234577a57f}{SPD\_\-LIST\_\-ENTRY()}) used to link entries of this list together.\end{DoxyParams}
+\begin{DoxyNote}{Note}
+This macro can {\bfseries only} be used inside an \hyperlink{linkedlist_8h_a250d1e4f67bac41ee798c73b81c7997d}{SPD\_\-LIST\_\-TRAVERSE\_\-SAFE\_\-BEGIN()} block; it is used to unlink the current entry from the list without affecting the list traversal (and without having to re-\/traverse the list to modify the previous entry, if any).
+\end{DoxyNote}
+define \hyperlink{linkedlist_8h_ae31f01a5cead1ac7438b64c024d56a1d}{SPD\_\-LIST\_\-REMOVE\_\-CURRENT(cur)} do \{ $\backslash$ \_\-\_\-new\_\-prev-\/$>$cur.next = NULL; $\backslash$ \_\-\_\-new\_\-prev-\/= \_\-\_\-list\_\-prev; $\backslash$ if(\_\-\_\-list\_\-prev) $\backslash$ \_\-\_\-list\_\-prev-\/$>$cur.next = \_\-\_\-list\_\-next; $\backslash$ else $\backslash$ \_\-\_\-list\_\-prev-\/$>$first = \_\-\_\-list\_\-prev; $\backslash$ if(!\_\-\_\-list\_\-next) $\backslash$ \_\-\_\-list\_\-head-\/$>$last = \_\-\_\-list\_\-prev; $\backslash$ \} while (0)
+
+define SPD\_\-RWLIST\_\-REMOVE\_\-CURRENT SPD\_\-LIST\_\-REMOVE\_\-CURRENT
+
+Removes the {\itshape current\/} entry from a list during a traversal. 
+\begin{DoxyParams}{Parameters}
+\item[{\em head}]This is a pointer to the list head structure \item[{\em field}]This is the name of the field (declared using \hyperlink{linkedlist_8h_a16d7b32a8d830307347698234577a57f}{SPD\_\-LIST\_\-ENTRY()}) used to link entries of this list together.\end{DoxyParams}
+\begin{DoxyNote}{Note}
+This macro can {\bfseries only} be used inside an \hyperlink{linkedlist_8h_a250d1e4f67bac41ee798c73b81c7997d}{SPD\_\-LIST\_\-TRAVERSE\_\-SAFE\_\-BEGIN()} block; it is used to unlink the current entry from the list without affecting the list traversal (and without having to re-\/traverse the list to modify the previous entry, if any). 
+\end{DoxyNote}
+\hypertarget{linkedlist_8h_a8b055be2123a525d84fa252508c35279}{
+\index{linkedlist.h@{linkedlist.h}!SPD\_\-LIST\_\-REMOVE\_\-HEAD@{SPD\_\-LIST\_\-REMOVE\_\-HEAD}}
+\index{SPD\_\-LIST\_\-REMOVE\_\-HEAD@{SPD\_\-LIST\_\-REMOVE\_\-HEAD}!linkedlist.h@{linkedlist.h}}
+\subsubsection[{SPD\_\-LIST\_\-REMOVE\_\-HEAD}]{\setlength{\rightskip}{0pt plus 5cm}\#define SPD\_\-LIST\_\-REMOVE\_\-HEAD(head, \/  field)}}
+\label{linkedlist_8h_a8b055be2123a525d84fa252508c35279}
+{\bfseries Value:}
+\begin{DoxyCode}
+({                              \
+                typeof((head)->first) cur = (head)->first;              \
+                if (cur) {                                              \
+                        (head)->first = cur->field.next;                \
+                        cur->field.next = NULL;                         \
+                        if ((head)->last == cur)                        \
+                                (head)->last = NULL;                    \
+                }                                                       \
+                cur;                                                    \
+        })
+\end{DoxyCode}
+
+
+Removes and returns the head entry from a list. 
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em head}]This is a pointer to the list head structure \item[{\em field}]This is the name of the field (declared using \hyperlink{linkedlist_8h_a16d7b32a8d830307347698234577a57f}{SPD\_\-LIST\_\-ENTRY()}) used to link entries of this list together.\end{DoxyParams}
+Removes the head entry from the list, and returns a pointer to it. This macro is safe to call on an empty list. \hypertarget{linkedlist_8h_aab55bb4679db16b0851bad02a4c7f89c}{
+\index{linkedlist.h@{linkedlist.h}!SPD\_\-LIST\_\-TRAVERSE@{SPD\_\-LIST\_\-TRAVERSE}}
+\index{SPD\_\-LIST\_\-TRAVERSE@{SPD\_\-LIST\_\-TRAVERSE}!linkedlist.h@{linkedlist.h}}
+\subsubsection[{SPD\_\-LIST\_\-TRAVERSE}]{\setlength{\rightskip}{0pt plus 5cm}\#define SPD\_\-LIST\_\-TRAVERSE(head, \/  cur, \/  field)~for((cur) = (head)-\/$>$first; (cur); (cur) = (cur)-\/$>$field.next)}}
+\label{linkedlist_8h_aab55bb4679db16b0851bad02a4c7f89c}
+
+
+Loops over (traverses) the entries in a list. 
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em head}]This is a pointer to the list head structure \item[{\em var}]This is the name of the variable that will hold a pointer to the current list entry on each iteration. It must be declared before calling this macro. \item[{\em field}]This is the name of the field (declared using \hyperlink{linkedlist_8h_a16d7b32a8d830307347698234577a57f}{SPD\_\-LIST\_\-ENTRY()}) used to link entries of this list together.\end{DoxyParams}
+This macro is use to loop over (traverse) the entries in a list. It uses a {\itshape for\/} loop, and supplies the enclosed code with a pointer to each list entry as it loops. It is typically used as follows: 
+\begin{DoxyCode}
+ static SPD_LIST_HEAD(entry_list, list_entry) entries;
+ ...
+ struct list_entry {
+       ...
+       SPD_LIST_ENTRY(list_entry) list;
+ }
+ ...
+ struct list_entry *current;
+ ...
+ SPD_LIST_TRAVERSE(&entries, current, list) {
+      (do something with current here)
+ }
+\end{DoxyCode}
+ \begin{DoxyWarning}{Warning}
+If you modify the forward-\/link pointer contained in the {\itshape current\/} entry while inside the loop, the behavior will be unpredictable. At a minimum, the following macros will modify the forward-\/link pointer, and should not be used inside \hyperlink{linkedlist_8h_aab55bb4679db16b0851bad02a4c7f89c}{SPD\_\-LIST\_\-TRAVERSE()} against the entry pointed to by the {\itshape current\/} pointer without careful consideration of their consequences: \begin{DoxyItemize}
+\item \hyperlink{linkedlist_8h_aead2163a47406ea9edb7da1de99e2f04}{SPD\_\-LIST\_\-NEXT()} (when used as an lvalue) \item \hyperlink{linkedlist_8h_ae8a02e73fac346def0aec74a9fc6d51a}{SPD\_\-LIST\_\-INSERT\_\-AFTER()} \item \hyperlink{linkedlist_8h_a4f0948f5e14401e642ce5cf7986b0ab2}{SPD\_\-LIST\_\-INSERT\_\-HEAD()} \item \hyperlink{linkedlist_8h_afb7d5d160952eb1884a5a61112f4d493}{SPD\_\-LIST\_\-INSERT\_\-TAIL()} \item \hyperlink{linkedlist_8h_a41fa5ac30dc53a833d7a3c9bc1465d6a}{SPD\_\-LIST\_\-INSERT\_\-SORTALPHA()} \end{DoxyItemize}
+
+\end{DoxyWarning}
+\hypertarget{linkedlist_8h_a250d1e4f67bac41ee798c73b81c7997d}{
+\index{linkedlist.h@{linkedlist.h}!SPD\_\-LIST\_\-TRAVERSE\_\-SAFE\_\-BEGIN@{SPD\_\-LIST\_\-TRAVERSE\_\-SAFE\_\-BEGIN}}
+\index{SPD\_\-LIST\_\-TRAVERSE\_\-SAFE\_\-BEGIN@{SPD\_\-LIST\_\-TRAVERSE\_\-SAFE\_\-BEGIN}!linkedlist.h@{linkedlist.h}}
+\subsubsection[{SPD\_\-LIST\_\-TRAVERSE\_\-SAFE\_\-BEGIN}]{\setlength{\rightskip}{0pt plus 5cm}\#define SPD\_\-LIST\_\-TRAVERSE\_\-SAFE\_\-BEGIN(head, \/  cur, \/  field)}}
+\label{linkedlist_8h_a250d1e4f67bac41ee798c73b81c7997d}
+{\bfseries Value:}
+\begin{DoxyCode}
+{        \
+    typeof((head)) __list_head = head;                         \
+    typeof(__list_head->first) __list_next;                    \
+    typeof(__list_head->first) __list_prev = NULL;              \
+    typeof(__list_head->first) __new_prev = NULL;               \
+    for((cur) = __list_head->first, __new_prev = (cur),      \
+        __list_next = (cur) ? (cur)->field.next : NULL;      \
+        (cur); __list_prev = __new_prev, (cur) = __list_next, \
+        __new_prev = (cur),                                   \
+        __list_next = (cur) ? (cur)->field.next : NULL           \
+        )
+\end{DoxyCode}
+
+
+Loops safely over (traverses) the entries in a list. 
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em head}]This is a pointer to the list head structure \item[{\em var}]This is the name of the variable that will hold a pointer to the current list entry on each iteration. It must be declared before calling this macro. \item[{\em field}]This is the name of the field (declared using \hyperlink{linkedlist_8h_a16d7b32a8d830307347698234577a57f}{SPD\_\-LIST\_\-ENTRY()}) used to link entries of this list together.\end{DoxyParams}
+This macro is used to safely loop over (traverse) the entries in a list. It uses a {\itshape for\/} loop, and supplies the enclosed code with a pointer to each list entry as it loops. It is typically used as follows:
+
+
+\begin{DoxyCode}
+ static SPD_LIST_HEAD(entry_list, list_entry) entries;
+ ...
+ struct list_entry {
+      ...
+      SPD_LIST_ENTRY(list_entry) list;
+ }
+ ...
+ struct list_entry *current;
+ ...
+ SPD_LIST_TRAVERSE_SAFE_BEGIN(&entries, current, list) {
+     (do something with current here)
+ }
+ SPD_LIST_TRAVERSE_SAFE_END;
+\end{DoxyCode}
+
+
+It differs from \hyperlink{linkedlist_8h_aab55bb4679db16b0851bad02a4c7f89c}{SPD\_\-LIST\_\-TRAVERSE()} in that the code inside the loop can modify (or even free, after calling \hyperlink{linkedlist_8h_ae31f01a5cead1ac7438b64c024d56a1d}{SPD\_\-LIST\_\-REMOVE\_\-CURRENT()}) the entry pointed to by the {\itshape current\/} pointer without affecting the loop traversal. \hypertarget{linkedlist_8h_a2aed95e1ecf23e717ef75295a67dd4ad}{
+\index{linkedlist.h@{linkedlist.h}!SPD\_\-LIST\_\-TRYLOCK@{SPD\_\-LIST\_\-TRYLOCK}}
+\index{SPD\_\-LIST\_\-TRYLOCK@{SPD\_\-LIST\_\-TRYLOCK}!linkedlist.h@{linkedlist.h}}
+\subsubsection[{SPD\_\-LIST\_\-TRYLOCK}]{\setlength{\rightskip}{0pt plus 5cm}\#define SPD\_\-LIST\_\-TRYLOCK(head)~spd\_\-mutex\_\-trylock(\&(head)-\/$>$lock)}}
+\label{linkedlist_8h_a2aed95e1ecf23e717ef75295a67dd4ad}
+
+
+Locks a list without blocking if the list is locked. 
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em head}]This is a pointer to the list head structure\end{DoxyParams}
+This macro attempts to place an exclusive lock in the list head structure pointed to by head. 
+\begin{DoxyRetVals}{Return values}
+\item[{\em 0}]on success \item[{\em non-\/zero}]on failure \end{DoxyRetVals}
+\hypertarget{linkedlist_8h_a1a39f1e8d3d2cfcca8f49651b60234d1}{
+\index{linkedlist.h@{linkedlist.h}!SPD\_\-LIST\_\-UNLOCK@{SPD\_\-LIST\_\-UNLOCK}}
+\index{SPD\_\-LIST\_\-UNLOCK@{SPD\_\-LIST\_\-UNLOCK}!linkedlist.h@{linkedlist.h}}
+\subsubsection[{SPD\_\-LIST\_\-UNLOCK}]{\setlength{\rightskip}{0pt plus 5cm}\#define SPD\_\-LIST\_\-UNLOCK(head)~spd\_\-mutex\_\-unlock(\&(head)-\/$>$lock)}}
+\label{linkedlist_8h_a1a39f1e8d3d2cfcca8f49651b60234d1}
+
+
+Attempts to unlock a list. 
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em head}]This is a pointer to the list head structure\end{DoxyParams}
+This macro attempts to remove an exclusive lock from the list head structure pointed to by head. If the list was not locked by this thread, this macro has no effect. \hypertarget{linkedlist_8h_ae9610f7f3937254cbeb125787a3a473c}{
+\index{linkedlist.h@{linkedlist.h}!SPD\_\-RWLISK\_\-TIMEDRDLOCK@{SPD\_\-RWLISK\_\-TIMEDRDLOCK}}
+\index{SPD\_\-RWLISK\_\-TIMEDRDLOCK@{SPD\_\-RWLISK\_\-TIMEDRDLOCK}!linkedlist.h@{linkedlist.h}}
+\subsubsection[{SPD\_\-RWLISK\_\-TIMEDRDLOCK}]{\setlength{\rightskip}{0pt plus 5cm}\#define SPD\_\-RWLISK\_\-TIMEDRDLOCK(head, \/  ts)~spd\_\-rwlock\_\-timedrdlock(\&(head)-\/$>$lock, ts)}}
+\label{linkedlist_8h_ae9610f7f3937254cbeb125787a3a473c}
+
+
+Read locks a list, with timeout. 
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em head}]This is a pointer to the list head structure \item[{\em ts}]Pointer to a timespec structure\end{DoxyParams}
+This macro attempts to place a read lock in the list head structure pointed to by head. 
+\begin{DoxyRetVals}{Return values}
+\item[{\em 0}]on success \item[{\em non-\/zero}]on failure \end{DoxyRetVals}
+\hypertarget{linkedlist_8h_a6d3dbd04abd59c2e790bcc46c2d9db37}{
+\index{linkedlist.h@{linkedlist.h}!SPD\_\-RWLISK\_\-TRYWRLOCK@{SPD\_\-RWLISK\_\-TRYWRLOCK}}
+\index{SPD\_\-RWLISK\_\-TRYWRLOCK@{SPD\_\-RWLISK\_\-TRYWRLOCK}!linkedlist.h@{linkedlist.h}}
+\subsubsection[{SPD\_\-RWLISK\_\-TRYWRLOCK}]{\setlength{\rightskip}{0pt plus 5cm}\#define SPD\_\-RWLISK\_\-TRYWRLOCK(head)~spd\_\-rwlock\_\-trywrlock(\&(head)-\/$>$lock)}}
+\label{linkedlist_8h_a6d3dbd04abd59c2e790bcc46c2d9db37}
+
+
+Write locks a list, without blocking if the list is locked. 
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em head}]This is a pointer to the list head structure\end{DoxyParams}
+This macro attempts to place an exclusive write lock in the list head structure pointed to by head. 
+\begin{DoxyRetVals}{Return values}
+\item[{\em 0}]on success \item[{\em non-\/zero}]on failure \end{DoxyRetVals}
+\hypertarget{linkedlist_8h_a925afe944cee7baaaffd18c765e991b8}{
+\index{linkedlist.h@{linkedlist.h}!SPD\_\-RWLIST\_\-HEAD@{SPD\_\-RWLIST\_\-HEAD}}
+\index{SPD\_\-RWLIST\_\-HEAD@{SPD\_\-RWLIST\_\-HEAD}!linkedlist.h@{linkedlist.h}}
+\subsubsection[{SPD\_\-RWLIST\_\-HEAD}]{\setlength{\rightskip}{0pt plus 5cm}\#define SPD\_\-RWLIST\_\-HEAD(name, \/  type)}}
+\label{linkedlist_8h_a925afe944cee7baaaffd18c765e991b8}
+{\bfseries Value:}
+\begin{DoxyCode}
+struct name {                  \
+        struct type *first;\
+        struct type *last;\
+        spd_rwlock_t lock; \
+    }
+\end{DoxyCode}
+
+
+Define a structure to be used to hold a list of spycified type. 
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em name}]This will be the name if the defined structure.  this is the type of each list entry.\end{DoxyParams}
+This Macro creates a structure definition tha can be used to hold a list of entries of type type, it does not actually declare a structure of the instance you wish to declare or use the specified name to declare instances elsewhere.
+
+Example usage: 
+\begin{DoxyCode}
+ static SPD_LIST_HEAD(entry_list, entry) entries;
+
+ This would define struct entry_list, and declare an instance of it named
+ */
+ #define SPD_LIST_HEAD(name, type)   \
+    struct name {                  \
+        struct type *first;        \
+        struct type *last;         \
+        spd_mutex_t lock;          \
+    }
+
+\end{DoxyCode}
+
+
+This would define {\ttfamily struct} {\ttfamily entry\_\-list}, and declare an instance of it named {\itshape entries\/}, all intended to hold a list of type {\ttfamily struct} {\ttfamily entry}. \hypertarget{linkedlist_8h_a72f6589f96d56c9eeb722fba205dd11a}{
+\index{linkedlist.h@{linkedlist.h}!SPD\_\-RWLIST\_\-HEAD\_\-DESTROY@{SPD\_\-RWLIST\_\-HEAD\_\-DESTROY}}
+\index{SPD\_\-RWLIST\_\-HEAD\_\-DESTROY@{SPD\_\-RWLIST\_\-HEAD\_\-DESTROY}!linkedlist.h@{linkedlist.h}}
+\subsubsection[{SPD\_\-RWLIST\_\-HEAD\_\-DESTROY}]{\setlength{\rightskip}{0pt plus 5cm}\#define SPD\_\-RWLIST\_\-HEAD\_\-DESTROY(head)}}
+\label{linkedlist_8h_a72f6589f96d56c9eeb722fba205dd11a}
+{\bfseries Value:}
+\begin{DoxyCode}
+{                                 \
+        (head)->first = NULL;                                           \
+        (head)->last = NULL;                                            \
+        spd_rwlock_destroy(&(head)->lock);                              \
+}
+\end{DoxyCode}
+
+
+Destroys an rwlist head structure. 
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em head}]This is a pointer to the list head structure\end{DoxyParams}
+This macro destroys a list head structure by setting the head entry to {\itshape NULL\/} (empty list) and destroying the embedded lock. It does not free the structure from memory. \hypertarget{linkedlist_8h_af242969a67d60ae300b6e9fbb756d155}{
+\index{linkedlist.h@{linkedlist.h}!SPD\_\-RWLIST\_\-HEAD\_\-INIT@{SPD\_\-RWLIST\_\-HEAD\_\-INIT}}
+\index{SPD\_\-RWLIST\_\-HEAD\_\-INIT@{SPD\_\-RWLIST\_\-HEAD\_\-INIT}!linkedlist.h@{linkedlist.h}}
+\subsubsection[{SPD\_\-RWLIST\_\-HEAD\_\-INIT}]{\setlength{\rightskip}{0pt plus 5cm}\#define SPD\_\-RWLIST\_\-HEAD\_\-INIT(head)}}
+\label{linkedlist_8h_af242969a67d60ae300b6e9fbb756d155}
+{\bfseries Value:}
+\begin{DoxyCode}
+{                                    \
+         (head)->first = NULL;                                           \
+         (head)->last = NULL;                                            \
+         spd_rwlock_init(&(head)->lock);                                 \
+ }
+\end{DoxyCode}
+
+
+Initializes an rwlist head structure. 
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em head}]This is a pointer to the list head structure\end{DoxyParams}
+This macro initializes a list head structure by setting the head entry to {\itshape NULL\/} (empty list) and recreating the embedded lock. \hypertarget{linkedlist_8h_aae84ecaa1c774852bd158016b6b92c9b}{
+\index{linkedlist.h@{linkedlist.h}!SPD\_\-RWLIST\_\-HEAD\_\-INIT\_\-VALUE@{SPD\_\-RWLIST\_\-HEAD\_\-INIT\_\-VALUE}}
+\index{SPD\_\-RWLIST\_\-HEAD\_\-INIT\_\-VALUE@{SPD\_\-RWLIST\_\-HEAD\_\-INIT\_\-VALUE}!linkedlist.h@{linkedlist.h}}
+\subsubsection[{SPD\_\-RWLIST\_\-HEAD\_\-INIT\_\-VALUE}]{\setlength{\rightskip}{0pt plus 5cm}\#define SPD\_\-RWLIST\_\-HEAD\_\-INIT\_\-VALUE}}
+\label{linkedlist_8h_aae84ecaa1c774852bd158016b6b92c9b}
+{\bfseries Value:}
+\begin{DoxyCode}
+{        \
+    .first = NULL,                          \
+    .last = NULL,                           \
+    .lock = SPD_RWLOCK_INIT_VALUE,          \
+    }
+\end{DoxyCode}
+
+
+Initial values for a declaration of SPD\_\-RWLIST\_\-HEAD. 
+
+\hypertarget{linkedlist_8h_ad64b2fec4c4b560c135684ac2d609773}{
+\index{linkedlist.h@{linkedlist.h}!SPD\_\-RWLIST\_\-HEAD\_\-SET@{SPD\_\-RWLIST\_\-HEAD\_\-SET}}
+\index{SPD\_\-RWLIST\_\-HEAD\_\-SET@{SPD\_\-RWLIST\_\-HEAD\_\-SET}!linkedlist.h@{linkedlist.h}}
+\subsubsection[{SPD\_\-RWLIST\_\-HEAD\_\-SET}]{\setlength{\rightskip}{0pt plus 5cm}\#define SPD\_\-RWLIST\_\-HEAD\_\-SET(head, \/  entry)}}
+\label{linkedlist_8h_ad64b2fec4c4b560c135684ac2d609773}
+{\bfseries Value:}
+\begin{DoxyCode}
+do {            \
+    (head)->first = (entry);                      \
+    (head)->last  = (entry);                  \
+    spd_rwlock_init(&(head)->lock);              \
+ } while (0)
+\end{DoxyCode}
+
+
+Initializes an rwlist head structure with a specified first entry. 
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em head}]This is a pointer to the list head structure \item[{\em entry}]pointer to the list entry that will become the head of the list\end{DoxyParams}
+This macro initializes a list head structure by setting the head entry to the supplied value and recreating the embedded lock. \hypertarget{linkedlist_8h_a4efe27c1923ab67491aada69e62ccd86}{
+\index{linkedlist.h@{linkedlist.h}!SPD\_\-RWLIST\_\-HEAD\_\-STATIC@{SPD\_\-RWLIST\_\-HEAD\_\-STATIC}}
+\index{SPD\_\-RWLIST\_\-HEAD\_\-STATIC@{SPD\_\-RWLIST\_\-HEAD\_\-STATIC}!linkedlist.h@{linkedlist.h}}
+\subsubsection[{SPD\_\-RWLIST\_\-HEAD\_\-STATIC}]{\setlength{\rightskip}{0pt plus 5cm}\#define SPD\_\-RWLIST\_\-HEAD\_\-STATIC(name, \/  type)}}
+\label{linkedlist_8h_a4efe27c1923ab67491aada69e62ccd86}
+{\bfseries Value:}
+\begin{DoxyCode}
+struct name {                       \
+        struct type *first;             \
+        struct type *last;             \
+        spd_rwlock_t lock;             \
+    } name = SPD_RWLIST_HEAD_INIT_VALUE
+\end{DoxyCode}
+
+
+Defines a structure to be used to hold a read/write list of specified type, statically initialized. 
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em name}]This will be the name of the defined structure. \item[{\em type}]This is the type of each list entry.\end{DoxyParams}
+This macro creates a structure definition that can be used to hold a list of the entries of type {\itshape type\/}, and allocates an instance of it, initialized to be empty.
+
+Example usage: 
+\begin{DoxyCode}
+ static SPD_RWLIST_HEAD_STATIC(entry_list, entry);
+\end{DoxyCode}
+
+
+This would define {\ttfamily struct} {\ttfamily entry\_\-list}, intended to hold a list of type {\ttfamily struct} {\ttfamily entry}. \hypertarget{linkedlist_8h_ac70e42489750abec21afa5564fdc2804}{
+\index{linkedlist.h@{linkedlist.h}!SPD\_\-RWLIST\_\-RDLOCK@{SPD\_\-RWLIST\_\-RDLOCK}}
+\index{SPD\_\-RWLIST\_\-RDLOCK@{SPD\_\-RWLIST\_\-RDLOCK}!linkedlist.h@{linkedlist.h}}
+\subsubsection[{SPD\_\-RWLIST\_\-RDLOCK}]{\setlength{\rightskip}{0pt plus 5cm}\#define SPD\_\-RWLIST\_\-RDLOCK(head)~spd\_\-rwlock\_\-rdlock(\&(head)-\/$>$lock)}}
+\label{linkedlist_8h_ac70e42489750abec21afa5564fdc2804}
+
+
+Read locks a list. 
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em head}]This is a pointer to the list head structure\end{DoxyParams}
+This macro attempts to place a read lock in the list head structure pointed to by head. 
+\begin{DoxyRetVals}{Return values}
+\item[{\em 0}]on success \item[{\em non-\/zero}]on failure \end{DoxyRetVals}
+\hypertarget{linkedlist_8h_abb1b48aa5f0fcb757daf42dc83a39f73}{
+\index{linkedlist.h@{linkedlist.h}!SPD\_\-RWLIST\_\-TIMEDWRLOCK@{SPD\_\-RWLIST\_\-TIMEDWRLOCK}}
+\index{SPD\_\-RWLIST\_\-TIMEDWRLOCK@{SPD\_\-RWLIST\_\-TIMEDWRLOCK}!linkedlist.h@{linkedlist.h}}
+\subsubsection[{SPD\_\-RWLIST\_\-TIMEDWRLOCK}]{\setlength{\rightskip}{0pt plus 5cm}\#define SPD\_\-RWLIST\_\-TIMEDWRLOCK(head, \/  ts)~spd\_\-rwlock\_\-timedwrlock(\&(head)-\/$>$lock, ts)}}
+\label{linkedlist_8h_abb1b48aa5f0fcb757daf42dc83a39f73}
+
+
+Write locks a list, with timeout. 
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em head}]This is a pointer to the list head structure \item[{\em ts}]Pointer to a timespec structure\end{DoxyParams}
+This macro attempts to place an exclusive write lock in the list head structure pointed to by head. 
+\begin{DoxyRetVals}{Return values}
+\item[{\em 0}]on success \item[{\em non-\/zero}]on failure \end{DoxyRetVals}
+\hypertarget{linkedlist_8h_a54a8c8c639131dd924c90cd90f074f09}{
+\index{linkedlist.h@{linkedlist.h}!SPD\_\-RWLIST\_\-TRYRDLOCK@{SPD\_\-RWLIST\_\-TRYRDLOCK}}
+\index{SPD\_\-RWLIST\_\-TRYRDLOCK@{SPD\_\-RWLIST\_\-TRYRDLOCK}!linkedlist.h@{linkedlist.h}}
+\subsubsection[{SPD\_\-RWLIST\_\-TRYRDLOCK}]{\setlength{\rightskip}{0pt plus 5cm}\#define SPD\_\-RWLIST\_\-TRYRDLOCK(head)~spd\_\-rwlock\_\-tryrdlock(\&(head)-\/$>$lock)}}
+\label{linkedlist_8h_a54a8c8c639131dd924c90cd90f074f09}
+
+
+Read locks a list, without blocking if the list is locked. 
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em head}]This is a pointer to the list head structure\end{DoxyParams}
+This macro attempts to place a read lock in the list head structure pointed to by head. 
+\begin{DoxyRetVals}{Return values}
+\item[{\em 0}]on success \item[{\em non-\/zero}]on failure \end{DoxyRetVals}
+\hypertarget{linkedlist_8h_a30d48c66594427df823bcc9a2d4a3378}{
+\index{linkedlist.h@{linkedlist.h}!SPD\_\-RWLIST\_\-UNLOCK@{SPD\_\-RWLIST\_\-UNLOCK}}
+\index{SPD\_\-RWLIST\_\-UNLOCK@{SPD\_\-RWLIST\_\-UNLOCK}!linkedlist.h@{linkedlist.h}}
+\subsubsection[{SPD\_\-RWLIST\_\-UNLOCK}]{\setlength{\rightskip}{0pt plus 5cm}\#define SPD\_\-RWLIST\_\-UNLOCK(head)~spd\_\-rwlock\_\-unlock(\&(head)-\/$>$lock)}}
+\label{linkedlist_8h_a30d48c66594427df823bcc9a2d4a3378}
+
+
+Attempts to unlock a read/write based list. 
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em head}]This is a pointer to the list head structure\end{DoxyParams}
+This macro attempts to remove a read or write lock from the list head structure pointed to by head. If the list was not locked by this thread, this macro has no effect. \hypertarget{linkedlist_8h_a49146776f3dc4c46d0a727ad4b451287}{
+\index{linkedlist.h@{linkedlist.h}!SPD\_\-RWLIST\_\-WRLOCK@{SPD\_\-RWLIST\_\-WRLOCK}}
+\index{SPD\_\-RWLIST\_\-WRLOCK@{SPD\_\-RWLIST\_\-WRLOCK}!linkedlist.h@{linkedlist.h}}
+\subsubsection[{SPD\_\-RWLIST\_\-WRLOCK}]{\setlength{\rightskip}{0pt plus 5cm}\#define SPD\_\-RWLIST\_\-WRLOCK(head)~spd\_\-rwlock\_\-wrlock(\&(head)-\/$>$lock)}}
+\label{linkedlist_8h_a49146776f3dc4c46d0a727ad4b451287}
+
+
+Write locks a list. 
+
+
+\begin{DoxyParams}{Parameters}
+\item[{\em head}]This is a pointer to the list head structure\end{DoxyParams}
+This macro attempts to place an exclusive write lock in the list head structure pointed to by head. 
+\begin{DoxyRetVals}{Return values}
+\item[{\em 0}]on success \item[{\em non-\/zero}]on failure \end{DoxyRetVals}

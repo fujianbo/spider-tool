@@ -1,0 +1,82 @@
+\hypertarget{structspd__cli__entry}{
+\section{spd\_\-cli\_\-entry Struct Reference}
+\label{structspd__cli__entry}\index{spd\_\-cli\_\-entry@{spd\_\-cli\_\-entry}}
+}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{structspd__cli__entry_a7294b69ec7220bc960424ff73dbd3773}{
+{\bfseries SPD\_\-LIST\_\-ENTRY} (\hyperlink{structspd__cli__entry}{spd\_\-cli\_\-entry}) list}
+\label{structspd__cli__entry_a7294b69ec7220bc960424ff73dbd3773}
+
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+const char $\ast$const \hyperlink{structspd__cli__entry_a044d985635ef8af84a2a30fd70e770bd}{cmda} \mbox{[}SPD\_\-MAX\_\-CMD\_\-LEN\mbox{]}
+\item 
+const char $\ast$ \hyperlink{structspd__cli__entry_aea9782355ada46b1dde2b29432611d91}{summary}
+\item 
+const char $\ast$ \hyperlink{structspd__cli__entry_a2f3d729e3a87a6056df8376b672a6fbd}{usage}
+\item 
+int \hyperlink{structspd__cli__entry_a81ccbdf325956499ab2020bcf6adea7b}{inuse}
+\item 
+char $\ast$ \hyperlink{structspd__cli__entry_a348ca53d3bc1548c92303252202ad907}{\_\-full\_\-cmd}
+\item 
+\hypertarget{structspd__cli__entry_a40ef5125edfc86a46afb4eaf5b698086}{
+int {\bfseries cmdlen}}
+\label{structspd__cli__entry_a40ef5125edfc86a46afb4eaf5b698086}
+
+\item 
+int \hyperlink{structspd__cli__entry_a35165ff8a1a0e5780131566c706bd782}{args}
+\item 
+char $\ast$ \hyperlink{structspd__cli__entry_a14d5467446365ddaefbbf559dd8a19c8}{command}
+\item 
+\hypertarget{structspd__cli__entry_a5d635766c68a5f11a096dfade04d7730}{
+char $\ast$($\ast$ {\bfseries handler} )(struct \hyperlink{structspd__cli__entry}{spd\_\-cli\_\-entry} $\ast$e, int cmd, struct \hyperlink{structspd__cli__arg}{spd\_\-cli\_\-arg} $\ast$arg)}
+\label{structspd__cli__entry_a5d635766c68a5f11a096dfade04d7730}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Member Data Documentation}
+\hypertarget{structspd__cli__entry_a348ca53d3bc1548c92303252202ad907}{
+\index{spd\_\-cli\_\-entry@{spd\_\-cli\_\-entry}!\_\-full\_\-cmd@{\_\-full\_\-cmd}}
+\index{\_\-full\_\-cmd@{\_\-full\_\-cmd}!spd_cli_entry@{spd\_\-cli\_\-entry}}
+\subsubsection[{\_\-full\_\-cmd}]{\setlength{\rightskip}{0pt plus 5cm}char$\ast$ {\bf spd\_\-cli\_\-entry::\_\-full\_\-cmd}}}
+\label{structspd__cli__entry_a348ca53d3bc1548c92303252202ad907}
+built at load time from cmda\mbox{[}\mbox{]} \hypertarget{structspd__cli__entry_a35165ff8a1a0e5780131566c706bd782}{
+\index{spd\_\-cli\_\-entry@{spd\_\-cli\_\-entry}!args@{args}}
+\index{args@{args}!spd_cli_entry@{spd\_\-cli\_\-entry}}
+\subsubsection[{args}]{\setlength{\rightskip}{0pt plus 5cm}int {\bf spd\_\-cli\_\-entry::args}}}
+\label{structspd__cli__entry_a35165ff8a1a0e5780131566c706bd782}
+number of non-\/null entries in cmda \hypertarget{structspd__cli__entry_a044d985635ef8af84a2a30fd70e770bd}{
+\index{spd\_\-cli\_\-entry@{spd\_\-cli\_\-entry}!cmda@{cmda}}
+\index{cmda@{cmda}!spd_cli_entry@{spd\_\-cli\_\-entry}}
+\subsubsection[{cmda}]{\setlength{\rightskip}{0pt plus 5cm}const char$\ast$ const {\bf spd\_\-cli\_\-entry::cmda}\mbox{[}SPD\_\-MAX\_\-CMD\_\-LEN\mbox{]}}}
+\label{structspd__cli__entry_a044d985635ef8af84a2a30fd70e770bd}
+words making up the command. \hypertarget{structspd__cli__entry_a14d5467446365ddaefbbf559dd8a19c8}{
+\index{spd\_\-cli\_\-entry@{spd\_\-cli\_\-entry}!command@{command}}
+\index{command@{command}!spd_cli_entry@{spd\_\-cli\_\-entry}}
+\subsubsection[{command}]{\setlength{\rightskip}{0pt plus 5cm}char$\ast$ {\bf spd\_\-cli\_\-entry::command}}}
+\label{structspd__cli__entry_a14d5467446365ddaefbbf559dd8a19c8}
+command, non-\/null for new-\/style entries \hypertarget{structspd__cli__entry_a81ccbdf325956499ab2020bcf6adea7b}{
+\index{spd\_\-cli\_\-entry@{spd\_\-cli\_\-entry}!inuse@{inuse}}
+\index{inuse@{inuse}!spd_cli_entry@{spd\_\-cli\_\-entry}}
+\subsubsection[{inuse}]{\setlength{\rightskip}{0pt plus 5cm}int {\bf spd\_\-cli\_\-entry::inuse}}}
+\label{structspd__cli__entry_a81ccbdf325956499ab2020bcf6adea7b}
+For keeping track of usage \hypertarget{structspd__cli__entry_aea9782355ada46b1dde2b29432611d91}{
+\index{spd\_\-cli\_\-entry@{spd\_\-cli\_\-entry}!summary@{summary}}
+\index{summary@{summary}!spd_cli_entry@{spd\_\-cli\_\-entry}}
+\subsubsection[{summary}]{\setlength{\rightskip}{0pt plus 5cm}const char$\ast$ {\bf spd\_\-cli\_\-entry::summary}}}
+\label{structspd__cli__entry_aea9782355ada46b1dde2b29432611d91}
+Summary of the command ($<$ 60 characters) \hypertarget{structspd__cli__entry_a2f3d729e3a87a6056df8376b672a6fbd}{
+\index{spd\_\-cli\_\-entry@{spd\_\-cli\_\-entry}!usage@{usage}}
+\index{usage@{usage}!spd_cli_entry@{spd\_\-cli\_\-entry}}
+\subsubsection[{usage}]{\setlength{\rightskip}{0pt plus 5cm}const char$\ast$ {\bf spd\_\-cli\_\-entry::usage}}}
+\label{structspd__cli__entry_a2f3d729e3a87a6056df8376b672a6fbd}
+Detailed usage information 
+
+The documentation for this struct was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+\hyperlink{cli_8h}{cli.h}\end{DoxyCompactItemize}

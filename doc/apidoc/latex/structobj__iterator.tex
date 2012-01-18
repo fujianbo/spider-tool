@@ -1,0 +1,110 @@
+\hypertarget{structobj__iterator}{
+\section{obj\_\-iterator Struct Reference}
+\label{structobj__iterator}\index{obj\_\-iterator@{obj\_\-iterator}}
+}
+
+
+When we need to walk through a container, we use an ao2\_\-iterator to keep track of the current position.  
+
+
+
+
+{\ttfamily \#include $<$obj.h$>$}
+
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+struct obj\_\-container $\ast$ \hyperlink{structobj__iterator_a5ecf21f7dd1f55e01db059a59c9d0d85}{c}
+\item 
+int \hyperlink{structobj__iterator_a09adf4a77131fe2d9a4a295cd694500a}{flags}
+\item 
+int \hyperlink{structobj__iterator_a5c2c1cc03d280d34568eb6abade757bb}{bucket}
+\item 
+unsigned int \hyperlink{structobj__iterator_afb5ef4e84bc1785aa3948f502bae545c}{c\_\-version}
+\item 
+void $\ast$ \hyperlink{structobj__iterator_aa50a51c930aa20abd91194f03f0265b3}{obj}
+\item 
+unsigned int \hyperlink{structobj__iterator_a1051579d4ab6b9e35195160229ef9fd6}{version}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+When we need to walk through a container, we use an ao2\_\-iterator to keep track of the current position. Because the navigation is typically done without holding the lock on the container across the loop, objects can be inserted or deleted or moved while we work. As a consequence, there is no guarantee that we manage to touch all the elements in the container, and it is possible that we touch the same object multiple times.
+
+However, within the current hash table container, the following is true:
+\begin{DoxyItemize}
+\item It is not possible to miss an object in the container while iterating unless it gets added after the iteration begins and is added to a bucket that is before the one the current object is in. In this case, even if you locked the container around the entire iteration loop, you still would not see this object, because it would still be waiting on the container lock so that it can be added.
+\item It would be extremely rare to see an object twice. The only way this can happen is if an object got unlinked from the container and added again during the same iteration. Furthermore, when the object gets added back, it has to be in the current or later bucket for it to be seen again.
+\end{DoxyItemize}
+
+An iterator must be first initialized with ao2\_\-iterator\_\-init(), then we can use o = ao2\_\-iterator\_\-next() to move from one element to the next. Remember that the object returned by ao2\_\-iterator\_\-next() has its refcount incremented, and the reference must be explicitly released when done with it.
+
+In addition, ao2\_\-iterator\_\-init() will hold a reference to the container being iterated, which will be freed when ao2\_\-iterator\_\-destroy() is called to free up the resources used by the iterator (if any).
+
+Example:
+
+
+\begin{DoxyCode}
+  struct ao2_container *c = ... // the container we want to iterate on
+  struct ao2_iterator i;
+  struct my_obj *o;
+
+  i = ao2_iterator_init(c, flags);
+
+  while ((o = ao2_iterator_next(&i))) {
+     ... do something on o ...
+     ao2_ref(o, -1);
+  }
+
+  ao2_iterator_destroy(&i);
+\end{DoxyCode}
+
+
+The obj iterator \begin{DoxyNote}{Note}
+You are not supposed to know the internals of an iterator! We would like the iterator to be opaque, unfortunately its size needs to be known if we want to store it around without too much trouble. Anyways... The iterator has a pointer to the container, and a flags field specifying various things e.g. whether the container should be locked or not while navigating on it. The iterator \char`\"{}points\char`\"{} to the current object, which is identified by three values:
+\end{DoxyNote}
+
+\begin{DoxyItemize}
+\item a bucket number;
+\item the object\_\-id, which is also the container version number when the object was inserted. This identifies the object uniquely, however reaching the desired object requires scanning a list.
+\item a pointer, and a container version when we saved the pointer. If the container has not changed its version number, then we can safely follow the pointer to reach the object in constant time.
+\end{DoxyItemize}
+
+Details are in the implementation of ao2\_\-iterator\_\-next() A freshly-\/initialized iterator has bucket=0, version=0. 
+
+\subsection{Member Data Documentation}
+\hypertarget{structobj__iterator_a5c2c1cc03d280d34568eb6abade757bb}{
+\index{obj\_\-iterator@{obj\_\-iterator}!bucket@{bucket}}
+\index{bucket@{bucket}!obj_iterator@{obj\_\-iterator}}
+\subsubsection[{bucket}]{\setlength{\rightskip}{0pt plus 5cm}int {\bf obj\_\-iterator::bucket}}}
+\label{structobj__iterator_a5c2c1cc03d280d34568eb6abade757bb}
+current bucket \hypertarget{structobj__iterator_a5ecf21f7dd1f55e01db059a59c9d0d85}{
+\index{obj\_\-iterator@{obj\_\-iterator}!c@{c}}
+\index{c@{c}!obj_iterator@{obj\_\-iterator}}
+\subsubsection[{c}]{\setlength{\rightskip}{0pt plus 5cm}struct obj\_\-container$\ast$ {\bf obj\_\-iterator::c}}}
+\label{structobj__iterator_a5ecf21f7dd1f55e01db059a59c9d0d85}
+the container \hypertarget{structobj__iterator_afb5ef4e84bc1785aa3948f502bae545c}{
+\index{obj\_\-iterator@{obj\_\-iterator}!c\_\-version@{c\_\-version}}
+\index{c\_\-version@{c\_\-version}!obj_iterator@{obj\_\-iterator}}
+\subsubsection[{c\_\-version}]{\setlength{\rightskip}{0pt plus 5cm}unsigned int {\bf obj\_\-iterator::c\_\-version}}}
+\label{structobj__iterator_afb5ef4e84bc1785aa3948f502bae545c}
+container version \hypertarget{structobj__iterator_a09adf4a77131fe2d9a4a295cd694500a}{
+\index{obj\_\-iterator@{obj\_\-iterator}!flags@{flags}}
+\index{flags@{flags}!obj_iterator@{obj\_\-iterator}}
+\subsubsection[{flags}]{\setlength{\rightskip}{0pt plus 5cm}int {\bf obj\_\-iterator::flags}}}
+\label{structobj__iterator_a09adf4a77131fe2d9a4a295cd694500a}
+operation flags \hypertarget{structobj__iterator_aa50a51c930aa20abd91194f03f0265b3}{
+\index{obj\_\-iterator@{obj\_\-iterator}!obj@{obj}}
+\index{obj@{obj}!obj_iterator@{obj\_\-iterator}}
+\subsubsection[{obj}]{\setlength{\rightskip}{0pt plus 5cm}void$\ast$ {\bf obj\_\-iterator::obj}}}
+\label{structobj__iterator_aa50a51c930aa20abd91194f03f0265b3}
+pointer to the current object \hypertarget{structobj__iterator_a1051579d4ab6b9e35195160229ef9fd6}{
+\index{obj\_\-iterator@{obj\_\-iterator}!version@{version}}
+\index{version@{version}!obj_iterator@{obj\_\-iterator}}
+\subsubsection[{version}]{\setlength{\rightskip}{0pt plus 5cm}unsigned int {\bf obj\_\-iterator::version}}}
+\label{structobj__iterator_a1051579d4ab6b9e35195160229ef9fd6}
+container version when the object was created 
+
+The documentation for this struct was generated from the following file:\begin{DoxyCompactItemize}
+\item 
+obj.h\end{DoxyCompactItemize}

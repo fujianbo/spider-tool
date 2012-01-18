@@ -1,0 +1,64 @@
+Containers are data structures meant to store several objects, and perform various operations on them. Internally, objects are stored in lists, hash tables or other data structures depending on the needs.
+
+\begin{DoxyNote}{Note}
+NOTA BENE: at the moment the only container we support is the hash table and its degenerate form, the list.
+\end{DoxyNote}
+Operations on container include:
+
+
+\begin{DoxyItemize}
+\item c = {\bfseries obj\_\-container\_\-alloc(size, hash\_\-fn, cmp\_\-fn)} allocate a container with desired size and default compare and hash function -\/The compare function returns an int, which can be 0 for not found, CMP\_\-STOP to stop end a traversal, or CMP\_\-MATCH if they are equal -\/The hash function returns an int. The hash function takes two argument, the object pointer and a flags field,
+\end{DoxyItemize}
+
+
+\begin{DoxyItemize}
+\item {\bfseries obj\_\-find(c, arg, flags)} returns zero or more element matching a given criteria (specified as arg). 'c' is the container pointer. Flags can be: OBJ\_\-UNLINK -\/ to remove the object, once found, from the container. OBJ\_\-NODATA -\/ don't return the object if found (no ref count change) OBJ\_\-MULTIPLE -\/ don't stop at first match OBJ\_\-POINTER -\/ if set, 'arg' is an object pointer, and a hashtable search will be done. If not, a traversal is done.
+\end{DoxyItemize}
+
+
+\begin{DoxyItemize}
+\item {\bfseries obj\_\-callback(c, flags, fn, arg)} apply fn(obj, arg) to all objects in the container. Similar to find. fn() can tell when to stop, and do anything with the object including unlinking it.
+\begin{DoxyItemize}
+\item c is the container;
+\end{DoxyItemize}
+\end{DoxyItemize}
+
+flags can be OBJ\_\-UNLINK -\/ to remove the object, once found, from the container. OBJ\_\-NODATA -\/ don't return the object if found (no ref count change) OBJ\_\-MULTIPLE -\/ don't stop at first match OBJ\_\-POINTER -\/ if set, 'arg' is an object pointer, and a hashtable search will be done. If not, a traversal is done through all the hashtable 'buckets'..
+\begin{DoxyItemize}
+\item fn is a func that returns int, and takes 3 args: (void $\ast$obj, void $\ast$arg, int flags); obj is an object arg is the same as arg passed into obj\_\-callback flags is the same as flags passed into obj\_\-callback fn returns: 0: no match, keep going CMP\_\-STOP: stop search, no match CMP\_\-MATCH: This object is matched.
+\end{DoxyItemize}
+
+Note that the entire operation is run with the container locked, so noone else can change its content while we work on it. However, we pay this with the fact that doing anything blocking in the callback keeps the container blocked. The mechanism is very flexible because the callback function fn() can do basically anything e.g. counting, deleting records, etc. possibly using arg to store the results.
+
+
+\begin{DoxyItemize}
+\item {\bfseries iterate} on a container this is done with the following sequence
+\end{DoxyItemize}
+
+
+\begin{DoxyCode}
+            struct obj_container *c = ... // our container
+            struct obj_iterator i;
+            void *o;
+
+            i = obj_iterator_init(c, flags);
+
+            while ((o = obj_iterator_next(&i))) {
+                ... do something on o ...
+                obj_ref(o, -1);
+            }
+
+            obj_iterator_destroy(&i);
+\end{DoxyCode}
+
+
+The difference with the callback is that the control on how to iterate is left to us.
+
+
+\begin{DoxyItemize}
+\item {\bfseries obj\_\-ref}(c, -\/1) dropping a reference to a container destroys it, very simple!
+\end{DoxyItemize}
+
+Containers are obj objects themselves, and this is why their implementation is simple too.
+
+Before declaring containers, we need to declare the types of the arguments passed to the constructor -\/ in turn, this requires to define callback and hash functions and their arguments. 

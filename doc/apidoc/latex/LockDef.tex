@@ -1,0 +1,11 @@
+This file provides different implementation of the functions, depending on the platform, the use of DEBUG\_\-THREADS, and the way module-\/level mutexes are initialized.
+
+
+\begin{DoxyItemize}
+\item {\bfseries static:} the mutex is assigned the value SPD\_\-MUTEX\_\-INIT\_\-VALUE this is done at compile time, and is the way used on Linux. This method is not applicable to all platforms e.g. when the initialization needs that some code is run.
+\end{DoxyItemize}
+
+
+\begin{DoxyItemize}
+\item {\bfseries through} constructors: for each mutex, a constructor function is defined, which then runs when the program (or the module) starts. The problem with this approach is that there is a lot of code duplication (a new block of code is created for each mutex). Also, it does not prevent a user from declaring a global mutex without going through the wrapper macros, so sane programming practices are still required. 
+\end{DoxyItemize}
