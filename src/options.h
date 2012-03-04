@@ -28,9 +28,9 @@ enum spd_option_flags {
 	SPD_OPT_FLAG_CONSOLE = (1 << 1),
 	/* Remote Console */
 	SPD_OPT_FLAG_REMOTE = (1 << 2),
-    /* whether display timestamp on console */
-    SPD_OPT_FLAG_TIMESTAMP = (1 << 3),
-    /* whether allow core dump  */
+      /* whether display timestamp on console */
+      SPD_OPT_FLAG_TIMESTAMP = (1 << 3),
+      /* whether allow core dump  */
 	SPD_OPT_FLAG_CORE_DUMP = (1 << 4),
 	SPD_OPT_FLAG_RECONNECT = (1 << 5),
 	SPD_OPT_FLAG_MUTE = (1 << 6),
