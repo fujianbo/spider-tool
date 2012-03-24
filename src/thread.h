@@ -33,7 +33,7 @@ int spd_pthread_create_detached_stack(pthread_t *thread, pthread_attr_t *attr, v
 /*
  *\breif  yeild thread for xx ms
  */
-void spd_thread_sleep(uint64_t ms);
+void spd_thread_sleep(int ms);
 
 /* usage :
   pthread_t thread; 

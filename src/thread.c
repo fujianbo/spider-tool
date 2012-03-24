@@ -70,7 +70,7 @@ int spd_pthread_create_detached_stack(pthread_t *thread, pthread_attr_t *attr, v
 	return res;
 }
 
-void spd_thread_sleep(uint64_t ms)
+void spd_thread_sleep(int ms)
 {
 	struct timespec interval;
 

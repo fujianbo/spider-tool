@@ -31,7 +31,7 @@ int spd_db_put(const char * table, const char *key, const char *buf);
 /*!\brief Delete entry in db */
 int spd_db_del(const char *table, const char *key);
 
-/*!\brief Delete one or more entries in astdb
+/*!\brief Delete one or more entries in spddb
  * If both parameters are NULL, the entire database will be purged.  If
  * only keytree is NULL, all entries within the family will be purged.
  * It is an error for keytree to have a value when family is NULL.
@@ -41,7 +41,7 @@ int spd_db_del(const char *table, const char *key);
  */
 int spd_db_deltree(const char *table, const char *key);
 
-/*!\brief Get a list of values within the astdb tree
+/*!\brief Get a list of values within the spddb tree
  * If family is specified, only those keys will be returned.  If keytree
  * is specified, subkeys are expected to exist (separated from the key with
  * a slash).  If subkeys do not exist and keytree is specified, the tree will
@@ -55,6 +55,10 @@ struct spd_db_entry *spd_db_gettree(const char *table, const char *key);
 /*!\brief Free structure created by spd_db_gettree() */
 void spd_db_freetree(struct spd_db_entry *entry);
 
+/* init db engine at start time */
+int spddb_init(void);
+void spddb_uninit(void);
+	
 #if defined(__cplusplus) || defined(c_plusplus)
 }
 #endif

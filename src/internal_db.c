@@ -18,11 +18,14 @@
  #include <dirent.h>
  #include <sqlite3.h>
 
-
  #include "logger.h"
  #include "utils.h"
-
-
+ #include "thread.h"
+ #include "lock.h"
+ #include "internal_db.h"
+ #include "strings.h"
+ #include "test_engine.h"
+ 
 /*
   * sqlite c interface api
   * http://www.sqlite.org/c3ref/open.html
@@ -40,10 +43,16 @@ const char* spddb_dir = "/tmp/spddb";
 	const char stmt##_sql[] = sql;
 
 SPD_DB_STATEMENT_DEFINE(put_stmt, "INSERT OR REPLACE INTO spd_db (key, value) VALUES (?, ?)")
-SPD_DB_STATEMENT_DEFINE(get_stmt, "SELECT value FROM spd_db WHERE key =?")
-SPD_DB_STATEMENT_DEFINE(del_stmt, "DELETE FROM spd_db WHERE key=?")
+SPD_DB_STATEMENT_DEFINE(get_stmt, 
+
+"SELECT value FROM spd_db WHERE key =?")
+SPD_DB_STATEMENT_DEFINE(del_stmt, 
+
+"DELETE FROM spd_db WHERE key=?")
 SPD_DB_STATEMENT_DEFINE(deltree_stmt, "DELETE FROM spd_db WHERE key || '/' LIKE ? || '/' || '%'")
-SPD_DB_STATEMENT_DEFINE(deltree_all_stmt, "DELETE FROM spd_db")
+SPD_DB_STATEMENT_DEFINE(deltree_all_stmt, 
+
+"DELETE FROM spd_db")
 SPD_DB_STATEMENT_DEFINE(gettree_stmt,"SELECT key, value FROM spd_db WHERE key || '/' LIKE ? || '/' || '%' ORDER BY key")
 SPD_DB_STATEMENT_DEFINE(gettree_all_stmt, "SELECT key, value FROM spd_db ORDER BY key")
 SPD_DB_STATEMENT_DEFINE(create_spd_db_stmt, "CREATE TABLE IF NOT EXISTS spd_db(key VARCHAR(256), value VARCHAR(256), PRIMARY KEY(key))");
@@ -162,6 +171,7 @@ void spddb_uninit(void)
 
 	spd_mutex_destroy(&dblock);
 	spd_cond_destroy(&dbcond);
+	spd_log(LOG_NOTICE, "uninit db end .\n");
 }
 
 int spd_db_get(const char * table, const char * key, char * buf, int len)
@@ -398,12 +408,12 @@ static void *dbsync_thread_loop(void *data)
 {
 	spd_mutex_lock(&dblock);
 	spd_db_begin_transaction();
-	spd_log(LOG_NOTICE, "db sync thread loop\n");
+	//spd_log(LOG_NOTICE, "db sync thread loop\n");
 
 	for(;;) {
-		spd_log(LOG_NOTICE, "wait sync cond \n");
+		//spd_log(LOG_NOTICE, "wait sync cond \n");
 		spd_cond_wait(&dbcond, &dblock);
-		spd_log(LOG_NOTICE, "get sync cond \n");
+		//spd_log(LOG_NOTICE, "get sync cond \n");
 		if(spd_db_commite_trancaction()) {
 			spd_db_rollback_transaction();
 		}
@@ -442,4 +452,80 @@ int spddb_init(void)
 	spd_log(LOG_NOTICE, "end init db engine...\n");
 	return 0;
  }
+
+
+const char large_name[] = "fjlkdsj";
+
+enum {
+	FAMILY = 0,
+	KEY = 1,
+	VALUE = 2,
+};
+
+SPD_TEST_INIT(test_db)
+{
+	int res = TEST_RESULT_PASS;
+	int i;
+	char buf[sizeof(large_name)] = {0,};
+	const char *inputs[][3] = {
+		{"family", "key", "value"},
+		{"dbtest", "a", "b"},
+		{"dbtest", "a", "a"},
+		{"dbtest", "b", "a"},
+		{"dbtest", "b", "b"},
+	};
+
+ 	switch(type) {
+		case SPD_TEST_CMD_INIT:
+			record->name = "test_db";
+			record->category = "/spider/db/";
+			record->description = "spd db get|put|del unit test";
+			
+			return TEST_RESULT_NOT_RUN;
+			
+		case SPD_TEST_CMD_RUN:
+			break;
+	}
+	
+	for(i = 0; i < ARRAY_LEN(inputs); i++) {
+
+		if(spd_db_put(inputs[i][FAMILY], inputs[i][KEY], inputs[i][VALUE])) {
+			spd_log(LOG_ERROR, "test failed in db put %s : %s : %s : \n", inputs[i][FAMILY], inputs[i][KEY], inputs[i][VALUE]);
+			spd_test_update_state(test, "test failed in db put %s : %s : %s : \n", inputs[i][FAMILY], inputs[i][KEY], inputs[i][VALUE]);
+			res = TEST_RESULT_FAILED;
+		} 
+
+		if(spd_db_get(inputs[i][FAMILY], inputs[i][KEY], buf, sizeof(buf))) {
+			spd_log(LOG_ERROR, "test failed in db put %s : %s : %s : \n", inputs[i][FAMILY], inputs[i][KEY], inputs[i][VALUE]);
+			spd_test_update_state(test, "test failed in db put %s : %s : %s : \n", inputs[i][FAMILY], inputs[i][KEY], inputs[i][VALUE]);
+			res = TEST_RESULT_FAILED;
+		} else if (strcasecmp(inputs[i][VALUE], buf)) {
+			spd_log(LOG_ERROR, "test failed in db get , this is not match value,expect %s but %s \n", buf,inputs[i][VALUE]);
+			spd_test_update_state(test, "test failed in db get , this is not match value,expect %s but %s \n", buf,inputs[i][VALUE]);
+			res = TEST_RESULT_FAILED;
+		} else {
+			//spd_log(LOG_NOTICE, "get success %s %s %s \n", inputs[i][FAMILY], inputs[i][KEY], buf);
+		}
+		
+		if(spd_db_del(inputs[i][FAMILY], inputs[i][KEY])) {
+			spd_log(LOG_ERROR, "test failed in db del %s : %s : \n", inputs[i][FAMILY], inputs[i][KEY]);
+			spd_test_update_state(test, "test failed in db get , this is not match value,expect %s but %s \n", buf,inputs[i][VALUE]);
+			res = TEST_RESULT_FAILED;
+		}
+		
+	}
+
+	return res;
+}
+
+int test_spddb()
+{
+
+	SPD_TEST_REGISTER(test_db);	
+	SPD_TEST_RUN("test_db",NULL);
+	SPD_TEST_REPORT("test_db", NULL, "/tmp/spddb_test");
+	SPD_TEST_UNREGISTER(test_db);
+
+	return 0;
+}
  
