@@ -193,3 +193,35 @@ void spd_str_join(char *s, size_t len, const char *const w[])
         ofs--;
     s[ofs] = '\0';
 }
+
+
+char *spd_strtok(char *str, const char *sep, char **last)
+{
+    char *token;
+
+    if (!str)           /* subsequent call */
+        str = *last;    /* start where we left off */
+
+    /* skip characters in sep (will terminate at '\0') */
+    while (*str && strchr(sep, *str))
+        ++str;
+
+    if (!*str)          /* no more tokens */
+        return NULL;
+
+    token = str;
+
+    /* skip valid token characters to terminate token and
+     * prepare for the next call (will terminate at '\0) 
+     */
+    *last = token + 1;
+    while (**last && !strchr(sep, **last))
+        ++*last;
+
+    if (**last) {
+        **last = '\0';
+        ++*last;
+    }
+
+    return token;
+}

@@ -711,8 +711,6 @@ int main(int argc, char *argv[])
 	spd_log(LOG_NOTICE, "sys name : %s debug level: %d  verbose level: %d\n",
             spd_config_SPD_SYSTEM_NAME, option_debug, option_verbose);
 
-	init_tinyhttp();
-	 
 	for(;;) {
 		sleep(1);
 		spd_log(LOG_DEBUG, " welcome\n");

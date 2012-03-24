@@ -52,7 +52,8 @@ am__objects_2 = threadprivdata.$(OBJEXT) utils.$(OBJEXT) \
 	strings.$(OBJEXT) logger.$(OBJEXT) config.$(OBJEXT) \
 	thread.$(OBJEXT) socket.$(OBJEXT) poll.$(OBJEXT) \
 	tcp_engine.$(OBJEXT) str.$(OBJEXT) obj.$(OBJEXT) io.$(OBJEXT) \
-	taskqueue.$(OBJEXT) cli.$(OBJEXT)
+	taskqueue.$(OBJEXT) cli.$(OBJEXT) internal_db.$(OBJEXT) \
+	test_engine.$(OBJEXT)
 am_spider_OBJECTS = spider.$(OBJEXT) $(am__objects_1) $(am__objects_2)
 spider_OBJECTS = $(am_spider_OBJECTS)
 spider_LDADD = $(LDADD)
@@ -98,7 +99,7 @@ INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
-LIBS = @LIBS@ -lpthread
+LIBS = @LIBS@ -lpthread -lsqlite3
 LTLIBOBJS = @LTLIBOBJS@
 MAKEINFO = @MAKEINFO@
 MKDIR_P = @MKDIR_P@
@@ -166,10 +167,11 @@ noinst_HEADERS = $(common_hdr)
 #spider-tool_a_LDADD =
 #spider-tool_a_LDFLAGS=
 common_hdr = spider.h  options.h lock.h const.h linkedlist.h threadprivdata.h  utils.h  strings.h \
-     logger.h config.h thread.h socket.h times.h poll.h tcp_engine.h str.h obj.h io.h taskqueue.h cli.h
+     logger.h config.h thread.h socket.h times.h poll.h tcp_engine.h str.h obj.h io.h \
+	taskqueue.h cli.h internal_db.h  test_engine.h
 
 common_src = threadprivdata.c  utils.c strings.c  logger.c  config.h config.c  thread.c \
-     socket.c    poll.c tcp_engine.c  str.c   obj.c io.c taskqueue.c cli.c 
+     socket.c    poll.c tcp_engine.c  str.c   obj.c io.c taskqueue.c cli.c internal_db.c test_engine.c
 
 all: all-am
 
@@ -254,6 +256,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cli.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/config.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/internal_db.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/io.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/logger.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/obj.Po@am__quote@
@@ -264,6 +267,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/strings.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/taskqueue.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcp_engine.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_engine.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/thread.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/threadprivdata.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/utils.Po@am__quote@
